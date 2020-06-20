@@ -1,0 +1,15 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": ".",
+  "compilerOptions": {
+    "tsConfigPath": "tsconfig.json",
+    "deleteOutDir": true,
+    "assets": [
+      ".env",
+      "Dockerfile",
+      "LICENSE",
+      "package.json",
+      "package-lock.json"
+    ]
+  }
+}

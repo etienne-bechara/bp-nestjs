@@ -1,0 +1,9 @@
+# Hidden Folders
+/.*/
+
+# Packages and Distributable Artifact
+/node_modules
+/dist
+
+# Application Secrets
+.env

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "commonjs",
+    "lib": ["es6","dom"],
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "sourceMap": true,
+  },
+  "include": [
+    "source"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
