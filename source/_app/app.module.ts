@@ -2,8 +2,7 @@ import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { AuthMiddleware } from '../_auth/auth.middleware';
 import { HttpsService } from '../_https/https.service';
-import { DemoController } from '../demo/demo.controller';
-import { DemoService } from '../demo/demo.service';
+import { RedisService } from '../_redis/redis.service';
 
 /**
  * Load all controllers and providers
@@ -13,12 +12,12 @@ import { DemoService } from '../demo/demo.service';
   imports: [ ],
 
   controllers: [
-    DemoController,
+
   ],
 
   providers: [
     HttpsService,
-    DemoService,
+    RedisService,
   ],
 
 })

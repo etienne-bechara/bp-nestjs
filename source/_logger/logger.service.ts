@@ -23,7 +23,8 @@ export class LoggerService {
    */
   private loggerSetup(): void {
     this.info(`Environment configured as ${this.settings.NODE_ENV}`, { localOnly: true });
-    this.sentryEnabled = this.settings.SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
+    this.sentryEnabled = this.settings.SENTRY_DSN
+      && this.settings.SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
 
     // Only enabls the integration if pass minimun environment
     if (this.sentryEnabled) {

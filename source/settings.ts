@@ -1,6 +1,6 @@
 import { ValidationPipeOptions } from '@nestjs/common';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, IsUrl } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, IsUrl, ValidateIf } from 'class-validator';
 
 import { AppEnvironment } from './_app/app.enum';
 import { LoggerLevel } from './_logger/logger.enum';
@@ -35,8 +35,23 @@ export class Settings {
   @IsString()
   public APP_AUTHORIZATION: string;
 
+  @IsOptional()
   @IsUrl()
   public SENTRY_DSN: string;
+
+  @IsOptional()
+  @IsUrl()
+  public REDIS_HOST: string;
+
+  @ValidateIf((o) => o.REDIS_HOST)
+  @Transform((v) => parseInt(v))
+  @IsNumber()
+  public REDIS_PORT: number;
+
+  @ValidateIf((o) => o.REDIS_HOST)
+  @IsOptional()
+  @IsString()
+  public REDIS_PASSWORD: string;
 
   /**
    * GENERAL OPTIONS
@@ -61,5 +76,7 @@ export class Settings {
 
   public HTTPS_DEFAULT_TIMEOUT: number = 20 * 1000;
   public HTTPS_DEFAULT_USER_AGENT: string = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/83.0.4103.61 Safari/537.36';
+
+  public REDIS_DEFAULT_EXPIRATION: number = 1 * 24 * 60 * 60 * 1000;
 
 }
