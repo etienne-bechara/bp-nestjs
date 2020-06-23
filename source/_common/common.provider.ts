@@ -28,7 +28,8 @@ export class CommonProvider {
    * @param params
    */
   public async retry(params: CommonRetryParams): Promise<any> {
-    this.log.debug(`${params.method}(): running with ${params.retries || 'infinite'} retries and ${params.timeout / 1000 || 'infinite '}s timeout...`);
+    const p = params;
+    this.log.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
 
     const startTime = new Date().getTime();
     let tentatives = 1;
@@ -36,22 +37,22 @@ export class CommonProvider {
 
     while (!result) {
       try {
-        result = await params.instance[params.method](...params.args);
+        result = await p.instance[p.method](...p.args);
       }
       catch (e) {
         const elapsed = new Date().getTime() - startTime;
 
-        if (params.retries && tentatives > params.retries) throw e;
-        else if (params.timeout && elapsed > params.timeout) throw e;
-        else if (params.validateRetry && !params.validateRetry(e)) throw e;
+        if (p.retries && tentatives > p.retries) throw e;
+        else if (p.timeout && elapsed > p.timeout) throw e;
+        else if (p.validateRetry && !p.validateRetry(e)) throw e;
         tentatives++;
 
-        this.log.debug(`${params.method}(): ${e.message} | Retrying #${tentatives}, elapsed ${elapsed / 1000}/${params.timeout / 1000 || 'infinite '}s...`);
-        await this.wait(params.delay || 0);
+        this.log.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || 'infinite'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || 'infinite '}s...`);
+        await this.wait(p.delay || 0);
       }
     }
 
-    this.log.debug(`${params.method}() finished successfully!`);
+    this.log.debug(`${p.method}() finished successfully!`);
     return result;
   }
 
