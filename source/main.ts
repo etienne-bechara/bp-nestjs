@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import { Settings } from './settings';
 
 // Validates environment variables and export a global settings object
-const rawEnv = dotenv.config({ path: `${__dirname}/../.env` }).parsed || { };
+const rawEnv = dotenv.config({ path: `${__dirname}/.env` }).parsed || { };
 export const settings = plainToClass(Settings, rawEnv);
 
 validateOrReject(settings, {
