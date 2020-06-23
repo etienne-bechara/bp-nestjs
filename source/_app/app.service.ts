@@ -1,9 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { plainToClass } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
-import dotenv from 'dotenv';
 
 import { LoggerService } from '../_logger/logger.service';
 import { Settings } from '../settings';
@@ -13,28 +10,12 @@ import { AppModule } from './app.module';
 
 export class AppService {
   private server: NestFastifyApplication;
-  public logger: LoggerService;
-  public settings: Settings;
 
-  /**
-   * Join env variables and app settings into a single object
-   * that is exposed at entrypoint
-   */
-  public loadSettings(): void {
-    const rawEnv = dotenv.config({ path: `${__dirname}/../.env` }).parsed || { };
-    const settings = plainToClass(Settings, rawEnv);
-
-    validateOrReject(settings, {
-      validationError: { target: false },
-    })
-      .catch((e) => {
-      console.error(e); // eslint-disable-line
-        process.exit(1);
-      });
-
-    this.settings = settings;
-    this.logger = new LoggerService(this.settings);
-  }
+  /** */
+  public constructor(
+    private readonly settings: Settings,
+    private readonly logger: LoggerService,
+  ) { }
 
   /**
    * Starts the Fastify server through Nest JS framework
@@ -61,7 +42,7 @@ export class AppService {
    * Configures the maximum of time before socket timeout
    */
   private async setServerTimeout(): Promise<void> {
-    this.logger.debug(`Setting global request timeout to ${this.settings.APP_TIMEOUT}...`);
+    this.logger.debug(`Setting global request timeout to ${this.settings.APP_TIMEOUT / 1000}s...`);
     this.server.register((app, opts, next) => {
       app.server.setTimeout(this.settings.APP_TIMEOUT);
       next();
