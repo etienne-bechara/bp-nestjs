@@ -28,7 +28,7 @@ export class CommonProvider {
    * @param params
    */
   public async retry(params: CommonRetryParams): Promise<any> {
-    this.log.debug(`${params.method}(): running with ${params.retries || 'infinite'} retries and ${params.timeout || 'infinite'} timeout...`);
+    this.log.debug(`${params.method}(): running with ${params.retries || 'infinite'} retries and ${params.timeout / 1000 || 'infinite '}s timeout...`);
 
     const startTime = new Date().getTime();
     let tentatives = 1;
@@ -46,7 +46,7 @@ export class CommonProvider {
         else if (params.validateRetry && !params.validateRetry(e)) throw e;
         tentatives++;
 
-        this.log.debug(`${params.method}(): ${e.message} | Retrying #${tentatives}, elapsed ${elapsed}ms...`);
+        this.log.debug(`${params.method}(): ${e.message} | Retrying #${tentatives}, elapsed ${elapsed / 1000}/${params.timeout / 1000 || 'infinite '}s...`);
         await this.wait(params.delay || 0);
       }
     }

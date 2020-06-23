@@ -19,7 +19,7 @@
     "update:minor": "npm update && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "boilerplate:setup": "git remote add boilerplate https://github.com/etienne-bechara/nestjs-boilerplate",
-    "boilerplate:update": "git fetch boilerplate && git merge boilerplate/master"
+    "boilerplate:update": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories"
   },
   "dependencies": {
     "@nestjs/common": "^7.2.0",
