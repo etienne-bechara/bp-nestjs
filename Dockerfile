@@ -1,5 +1,5 @@
 # Use full LTS Node.js image
-FROM node:14
+FROM node:14-alpine
 EXPOSE 8080
 
 # Create application directory and install packages
