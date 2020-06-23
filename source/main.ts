@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable simple-import-sort/sort */
 
-// Validates environment variables and export a global settings object
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 import { Settings } from './settings';
 
+// Validates environment variables and export a global settings object
 const rawEnv = dotenv.config({ path: `${__dirname}/../.env` }).parsed || { };
 export const settings = plainToClass(Settings, rawEnv);
 
