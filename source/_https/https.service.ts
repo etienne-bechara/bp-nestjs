@@ -2,18 +2,21 @@
 
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
+import https from 'https';
 import qs from 'qs';
+import UserAgent from 'user-agents';
 
 import { CommonProvider } from '../_common/common.provider';
-import { HttpsRequestParams } from './interfaces/https.request.params';
+import { HttpsRequestParams, HttpsSetupParams } from './interfaces/https.request.params';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class HttpsService extends CommonProvider {
 
-  private defaultValidator: (status: number)=> boolean = (s) => s < 400;
-  private defaultReturnType: 'data' | 'full' = 'data';
+  private defaultValidator: (status: number)=> boolean;
+  private defaultReturnType: 'data' | 'full';
 
   private baseData: Record<string, unknown>;
+  private baseHeaders: Record<string, string>;
   private instance: AxiosInstance;
 
   /**
@@ -25,17 +28,28 @@ export class HttpsService extends CommonProvider {
    * - Remove validation inside axios handler
    * @param params
    */
-  public setupInstance(params: HttpsRequestParams = { }): void {
-    if (!params.timeout) params.timeout = this.settings.HTTPS_DEFAULT_TIMEOUT;
-    if (!params.headers) params.headers = { };
-    if (!params.headers['user-agent']) params.headers['user-agent'] = this.settings.HTTPS_DEFAULT_USER_AGENT;
+  public setupInstance(params: HttpsSetupParams): void {
 
-    if (params.returnType) this.defaultReturnType = params.returnType;
-    if (params.validateStatus) this.defaultValidator = params.validateStatus;
-    if (params.baseData) this.baseData = params.baseData;
+    this.defaultReturnType = params.defaultReturnType || 'data';
+    this.baseData = params.baseData;
+    this.defaultValidator = params.defaultValidator
+      ? params.defaultValidator
+      : (s): boolean => s < 400;
 
-    params.validateStatus = (): boolean => true;
-    this.instance = axios.create(params);
+    if (!params.baseHeaders) params.baseHeaders = { };
+    if (params.randomizeUserAgent) {
+      params.baseHeaders['user-agent'] = new UserAgent().toString();
+    }
+    this.baseHeaders = params.baseHeaders;
+
+    this.instance = axios.create({
+      baseURL: params.baseUrl,
+      timeout: params.defaultTimeout,
+      validateStatus: () => true,
+      httpsAgent: params.ignoreHttpsErrors
+        ? new https.Agent({ rejectUnauthorized: false })
+        : undefined,
+    });
   }
 
   /**
@@ -47,17 +61,16 @@ export class HttpsService extends CommonProvider {
   public async request(params: HttpsRequestParams): Promise<any> {
     const rawParms = JSON.parse(JSON.stringify(params));
     this.transformParams(params);
-    let errorPrefix;
-    let res;
 
+    let errorPrefix, res;
     try {
       res = await this.instance(params);
-      const validator = params.validateCustom || this.defaultValidator;
-      if (!validator(res.status)) errorPrefix = 'Request failed';
+      const validator = params.validateStatus || this.defaultValidator;
+      if (!validator(res.status)) errorPrefix = 'Request Failed';
     }
     catch (e) {
-      if (e.message.includes('timeout')) errorPrefix = 'Request timed out';
-      else errorPrefix = 'Request unknown exception';
+      if (e.message.includes('timeout')) errorPrefix = 'Request Timed Out';
+      else errorPrefix = 'Request Exception';
     }
 
     if (errorPrefix) {
@@ -81,7 +94,8 @@ export class HttpsService extends CommonProvider {
   private transformParams(params: HttpsRequestParams): void {
     if (!params.headers) params.headers = { };
 
-    // Join data with base data
+    // Join data and headers with respective base
+    params.headers = { ...this.baseHeaders, ...params.headers };
     if (this.baseData) {
       if (params.data) params.data = { ...this.baseData, ...params.data };
       if (params.form) params.form = { ...this.baseData, ...params.form };
@@ -90,7 +104,7 @@ export class HttpsService extends CommonProvider {
 
     // Automatically stringify forms and set its header
     if (params.form) {
-      params.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      params.headers['content-type'] = 'application/x-www-form-urlencoded';
       params.data = qs.stringify(params.form);
     }
 

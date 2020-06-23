@@ -74,9 +74,6 @@ export class Settings {
   public SENTRY_ENVIRONMENTS: AppEnvironment[] = [ AppEnvironment.PRODUCTION, AppEnvironment.STAGING ];
   public SENTRY_MINIMUM_LEVEL: LoggerLevel = LoggerLevel.ERROR;
 
-  public HTTPS_DEFAULT_TIMEOUT: number = 20 * 1000;
-  public HTTPS_DEFAULT_USER_AGENT: string = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/83.0.4103.61 Safari/537.36';
-
   public REDIS_DEFAULT_EXPIRATION: number = 1 * 24 * 60 * 60 * 1000;
 
 }
