@@ -17,7 +17,7 @@ export class RedisService extends CommonProvider {
   /**
    * Sets up the redis cloud connection
    */
-  private async setupRedis(): Promise<void> {
+  private setupRedis(): void {
     this.redisEnabled = this.settings.REDIS_HOST ? true : false;
 
     if (!this.redisEnabled) {
