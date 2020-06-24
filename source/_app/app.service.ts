@@ -21,18 +21,23 @@ export class AppService {
    */
   public async bootServer(): Promise<void> {
 
-    this.logger.debug(`Booting server on port ${this.settings.PORT}...`);
+    this.logger.debug('Booting application...');
     this.server = await NestFactory.create(
       AppModule,
       new FastifyAdapter(),
       { logger: [ 'error', 'warn' ] },
     );
 
+    this.settings.APP_ORM_TYPE
+      ? this.logger.success('ORM connection ENABLED', { localOnly: true })
+      : this.logger.warning('ORM connection DISABLED', { localOnly: true });
+
     await this.setServerTimeout();
     await this.applyFilters();
 
     await this.server.listen(this.settings.PORT, this.settings.APP_INTERFACE);
     this.logger.success(`Server listening on port ${this.settings.PORT}`);
+
   }
 
   /**

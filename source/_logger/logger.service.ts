@@ -33,10 +33,10 @@ export class LoggerService {
         environment: this.settings.NODE_ENV,
         integrations: (ints) => ints.filter((i) => i.name !== 'OnUncaughtException'),
       });
-      this.success('Sentry integration ONLINE', { localOnly: true });
+      this.success('Sentry integration ENABLED', { localOnly: true });
     }
     else {
-      this.warning('Sentry integration OFFLINE', { localOnly: true });
+      this.warning('Sentry integration DISABLED', { localOnly: true });
     }
 
     // Logs any uncaught exception as error
