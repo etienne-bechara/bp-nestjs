@@ -1,15 +1,16 @@
 import { CommonSettings } from './_common/common.settings';
 
-/**
- * Import all non-boilerplate controllers into this array
- */
+/** Your Application Repositories */
+export const Repositories = [
+
+];
+
+/** Your Application Controllers */
 export const Controllers = [
 
 ];
 
-/**
- * Import all non-boilerplate services, guards and middlewares into this array
- */
+/** Your Application Services, Guards and Middlewares */
 export const Providers = [
 
 ];

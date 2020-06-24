@@ -6,7 +6,7 @@ import { RedisService } from '../_redis/redis.service';
 import { StatusController } from '../_status/status.controller';
 import { StatusService } from '../_status/status.service';
 import { settings } from '../main';
-import { Controllers, Providers } from '../settings';
+import { Controllers, Providers, Repositories } from '../settings';
 import { AppAuthMiddleware } from './middlewares/app.auth.middleware';
 import { AppCorsMiddleware } from './middlewares/app.cors.middleware';
 import { AppLoggerMiddleware } from './middlewares/app.logger.middleware';
@@ -37,6 +37,7 @@ const ormConnectionOptions: TypeOrmModuleOptions = {
 
   imports: [
     ...settings.APP_ORM_TYPE ? [ TypeOrmModule.forRoot(ormConnectionOptions) ] : [ ],
+    ...settings.APP_ORM_TYPE ? [ TypeOrmModule.forFeature(Repositories) ] : [ ],
   ],
 
   controllers: [
