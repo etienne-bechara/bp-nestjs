@@ -21,7 +21,7 @@ export class RedisService extends CommonProvider {
     this.redisEnabled = this.settings.REDIS_HOST ? true : false;
 
     if (!this.redisEnabled) {
-      this.log.warning('Redis integration OFFLINE', { localOnly: true });
+      this.logger.warning('Redis integration OFFLINE', { localOnly: true });
       return undefined;
     }
 
@@ -31,7 +31,7 @@ export class RedisService extends CommonProvider {
       password: this.settings.REDIS_PASSWORD,
     });
 
-    this.log.success('Redis integration ONLINE', { localOnly: true });
+    this.logger.success('Redis integration ONLINE', { localOnly: true });
   }
 
   /**

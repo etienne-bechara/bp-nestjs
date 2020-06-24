@@ -1,18 +1,20 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
 
-import { CommonProvider } from '../_common/common.provider';
+import { CommonProvider } from '../../_common/common.provider';
 
 @Injectable()
-export class AuthMiddleware extends CommonProvider implements NestMiddleware {
+export class AppAuthMiddleware extends CommonProvider implements NestMiddleware {
 
   /**
-   * Checks if Authorization header matchers auth token
+   * Implements a very basic authentication middleware that checks if
+   * Authorization property at header matches configured token at env
    * @param req
    * @param res
    * @param next
    */
   public use(req: IncomingMessage, res: ServerResponse, next: ()=> void): void {
+
     const authorization = req.headers.authorization;
     if (!authorization) throw new UnauthorizedException('missing authorization header');
 
@@ -22,4 +24,5 @@ export class AuthMiddleware extends CommonProvider implements NestMiddleware {
 
     next();
   }
+
 }

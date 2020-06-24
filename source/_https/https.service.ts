@@ -44,7 +44,7 @@ export class HttpsService extends CommonProvider {
 
     this.instance = axios.create({
       baseURL: params.baseUrl,
-      timeout: params.defaultTimeout,
+      timeout: params.defaultTimeout || this.settings.HTTPS_DEFAULT_TIMEOUT,
       validateStatus: () => true,
       httpsAgent: params.ignoreHttpsErrors
         ? new https.Agent({ rejectUnauthorized: false })

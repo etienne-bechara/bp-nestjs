@@ -13,7 +13,7 @@ export class CommonProvider {
   }
 
   /** Returns the instance of logger service */
-  public get log(): LoggerService {
+  public get logger(): LoggerService {
     return logger;
   }
 
@@ -29,7 +29,7 @@ export class CommonProvider {
    */
   public async retry(params: CommonRetryParams): Promise<any> {
     const p = params;
-    this.log.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
+    this.logger.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
 
     const startTime = new Date().getTime();
     let tentatives = 1;
@@ -47,12 +47,12 @@ export class CommonProvider {
         else if (p.validateRetry && !p.validateRetry(e)) throw e;
         tentatives++;
 
-        this.log.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || 'infinite'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || 'infinite '}s...`);
+        this.logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || 'infinite'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || 'infinite '}s...`);
         await this.wait(p.delay || 0);
       }
     }
 
-    this.log.debug(`${p.method}() finished successfully!`);
+    this.logger.debug(`${p.method}() finished successfully!`);
     return result;
   }
 

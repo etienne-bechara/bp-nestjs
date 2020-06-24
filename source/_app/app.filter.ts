@@ -27,14 +27,14 @@ export class AppFilter extends CommonProvider implements ExceptionFilter {
 
     // Logs the incident according to status type, remove error message on production
     if (error === HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.log.error(exception, { message, details });
+      this.logger.error(exception, { message, details });
       if (nodeEnv === AppEnvironment.PRODUCTION) {
         message = 'unexpected error';
         details = { };
       }
     }
     else {
-      this.log.info(exception, { message, details });
+      this.logger.info(exception, { message, details });
     }
 
     // Response object may have two different types depending on whether or not
