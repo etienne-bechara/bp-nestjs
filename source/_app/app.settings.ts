@@ -2,14 +2,14 @@ import { ValidationPipeOptions } from '@nestjs/common';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, ValidateIf } from 'class-validator';
 
-import { AppEnvironment } from '../_app/app.enum';
 import { LoggerLevel } from '../_logger/logger.enum';
+import { AppEnvironment } from './app.enum';
 
 /**
  * All Setting will be avaiable at `this.settings`
- * when extending the `CommonProvider`
+ * when extending the `AbstractProvider`
  */
-export class CommonSettings {
+export class AppSettings {
 
   /**
    * BOILERPLATE ENVIRONMENT VARIABLES
@@ -89,7 +89,6 @@ export class CommonSettings {
   public APP_TIMEOUT: number = 2 * 60 * 1000;
   public APP_INTERFACE: string = '0.0.0.0';
   public APP_ENABLE_CORS: boolean = true;
-
   public APP_VALIDATION_RULES: ValidationPipeOptions = {
     whitelist: true,
     forbidNonWhitelisted: true,
@@ -99,7 +98,10 @@ export class CommonSettings {
 
   public REDIS_DEFAULT_EXPIRATION: number = 1 * 24 * 60 * 60 * 1000;
 
-  public SENTRY_ENVIRONMENTS: AppEnvironment[] = [ AppEnvironment.PRODUCTION, AppEnvironment.STAGING ];
-  public SENTRY_MINIMUM_LEVEL: LoggerLevel = LoggerLevel.ERROR;
+  public LOGGER_SENTRY_MINIMUM_LEVEL: LoggerLevel = LoggerLevel.ERROR;
+  public LOGGER_SENTRY_ENVIRONMENTS: AppEnvironment[] = [
+    AppEnvironment.PRODUCTION,
+    AppEnvironment.STAGING,
+  ];
 
 }

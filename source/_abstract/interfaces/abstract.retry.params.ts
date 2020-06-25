@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export interface CommonRetryParams {
+export interface AbstractRetryParams {
   instance: any;
   method: string;
   args?: any;

@@ -6,11 +6,11 @@ import https from 'https';
 import qs from 'qs';
 import UserAgent from 'user-agents';
 
-import { CommonProvider } from '../_common/common.provider';
+import { AbstractProvider } from '../_abstract/abstract.provider';
 import { HttpsRequestParams, HttpsSetupParams } from './interfaces/https.request.params';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class HttpsService extends CommonProvider {
+export class HttpsService extends AbstractProvider {
 
   private defaultValidator: (status: number)=> boolean;
   private defaultReturnType: 'data' | 'full';

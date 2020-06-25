@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import redis, { RedisClient } from 'redis';
 
-import { CommonProvider } from '../_common/common.provider';
+import { AbstractProvider } from '../_abstract/abstract.provider';
 
 @Injectable()
-export class RedisService extends CommonProvider {
+export class RedisService extends AbstractProvider {
   private redisEnabled: boolean;
   private redisClient: RedisClient;
 

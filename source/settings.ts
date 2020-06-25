@@ -1,4 +1,4 @@
-import { CommonSettings } from './_common/common.settings';
+import { AppSettings } from './_app/app.settings';
 
 /** Your Application Repositories */
 export const Repositories = [
@@ -17,9 +17,9 @@ export const Providers = [
 
 /**
  * All Setting will be avaiable at `this.settings`
- * when extending the `CommonProvider`
+ * when extending the `AbstractProvider`
  */
-export class Settings extends CommonSettings {
+export class Settings extends AppSettings {
 
   /**
    * ENVIRONMENT VARIABLES

@@ -18,15 +18,13 @@ const ormConnectionOptions: TypeOrmModuleOptions = {
   username: settings.APP_ORM_USERNAME,
   password: settings.APP_ORM_PASSWORD,
   database: settings.APP_ORM_DATABASE,
-  entities: [
-    `${__dirname}/../**/*.entity.{js,ts}`,
-  ],
   synchronize: settings.APP_ORM_SYNCHRONIZE,
+  entities: [ `${__dirname}/../**/*.entity.{js,ts}` ],
+  logging: [ 'error' ],
   extra: {
     connectionLimit: settings.APP_ORM_POOL_LIMIT,
     waitForConnections: true,
   },
-  logging: [ 'error' ],
 };
 
 /**

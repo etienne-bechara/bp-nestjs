@@ -1,10 +1,10 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
 
-import { CommonProvider } from '../../_common/common.provider';
+import { AbstractProvider } from '../../_abstract/abstract.provider';
 
 @Injectable()
-export class AppAuthMiddleware extends CommonProvider implements NestMiddleware {
+export class AppAuthMiddleware extends AbstractProvider implements NestMiddleware {
 
   /**
    * Implements a very basic authentication middleware that checks if

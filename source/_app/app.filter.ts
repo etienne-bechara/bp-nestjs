@@ -2,11 +2,11 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 import { FastifyReply } from 'fastify';
 import { ServerResponse } from 'http';
 
-import { CommonProvider } from '../_common/common.provider';
+import { AbstractProvider } from '../_abstract/abstract.provider';
 import { AppEnvironment } from './app.enum';
 
 @Catch()
-export class AppFilter extends CommonProvider implements ExceptionFilter {
+export class AppFilter extends AbstractProvider implements ExceptionFilter {
   /** */
   public constructor() { super(); }
 

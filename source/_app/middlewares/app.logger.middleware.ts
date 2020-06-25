@@ -2,11 +2,11 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
 import requestIp from 'request-ip';
 
-import { CommonProvider } from '../../_common/common.provider';
+import { AbstractProvider } from '../../_abstract/abstract.provider';
 import { AppEnvironment } from '../app.enum';
 
 @Injectable()
-export class AppLoggerMiddleware extends CommonProvider implements NestMiddleware {
+export class AppLoggerMiddleware extends AbstractProvider implements NestMiddleware {
 
   /**
    * Isolates user agent and IP address, then prints request data

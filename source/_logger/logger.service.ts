@@ -24,7 +24,7 @@ export class LoggerService {
   private loggerSetup(): void {
     this.info(`Environment configured as ${this.settings.NODE_ENV}`, { localOnly: true });
     this.sentryEnabled = this.settings.SENTRY_DSN
-      && this.settings.SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
+      && this.settings.LOGGER_SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
 
     // Only enabls the integration if pass minimun environment
     if (this.sentryEnabled) {
@@ -59,7 +59,7 @@ export class LoggerService {
       // If level is error or higher but there is no error object, we must create it.
       // Make sure to remove the top 2 stack traces since they reference this module
       if (
-        params.level <= Math.max(LoggerLevel.ERROR, this.settings.SENTRY_MINIMUM_LEVEL)
+        params.level <= Math.max(LoggerLevel.ERROR, this.settings.LOGGER_SENTRY_MINIMUM_LEVEL)
         && !(params.message instanceof Error)
       ) {
         params.message = new Error(params.message);
@@ -121,7 +121,7 @@ export class LoggerService {
   private async publishLog(params: LoggerParams): Promise<void> {
     if (params.data && params.data.localOnly) return undefined;
 
-    if (this.sentryEnabled && params.level <= this.settings.SENTRY_MINIMUM_LEVEL) {
+    if (this.sentryEnabled && params.level <= this.settings.LOGGER_SENTRY_MINIMUM_LEVEL) {
       let sentryLevel;
       if (params.level === LoggerLevel.DEBUG) sentryLevel = Sentry.Severity.Debug;
       else if (params.level === LoggerLevel.INFO) sentryLevel = Sentry.Severity.Info;

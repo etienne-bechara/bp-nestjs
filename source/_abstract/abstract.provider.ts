@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { plainToClass } from 'class-transformer';
+import { ClassType } from 'class-transformer/ClassTransformer';
+import { validate } from 'class-validator';
+
 import { LoggerService } from '../_logger/logger.service';
 import { logger, settings } from '../main';
 import { Settings } from '../settings';
-import { CommonRetryParams } from './interfaces/common.retry.params';
+import { AbstractRetryParams } from './interfaces/abstract.retry.params';
 
-export class CommonProvider {
+export class AbstractProvider {
 
   /** Reads an env variable */
   public get settings(): Settings {
@@ -23,11 +27,24 @@ export class CommonProvider {
   }
 
   /**
+   * Validates an object across desired type
+   * Returns an array of failed constraints
+   * @param object
+   * @param type
+   */
+  public async validate(object: unknown, type: ClassType<unknown>): Promise<string[]> {
+    const plainObj = plainToClass(type, object);
+    const errors = await validate(plainObj, this.settings.APP_VALIDATION_RULES);
+    const constraints = errors.map((e) => Object.values(e.constraints));
+    return [].concat(...constraints);
+  }
+
+  /**
    * Retry a method for configured times or until desired timeout
    * @param method
    * @param params
    */
-  public async retry(params: CommonRetryParams): Promise<any> {
+  public async retry(params: AbstractRetryParams): Promise<any> {
     const p = params;
     this.logger.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
 

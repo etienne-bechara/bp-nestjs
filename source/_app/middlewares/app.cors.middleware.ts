@@ -1,10 +1,10 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
 
-import { CommonProvider } from '../../_common/common.provider';
+import { AbstractProvider } from '../../_abstract/abstract.provider';
 
 @Injectable()
-export class AppCorsMiddleware extends CommonProvider implements NestMiddleware {
+export class AppCorsMiddleware extends AbstractProvider implements NestMiddleware {
 
   /**
    * If anabled at environment, add header properties to allow CORS
