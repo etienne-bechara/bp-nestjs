@@ -1,10 +1,8 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { LoggerService } from '../_logger/logger.service';
 import { Settings } from '../settings';
-import { AppFilter } from './app.filter';
 import { AppModule } from './app.module';
 
 export class AppService {
@@ -33,7 +31,6 @@ export class AppService {
       : this.logger.warning('ORM connection DISABLED', { localOnly: true });
 
     await this.setServerTimeout();
-    await this.applyFilters();
 
     await this.server.listen(this.settings.PORT, this.settings.APP_INTERFACE);
     this.logger.success(`Server listening on port ${this.settings.PORT}`);
@@ -49,15 +46,6 @@ export class AppService {
       app.server.setTimeout(this.settings.APP_TIMEOUT);
       next();
     });
-  }
-
-  /**
-   * Apply global filters on inbound requests or exceptions
-   */
-  private async applyFilters(): Promise<void> {
-    this.logger.debug('Applying global validation pipe and exception filter...');
-    this.server.useGlobalFilters(new AppFilter());
-    this.server.useGlobalPipes(new ValidationPipe(this.settings.APP_VALIDATION_RULES));
   }
 
 }

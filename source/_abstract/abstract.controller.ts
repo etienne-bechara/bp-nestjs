@@ -38,6 +38,7 @@ export class AbstractController<Entity> extends AbstractProvider {
   public async postEntity(@Body() body: DeepPartial<Entity>): Promise<Entity> {
     const errors = await this.validate(body, this.options.dto.create);
     if (errors.length > 0) throw new BadRequestException(errors);
+    await this.unflatten(body);
     return this.service.createEntity(body);
   }
 
@@ -50,7 +51,8 @@ export class AbstractController<Entity> extends AbstractProvider {
   public async putEntityById(@Param() params: AbstractUuidDto, @Body() body: DeepPartial<Entity>): Promise<Entity> {
     const errors = await this.validate(body, this.options.dto.update);
     if (errors.length > 0) throw new BadRequestException(errors);
-    return this.service.updateById(params.id, body);
+    await this.unflatten(body);
+    return this.service.updateEntityById(params.id, body);
   }
 
   /**
@@ -60,7 +62,7 @@ export class AbstractController<Entity> extends AbstractProvider {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   public async deleteEntityById(@Param() params: AbstractUuidDto): Promise<void> {
-    return this.service.deleteById(params.id);
+    return this.service.deleteEntityById(params.id);
   }
 
 }

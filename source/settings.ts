@@ -1,20 +1,5 @@
 import { AppSettings } from './_app/app.settings';
 
-/** Your Application Repositories */
-export const Repositories = [
-
-];
-
-/** Your Application Controllers */
-export const Controllers = [
-
-];
-
-/** Your Application Services, Guards and Middlewares */
-export const Providers = [
-
-];
-
 /**
  * All Setting will be avaiable at `this.settings`
  * when extending the `AbstractProvider`

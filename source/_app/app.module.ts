@@ -1,12 +1,12 @@
-import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Global, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { HttpsService } from '../_https/https.service';
+import { settings } from '../_main';
 import { RedisService } from '../_redis/redis.service';
-import { StatusController } from '../_status/status.controller';
-import { StatusService } from '../_status/status.service';
-import { settings } from '../main';
-import { Controllers, Providers, Repositories } from '../settings';
+import { Controllers, Providers, Repositories } from '../components';
+import { AppFilter } from './app.filter';
 import { AppAuthMiddleware } from './middlewares/app.auth.middleware';
 import { AppCorsMiddleware } from './middlewares/app.cors.middleware';
 import { AppLoggerMiddleware } from './middlewares/app.logger.middleware';
@@ -39,14 +39,15 @@ const ormConnectionOptions: TypeOrmModuleOptions = {
   ],
 
   controllers: [
-    StatusController,
     ...Controllers,
   ],
 
   providers: [
+    { provide: APP_FILTER, useClass: AppFilter },
+    { provide: APP_PIPE, useFactory: (): ValidationPipe => new ValidationPipe(settings.APP_VALIDATION_RULES) },
+    { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
     HttpsService,
     RedisService,
-    StatusService,
     ...Providers,
   ],
 
