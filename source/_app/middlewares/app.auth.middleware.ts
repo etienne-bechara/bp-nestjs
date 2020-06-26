@@ -16,7 +16,9 @@ export class AppAuthMiddleware extends AbstractProvider implements NestMiddlewar
   public use(req: IncomingMessage, res: ServerResponse, next: ()=> void): void {
 
     const authorization = req.headers.authorization;
-    if (!authorization) throw new UnauthorizedException('missing authorization header');
+    if (!authorization && this.settings.APP_AUTHORIZATION) {
+      throw new UnauthorizedException('missing authorization header');
+    }
 
     if (authorization !== this.settings.APP_AUTHORIZATION) {
       throw new UnauthorizedException('invalid authorization header');

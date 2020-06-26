@@ -21,12 +21,14 @@ export class AppSettings {
   @IsNumber()
   public PORT: number;
 
+  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   public APP_AUTHORIZATION: string;
 
   @IsOptional()
   @IsUrl()
-  public SENTRY_DSN: string;
+  public LOGGER_SENTRY_DSN: string;
 
   @IsOptional()
   @IsUrl()

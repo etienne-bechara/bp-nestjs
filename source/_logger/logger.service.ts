@@ -23,13 +23,13 @@ export class LoggerService {
    */
   private loggerSetup(): void {
     this.info(`Environment configured as ${this.settings.NODE_ENV}`, { localOnly: true });
-    this.sentryEnabled = this.settings.SENTRY_DSN
+    this.sentryEnabled = this.settings.LOGGER_SENTRY_DSN
       && this.settings.LOGGER_SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
 
     // Only enabls the integration if pass minimun environment
     if (this.sentryEnabled) {
       Sentry.init({
-        dsn: this.settings.SENTRY_DSN,
+        dsn: this.settings.LOGGER_SENTRY_DSN,
         environment: this.settings.NODE_ENV,
         integrations: (ints) => ints.filter((i) => i.name !== 'OnUncaughtException'),
       });

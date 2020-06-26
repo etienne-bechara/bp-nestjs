@@ -14,11 +14,23 @@
   "scripts": {
     "start": "nest start",
     "dev": "nest start --debug --watch",
+
     "lint": "eslint **/*.ts",
     "build": "nest build",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    
     "update:minor": "npm update && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
-    "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories"
+    "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
+    
+    "migration:dev:gen": "npm run build && npm run typeorm migration:generate -- --config .migration/dev.json -n automated_migration",
+    "migration:dev:run": "npm run migration:dev:gen && npm run typeorm migration:run -- --config .migration/dev.json",
+
+    "migration:stg:gen": "npm run build && npm run typeorm migration:generate -- --config .migration/stg.json -n automated_migration",
+    "migration:stg:run": "npm run migration:stg:gen && npm run typeorm migration:run -- --config .migration/stg.json",
+
+    "migration:prd:gen": "npm run build && npm run typeorm migration:generate -- --config .migration/prd.json -n automated_migration",
+    "migration:prd:run": "npm run migration:prd:gen && npm run typeorm migration:run -- --config .migration/prd.json"
   },
   "dependencies": {
     "@nestjs/common": "^7.2.0",
