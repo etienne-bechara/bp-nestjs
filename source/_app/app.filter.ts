@@ -99,7 +99,7 @@ export class AppFilter extends AbstractProvider implements ExceptionFilter {
    * @param exception
    */
   private getDetails(exception: HttpException | Error): unknown {
-    let details;
+    let details: unknown;
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();

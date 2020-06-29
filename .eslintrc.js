@@ -15,6 +15,7 @@ module.exports =  {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
 
   plugins: [
@@ -29,6 +30,11 @@ module.exports =  {
      */
     '@typescript-eslint/no-inferrable-types': ['off'], // Conflicts with typedef
     '@typescript-eslint/explicit-module-boundary-types': ['off'], // Sometimes we need to pass 'any' type argument
+    '@typescript-eslint/require-await': ['off'], // Allow async methods with no await keyword
+    '@typescript-eslint/no-unsafe-assignment': ['off'], // Allow bracket assignments
+    '@typescript-eslint/restrict-template-expressions': ['off'], // Allow any values inside template literals
+    '@typescript-eslint/no-unsafe-member-access': ['off'], // Allow member access of an any type (used at catch handlers)
+    '@typescript-eslint/no-unsafe-call': ['off'], // Allow call of an any type (used at catch handlers)
 
     /**
      * ADDITIONAL ERROR SEVERITY RULES

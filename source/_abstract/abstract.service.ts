@@ -3,6 +3,8 @@ import { DeepPartial } from 'typeorm';
 
 import { AbstractProvider } from './abstract.provider';
 import { AbstractRepository } from './abstract.repository';
+import { AbstractPartialDto } from './dto/abstract.partial.dto';
+import { AbstractPartialEntity } from './interfaces/abstract.partial.entity';
 
 /**
  * Creates an abstract service tied with a repository
@@ -12,6 +14,30 @@ export class AbstractService<Entity> extends AbstractProvider {
 
   /** */
   public constructor(private readonly repository: AbstractRepository<Entity>) { super(); }
+
+  /**
+   * Reads all entities that matches given criteria
+   * @param id
+   */
+  public async readEntities(params: DeepPartial<Entity>, partial: AbstractPartialDto): Promise<Entity[] | AbstractPartialEntity<Entity>> {
+
+    if (!partial.limit || !partial.offset && partial.offset !== 0) {
+      return this.repository.find(params);
+    }
+
+    const [ entities, count ] = await this.repository.findAndCount({
+      where: params,
+      take: partial.limit,
+      skip: partial.offset,
+    });
+
+    return {
+      limit: partial.limit,
+      offset: partial.offset,
+      total: count,
+      results: entities,
+    };
+  }
 
   /**
    * Reads a single entity by its ID
@@ -47,7 +73,7 @@ export class AbstractService<Entity> extends AbstractProvider {
    * @param id
    */
   public async deleteEntityById(id: string | number): Promise<void> {
-    const { affected } = await this.repository.delete(id);
+    const affected = await this.repository.deleteOrReject(id);
     if (!affected) throw new NotFoundException(this.NOT_FOUND_MESSAGE);
   }
 

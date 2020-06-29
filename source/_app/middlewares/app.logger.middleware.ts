@@ -21,7 +21,7 @@ export class AppLoggerMiddleware extends AbstractProvider implements NestMiddlew
     req['userAgent'] = req.headers ? req.headers['user-agent'] : null;
 
     if (this.settings.NODE_ENV === AppEnvironment.DEVELOPMENT) {
-      this.logger.server(`> ${req.method.padStart(6, ' ')} ${req.url} | ${req['ip']} | ${req['userAgent']}`);
+      this.logger.server(`${req.method.padEnd(6, ' ')} ${req.url} | ${req['ip']} | ${req['userAgent']}`);
     }
 
     next();

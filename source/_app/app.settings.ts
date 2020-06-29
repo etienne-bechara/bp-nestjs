@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { ValidationPipeOptions } from '@nestjs/common';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, ValidateIf } from 'class-validator';

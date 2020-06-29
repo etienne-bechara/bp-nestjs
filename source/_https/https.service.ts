@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import https from 'https';
 import qs from 'qs';
 import UserAgent from 'user-agents';
@@ -58,11 +58,11 @@ export class HttpsService extends AbstractProvider {
    * In case of any errors, standardize the output for easy debugging
    * @param params
    */
-  public async request(params: HttpsRequestParams): Promise<any> {
+  public async request<T>(params: HttpsRequestParams): Promise<AxiosResponse | T> {
     const rawParms = JSON.parse(JSON.stringify(params));
     this.transformParams(params);
 
-    let errorPrefix, res;
+    let errorPrefix, res: AxiosResponse<T>;
     try {
       res = await this.instance(params);
       const validator = params.validateStatus || this.defaultValidator;

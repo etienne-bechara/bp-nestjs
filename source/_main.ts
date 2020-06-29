@@ -25,4 +25,4 @@ export const logger = new LoggerService(settings);
 // Boots the server
 import { AppService } from './_app/app.service';
 const appService = new AppService(settings, logger);
-appService.bootServer();
+void appService.bootServer();

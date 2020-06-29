@@ -50,7 +50,7 @@ export class LoggerService {
    * the API standards according to message type being an error or string
    * @param params
    */
-  private async log(params: LoggerParams): Promise<void> {
+  private log(params: LoggerParams): void {
     try {
 
       // If data is present but is not an object, make it one
@@ -81,7 +81,7 @@ export class LoggerService {
 
       // Logs the error locally and publish on cloud services
       this.printLog(params);
-      await this.publishLog(params);
+      this.publishLog(params);
     }
 
     // Catch exceptions during the loggin procedure
@@ -118,7 +118,7 @@ export class LoggerService {
    * Publish events of Sentry according to minimun configured level
    * @param params
    */
-  private async publishLog(params: LoggerParams): Promise<void> {
+  private publishLog(params: LoggerParams): void {
     if (params.data && params.data.localOnly) return undefined;
 
     if (this.sentryEnabled && params.level <= this.settings.LOGGER_SENTRY_MINIMUM_LEVEL) {
@@ -139,8 +139,8 @@ export class LoggerService {
   }
 
   /** CRITICAL - Display as red */
-  public async critical(message: string | Error, data?: any): Promise<void> {
-    await this.log({
+  public critical(message: string | Error, data?: any): void {
+    this.log({
       level: LoggerLevel.CRITICAL,
       labelColor: 'white.bgRed',
       messageColor: 'red',
@@ -151,8 +151,8 @@ export class LoggerService {
   }
 
   /** ERROR - Display as red */
-  public async error(message: string | Error, data?: any): Promise<void> {
-    await this.log({
+  public error(message: string | Error, data?: any): void {
+    this.log({
       level: LoggerLevel.ERROR,
       labelColor: 'black.bgRed',
       messageColor: 'red',
@@ -163,8 +163,8 @@ export class LoggerService {
   }
 
   /** WARNING - Display as yellow */
-  public async warning(message: string | Error, data?: any): Promise<void> {
-    await this.log({
+  public warning(message: string | Error, data?: any): void {
+    this.log({
       level: LoggerLevel.WARNING,
       labelColor: 'black.bgYellow',
       messageColor: 'yellow',
@@ -175,8 +175,8 @@ export class LoggerService {
   }
 
   /** INFO (Generic) - Display as white */
-  public async info(message: string | Error, data?: any): Promise<void> {
-    await this.log({
+  public info(message: string | Error, data?: any): void {
+    this.log({
       level: LoggerLevel.INFO,
       labelColor: 'black.bgWhite',
       messageColor: 'white',
@@ -187,8 +187,8 @@ export class LoggerService {
   }
 
   /** INFO (Success) - display as green */
-  public async success(message: string | Error, data?: any): Promise<void> {
-    await this.log({
+  public success(message: string | Error, data?: any): void {
+    this.log({
       level: LoggerLevel.INFO,
       labelColor: 'black.bgGreen',
       messageColor: 'green',
@@ -199,8 +199,8 @@ export class LoggerService {
   }
 
   /** INFO (HTTP) - display as cyan */
-  public async server(message: string | Error, data?: any): Promise<void> {
-    await this.log({
+  public server(message: string | Error, data?: any): void {
+    this.log({
       level: LoggerLevel.INFO,
       labelColor: 'black.bgCyan',
       messageColor: 'cyan',
@@ -211,8 +211,8 @@ export class LoggerService {
   }
 
   /** DEBUG - Display as grey */
-  public async debug(message: string | Error, data?: any): Promise<void> {
-    await this.log({
+  public debug(message: string | Error, data?: any): void {
+    this.log({
       level: LoggerLevel.DEBUG,
       labelColor: 'black.bgBlue',
       messageColor: 'grey',

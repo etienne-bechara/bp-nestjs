@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { plainToClass } from 'class-transformer';
-import { ClassType } from 'class-transformer/ClassTransformer';
-import { validate } from 'class-validator';
-
 import { LoggerService } from '../_logger/logger.service';
 import { logger, settings } from '../_main';
 import { Settings } from '../settings';
@@ -27,59 +23,16 @@ export class AbstractProvider {
   }
 
   /**
-   * Validates an object across desired type
-   * Returns an array of failed constraints
-   * @param object
-   * @param type
-   */
-  public async validate(object: unknown, type: ClassType<unknown>): Promise<string[]> {
-    const plainObj = plainToClass(type, object);
-    const errors = await validate(plainObj, this.settings.APP_VALIDATION_RULES);
-    const constraints = [ ];
-
-    for (const e of errors) {
-      if (e.children) {
-        e.children = e.children.map((c) => {
-          return { parent: e.property, ...c };
-        });
-        errors.push(...e.children);
-      }
-      if (e.constraints) {
-        let partials = Object.values(e.constraints);
-        if (e['parent']) {
-          partials = partials.map((p) => `${e['parent']}: ${p}`);
-        }
-        constraints.push(...partials);
-      }
-    }
-    return constraints;
-  }
-
-  /**
-   * Unflatten an object with nested entities by transforming
-   * keys in {name}_id standard to name: { id: string | number}
-   * @param object
-   */
-  public async unflatten(object: unknown): Promise<void> {
-    Object.keys(object).map((key) => {
-      if (key.endsWith('_id')) {
-        object[key.slice(0, -3)] = { id: object[key] };
-        delete object[key];
-      }
-    });
-  }
-
-  /**
    * Retry a method for configured times or until desired timeout
    * @param params
    */
-  public async retry(params: AbstractRetryParams): Promise<any> {
+  public async retry<T>(params: AbstractRetryParams): Promise<T> {
     const p = params;
     this.logger.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
 
     const startTime = new Date().getTime();
     let tentatives = 1;
-    let result;
+    let result: T;
 
     while (!result) {
       try {
