@@ -1,0 +1,4 @@
+# Ignore all non-typescript folders
+/node_modules
+/dist
+/scripts

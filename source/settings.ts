@@ -1,4 +1,4 @@
-import { AppSettings } from './_app/app.settings';
+import { AppSettings } from './core/app/app.settings';
 
 /**
  * All Setting will be avaiable at `this.settings`
@@ -31,7 +31,7 @@ export class Settings extends AppSettings {
    *
    * When to use:
    * • The value does not contain sensitive information
-   * • The value is the same across environments
+   * • The value is the same across all environments
    *
    * How to use:
    * • Create a property here with value and type definition

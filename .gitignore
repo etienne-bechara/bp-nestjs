@@ -1,6 +1,5 @@
-# Hidden and Demo Folders
+# Hidden Folders
 /.*/
-/**/demo*/
 
 # Packages and Distributable Artifact
 /node_modules
