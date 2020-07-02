@@ -8,7 +8,7 @@ export class AppService extends AbstractProvider {
   private server: NestExpressApplication;
 
   /**
-   * Starts the Fastify server through Nest JS framework
+   * Starts Express server through Nest JS framework
    */
   public async bootServer(): Promise<void> {
 
