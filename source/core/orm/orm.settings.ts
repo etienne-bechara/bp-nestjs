@@ -6,6 +6,8 @@ import { AppUtils } from '../app/app.utils';
 const settings = AppUtils.getSettings();
 const entities = AppUtils.globToRequire('../../**/*.entity.js');
 
+const isDevelopment = settings.NODE_ENV === AppEnvironment.DEVELOPMENT;
+
 const OrmSettings: Options<IDatabaseDriver<Connection>> = {
 
   type: settings.APP_ORM_TYPE,
@@ -25,11 +27,21 @@ const OrmSettings: Options<IDatabaseDriver<Connection>> = {
 
   logger: (msg): void => AppUtils.getLogger().debug(`MikroORM ${msg}`),
   namingStrategy: UnderscoreNamingStrategy,
-  debug: settings.NODE_ENV === AppEnvironment.DEVELOPMENT,
+  debug: isDevelopment,
 
   cache: {
     pretty: true,
-    options: { cacheDir: '.cache' },
+    options: {
+      cacheDir: isDevelopment ? 'dist/cache' : 'cache',
+    },
+  },
+
+  migrations: {
+    tableName: 'app_migration',
+    path: isDevelopment ? 'dist/migration' : 'migration',
+    pattern: /^[\w-]+\d+\.[tj]s$/,
+    dropTables: isDevelopment,
+    emit: 'js',
   },
 };
 

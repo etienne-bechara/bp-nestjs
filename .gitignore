@@ -6,4 +6,4 @@
 /dist
 
 # Application Secrets
-.env
+.env*

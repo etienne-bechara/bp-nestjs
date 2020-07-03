@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from 'mikro-orm';
 import { v4 } from 'uuid';
 
-@Entity({ tableName: 'app_metadata' })
+@Entity({ tableName: 'app_abstract' })
 export abstract class AbstractEntity {
 
   @PrimaryKey()
