@@ -7,10 +7,10 @@ export abstract class AbstractEntity {
   @PrimaryKey()
   public id: string = v4();
 
-  @Property()
-  public created: Date = new Date();
-
-  @Property({ onUpdate: () => new Date() })
+  @Property({ columnType: 'timestamp', onUpdate: () => new Date() })
   public updated: Date = new Date();
+
+  @Property({ columnType: 'timestamp' })
+  public created: Date = new Date();
 
 }

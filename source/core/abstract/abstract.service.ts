@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { EntityRepository, FilterQuery } from 'mikro-orm';
 
@@ -57,7 +59,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * it into the database
    * @param data
    */
-  public async createEntity(data: Entity): Promise<Entity> {
+  public async createEntity(data: Partial<Entity> | any): Promise<Entity> {
 
     const newEntity = this.repository.create(data);
     try {
@@ -77,7 +79,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param id
    * @param data
    */
-  public async updateEntityById(id: FilterQuery<Entity>, data: Entity): Promise<Entity> {
+  public async updateEntityById(id: FilterQuery<Entity>, data: Partial<Entity> | any): Promise<Entity> {
 
     await this.readEntityById(id, false);
     try {
@@ -110,7 +112,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Handles exception during INSERT or UPDATE operations
    * @param e
    */
-  private queryExceptionHandler(e: Error, data: Entity | FilterQuery<Entity>): void {
+  private queryExceptionHandler(e: Error, data: Partial<Entity> | any): void {
     if (e.message.match(/duplicate entry/gi)) {
       const violation = /entry '(.+?)' for/gi.exec(e.message);
       throw new ConflictException({
