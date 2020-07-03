@@ -1,9 +1,10 @@
-# Hidden Folders
-/.*/
-
 # Packages and Distributable Artifact
 /node_modules
 /dist
 
+# Debugging Folder
+/source/debug
+
 # Application Secrets
 .env*
+
