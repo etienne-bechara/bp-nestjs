@@ -5,7 +5,7 @@ import { __PascalCaseName__CreateDto, __PascalCaseName__ReadDto, __PascalCaseNam
 import { __PascalCaseName__Entity } from './__DotCaseName__.entity';
 import { __PascalCaseName__Service } from './__DotCaseName__.service';
 
-@Controller('__DotCaseName__')
+@Controller('__PathCaseName__')
 export class __PascalCaseName__Controller extends AbstractController<__PascalCaseName__Entity> {
 
   /** */
@@ -18,4 +18,5 @@ export class __PascalCaseName__Controller extends AbstractController<__PascalCas
       },
     });
   }
+  
 }

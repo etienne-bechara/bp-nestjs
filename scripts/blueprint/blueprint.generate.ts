@@ -1,7 +1,7 @@
 import { argv } from 'yargs';
 import fs from 'fs-extra';
 import globby from 'globby';
-import { dotCase, pascalCase, snakeCase, camelCase } from 'change-case';
+import { dotCase, pascalCase, snakeCase, camelCase, pathCase } from 'change-case';
 
 /**
  * Creates a folder inside ./source that matches
@@ -40,6 +40,7 @@ function generateCrud(): void {
       .replace(/__SnakeCaseName__/g, snakeCase(name))
       .replace(/__CamelCaseName__/g, camelCase(name))
       .replace(/__DotCaseName__/g, dotCase(name))
+      .replace(/__PathCaseName__/g, pathCase(name))
 
     fs.ensureFileSync(destination);
     fs.writeFileSync(destination, replaced, 'utf8');
