@@ -14,18 +14,12 @@ import { AbstractService } from './abstract.service';
  * can be extended to prevent duplicate code
  */
 export abstract class AbstractController<Entity> extends AbstractProvider {
-  public MISSING_DTO_MESSAGE: string = 'missing dto implementation';
-  public MISSING_BODY_MESSAGE: string = 'missing request body';
+  protected options: AbstractControllerOptions = { };
+  protected MISSING_DTO_MESSAGE: string = 'missing dto implementation';
+  protected MISSING_BODY_MESSAGE: string = 'missing request body';
 
   /** */
-  public constructor(
-    public readonly service: AbstractService<Entity>,
-    public readonly options: AbstractControllerOptions = { },
-  ) {
-    super();
-    if (!options.dto) options.dto = { };
-    if (!options.routes) options.routes = { };
-  }
+  public constructor(public readonly service: AbstractService<Entity>) { super(); }
 
   /**
    * Read all entitties that matches desired criterias
@@ -35,7 +29,10 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
   public async getEntities(@Query() query: Entity & AbstractPartialDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
     await this.checkImplementation('get');
     const { data, partial } = await this.plainToDtoOffset(unflatten(query), this.options.dto.read);
-    return this.service.readEntities(data, partial);
+    const entities = await this.service.readEntities(data, partial);
+    return Array.isArray(entities)
+      ? entities.map((e) => e['toJSON'] ? e['toJSON']() : e) // eslint-disable-line
+      : entities;
   }
 
   /**
@@ -92,6 +89,8 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param method
    */
   public async checkImplementation(method: AbstractControllerMethod): Promise<void> {
+    if (!this.options.dto) this.options.dto = { };
+    if (!this.options.routes) this.options.routes = { };
 
     if (
       this.options.routes.exclude && this.options.routes.exclude.includes(method) ||
@@ -165,7 +164,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param object
    * @param type
    */
-  public async plainToDtoOffset(object: unknown, type: ClassType<unknown>): Promise<{ data: any, partial: any }> { // eslint-disable-line
+  protected async plainToDtoOffset(object: unknown, type: ClassType<unknown>): Promise<{ data: any, partial: any }> { // eslint-disable-line
 
     const dataObject = JSON.parse(JSON.stringify(object));
     delete dataObject.limit;

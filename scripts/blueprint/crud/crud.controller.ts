@@ -9,14 +9,21 @@ import { __PascalCaseName__Service } from './__DotCaseName__.service';
 export class __PascalCaseName__Controller extends AbstractController<__PascalCaseName__Entity> {
 
   /** */
-  public constructor(private readonly __SnakeCaseName__Service: __PascalCaseName__Service) {
-    super(__SnakeCaseName__Service, {
+  public constructor(private readonly __CamelCaseName__Service: __PascalCaseName__Service) {
+    super(__CamelCaseName__Service);
+    
+    this.options = {
+      routes: {
+        exclude: [ ],
+        // only: [ ],
+      },
       dto: {
         read: __PascalCaseName__ReadDto,
         create: __PascalCaseName__CreateDto,
         update: __PascalCaseName__UpdateDto,
       },
-    });
+    };
+
   }
   
 }

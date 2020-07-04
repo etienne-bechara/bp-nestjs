@@ -11,9 +11,13 @@ export class __PascalCaseName__Service extends AbstractService<__PascalCaseName_
   /** */
   public constructor(
     @InjectRepository(__PascalCaseName__Entity)
-    private readonly __SnakeCaseName__Repository: EntityRepository<__PascalCaseName__Entity>,
+    private readonly __CamelCaseName__Repository: EntityRepository<__PascalCaseName__Entity>,
   ) {
-    super(__SnakeCaseName__Repository);
+    super(__CamelCaseName__Repository);
+    this.options = {
+      populate: [ ],
+      collections: [ ],
+    }
   }
 
 }

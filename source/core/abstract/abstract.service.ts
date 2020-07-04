@@ -1,55 +1,82 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { EntityRepository, FilterQuery } from 'mikro-orm';
+import { AnyEntity, Collection, EntityRepository, FilterQuery } from 'mikro-orm';
 
 import { AbstractPartialDto } from './abstract.dto';
-import { AbstractPartialResponse } from './abstract.interface';
+import { AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
 import { AbstractProvider } from './abstract.provider';
 
 /**
  * Creates an abstract service tied with a repository
  */
 export abstract class AbstractService<Entity> extends AbstractProvider {
-  public DUPLICATE_ENTRY_MESSAGE: string = 'unique constraint violation';
-  public FK_FAIL_CREATE_MESSAGE: string = 'must reference an existing entity';
-  public FK_FAIL_DELETE_MESSAGE: string = 'constraint prevents cascade deletion';
-  public QUERY_FAIL_MESSAGE: string = 'failed to execute query statement';
-  public NOT_FOUND_MESSAGE: string = 'entity with given id does not exist';
+  protected options: AbstractServiceOptions = { };
+  protected DUPLICATE_ENTRY_MESSAGE: string = 'unique constraint violation';
+  protected FK_FAIL_CREATE_MESSAGE: string = 'must reference an existing entity';
+  protected FK_FAIL_DELETE_MESSAGE: string = 'constraint prevents cascade deletion';
+  protected QUERY_FAIL_MESSAGE: string = 'failed to execute query statement';
+  protected NOT_FOUND_MESSAGE: string = 'entity with given id does not exist';
 
   /** */
   public constructor(private readonly repository: EntityRepository<Entity>) { super(); }
 
   /**
-   * Reads all entities that matches given criteria
+   * Read and populate all entities that matches given criteria
+   * Then, populate any OneToMany collections configured at
+   * service options
    * @param id
    */
-  public async readEntities(params: Entity, partial: AbstractPartialDto, populate: boolean | string[] = true): Promise<Entity[] | AbstractPartialResponse<Entity>> {
+  public async readEntities(params: Entity, partial: AbstractPartialDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
+    if (!this.options.collections) this.options.collections = [ ];
+    const fullSearch = !partial.limit || !partial.offset && partial.offset !== 0;
+    let results: Entity[];
+    let total: number;
 
-    if (!partial.limit || !partial.offset && partial.offset !== 0) {
-      return this.repository.find(params, populate);
+    if (fullSearch) {
+      results = await this.repository.find(params, {
+        populate: this.options.populate,
+      });
+    }
+    else {
+      [ results, total ] = await this.repository.findAndCount(params, {
+        populate: this.options.populate,
+        limit: partial.limit,
+        offset: partial.offset,
+      });
     }
 
-    const [ entities, count ] = await this.repository.findAndCount(params, {
-      populate,
-      limit: partial.limit,
-      offset: partial.offset,
-    });
+    await this.populateCollections(results);
 
-    return {
+    return fullSearch ? results : {
       limit: partial.limit,
       offset: partial.offset,
-      total: count,
-      results: entities,
+      total,
+      results,
     };
+  }
+
+  /**
+   * Given a set of entities and configured collection
+   * population rules, apply them asynchronously
+   * @param entities
+   */
+  public async populateCollections(entities: AnyEntity[]): Promise<void> {
+    await Promise.all(entities.map(async(entity) => {
+      await Promise.all(this.options.collections.map(async(collection) => {
+        entity[collection.name] = await collection.provider.repository.find({
+          [collection.reference]: entity.id,
+        });
+      }));
+    }));
   }
 
   /**
    * Reads a single entity by its ID
    * @param id
    */
-  public async readEntityById(id: FilterQuery<Entity>, populate: boolean | string[] = true): Promise<Entity> {
-    const entity = await this.repository.findOne(id, populate);
+  public async readEntityById(id: FilterQuery<Entity>): Promise<Entity> {
+    const entity = await this.repository.findOne(id, this.options.populate);
     if (!entity) throw new NotFoundException(this.NOT_FOUND_MESSAGE);
     return entity;
   }
@@ -62,6 +89,12 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
   public async createEntity(data: Partial<Entity> | any): Promise<Entity> {
 
     const newEntity = this.repository.create(data);
+    for (const key in newEntity) {
+      if (newEntity[key] instanceof Collection) {
+        delete newEntity[key];
+      }
+    }
+
     try {
       await this.repository.createQueryBuilder()
         .insert({ ...newEntity, ...data }) // Re-add `_id` props removed by .create
@@ -70,7 +103,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
     catch (e) {
       this.queryExceptionHandler(e, data);
     }
-    return this.repository.findOne(newEntity, true);
+    return this.repository.findOne(newEntity, this.options.populate);
   }
 
   /**
@@ -81,7 +114,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    */
   public async updateEntityById(id: FilterQuery<Entity>, data: Partial<Entity> | any): Promise<Entity> {
 
-    await this.readEntityById(id, false);
+    await this.readEntityById(id);
     try {
       await this.repository.createQueryBuilder()
         .update({ ...data })
@@ -99,7 +132,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param id
    */
   public async deleteEntityById(id: FilterQuery<Entity>): Promise<void> {
-    const entity = await this.readEntityById(id, false);
+    const entity = await this.readEntityById(id);
     try {
       await this.repository.removeAndFlush(entity);
     }
@@ -112,7 +145,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Handles exception during INSERT or UPDATE operations
    * @param e
    */
-  private queryExceptionHandler(e: Error, data: Partial<Entity> | any): void {
+  protected queryExceptionHandler(e: Error, data: Partial<Entity> | any): void {
     if (e.message.match(/duplicate entry/gi)) {
       const violation = /entry '(.+?)' for/gi.exec(e.message);
       throw new ConflictException({
