@@ -48,31 +48,31 @@ export class AppSettings {
 
   @IsOptional()
   @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])
-  public APP_ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
+  public ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
 
-  @ValidateIf((o) => o.APP_ORM_TYPE)
+  @ValidateIf((o) => o.ORM_TYPE)
   @IsNotEmpty()
   @IsString()
-  public APP_ORM_HOST: string;
+  public ORM_HOST: string;
 
-  @ValidateIf((o) => o.APP_ORM_TYPE)
+  @ValidateIf((o) => o.ORM_TYPE)
   @Transform((v) => parseInt(v))
   @IsNumber()
-  public APP_ORM_PORT: number;
+  public ORM_PORT: number;
 
-  @ValidateIf((o) => o.APP_ORM_TYPE)
+  @ValidateIf((o) => o.ORM_TYPE)
   @IsNotEmpty()
   @IsString()
-  public APP_ORM_USERNAME: string;
+  public ORM_USERNAME: string;
 
-  @ValidateIf((o) => o.APP_ORM_TYPE)
+  @ValidateIf((o) => o.ORM_TYPE)
   @IsString()
-  public APP_ORM_PASSWORD: string;
+  public ORM_PASSWORD: string;
 
-  @ValidateIf((o) => o.APP_ORM_TYPE)
+  @ValidateIf((o) => o.ORM_TYPE)
   @IsNotEmpty()
   @IsString()
-  public APP_ORM_DATABASE: string;
+  public ORM_DATABASE: string;
 
   /**
    * BOILERPLATE PROVIDER OPTIONS
@@ -90,8 +90,8 @@ export class AppSettings {
     forbidNonWhitelisted: true,
   };
 
-  public APP_ORM_POOL_MIN: number = 5;
-  public APP_ORM_POOL_MAX: number = 25;
+  public ORM_POOL_MIN: number = 5;
+  public ORM_POOL_MAX: number = 25;
 
   public HTTPS_DEFAULT_TIMEOUT: number = 60 * 1000;
 

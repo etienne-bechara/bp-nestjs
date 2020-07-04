@@ -5,7 +5,7 @@ import { AppUtils } from '../app/app.utils';
 import OrmSettings from './orm.settings';
 
 const entities = AppUtils.globToRequire('../../**/*.entity.js');
-const enableOrm = AppUtils.getSettings().APP_ORM_TYPE;
+const enableOrm = AppUtils.getSettings().ORM_TYPE;
 
 @Module({
   imports: [

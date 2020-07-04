@@ -10,16 +10,16 @@ const isDevelopment = settings.NODE_ENV === AppEnvironment.DEVELOPMENT;
 
 const OrmSettings: Options<IDatabaseDriver<Connection>> = {
 
-  type: settings.APP_ORM_TYPE,
-  host: settings.APP_ORM_HOST,
-  port: settings.APP_ORM_PORT,
-  user: settings.APP_ORM_USERNAME,
-  password: settings.APP_ORM_PASSWORD,
-  dbName: settings.APP_ORM_DATABASE,
+  type: settings.ORM_TYPE,
+  host: settings.ORM_HOST,
+  port: settings.ORM_PORT,
+  user: settings.ORM_USERNAME,
+  password: settings.ORM_PASSWORD,
+  dbName: settings.ORM_DATABASE,
 
   pool: {
-    min: settings.APP_ORM_POOL_MIN,
-    max: settings.APP_ORM_POOL_MAX,
+    min: settings.ORM_POOL_MIN,
+    max: settings.ORM_POOL_MAX,
   },
 
   autoFlush: false,

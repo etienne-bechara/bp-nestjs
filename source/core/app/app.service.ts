@@ -18,7 +18,7 @@ export class AppService extends AbstractProvider {
       cors: this.settings.APP_CORS_OPTIONS,
     });
 
-    this.settings.APP_ORM_TYPE
+    this.settings.ORM_TYPE
       ? this.logger.success('ORM connection ENABLED', { localOnly: true })
       : this.logger.warning('ORM connection DISABLED', { localOnly: true });
 
