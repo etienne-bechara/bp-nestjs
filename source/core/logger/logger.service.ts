@@ -23,6 +23,7 @@ export class LoggerService {
    */
   private loggerSetup(): void {
     this.info(`Environment configured as ${this.settings.NODE_ENV}`, { localOnly: true });
+
     this.sentryEnabled = this.settings.LOGGER_SENTRY_DSN
       && this.settings.LOGGER_SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
 

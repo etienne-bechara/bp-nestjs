@@ -7,13 +7,15 @@ import qs from 'qs';
 import UserAgent from 'user-agents';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
-import { HttpsRequestParams, HttpsSetupParams } from './https.interface';
+import { HttpsReturnType } from './https.enum';
+import { HttpsRequestParams } from './https.interface';
+import { HttpsSetupParams } from './https.interface/https.setup.params';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class HttpsService extends AbstractProvider {
 
   private defaultValidator: (status: number)=> boolean;
-  private defaultReturnType: 'data' | 'full';
+  private defaultReturnType: HttpsReturnType;
 
   private baseData: Record<string, unknown>;
   private baseHeaders: Record<string, string>;
@@ -30,7 +32,7 @@ export class HttpsService extends AbstractProvider {
    */
   public setupInstance(params: HttpsSetupParams): void {
 
-    this.defaultReturnType = params.defaultReturnType || 'data';
+    this.defaultReturnType = params.defaultReturnType || HttpsReturnType.DATA;
     this.baseData = params.baseData;
     this.defaultValidator = params.defaultValidator
       ? params.defaultValidator
@@ -84,7 +86,9 @@ export class HttpsService extends AbstractProvider {
     }
 
     const returnType = params.returnType || this.defaultReturnType;
-    return returnType === 'data' ? res.data : res;
+    return returnType === HttpsReturnType.DATA
+      ? res.data
+      : res;
   }
 
   /**
