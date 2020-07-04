@@ -1,4 +1,4 @@
-# Use full LTS Node.js image
+# Use minimum viable LTS Node.js
 FROM node:14-alpine
 EXPOSE 8080
 
@@ -9,4 +9,4 @@ RUN npm install --only=production
 
 # Copy source code and execute application
 COPY . /app
-CMD ["node", "_main.js"]
+CMD ["node", "core/main.js"]

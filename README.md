@@ -4,7 +4,6 @@
 
 Este é um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover iniciação rápida de projetos tradicionais em Node.js.
 
----
 
 ## Guia Rápido
 
@@ -84,5 +83,4 @@ Documentação | Reponsabilidades | Utilização
 [Class Transformer](https://www.npmjs.com/package/class-transformer) | • Conversão de Objetos para Classes<br>• Conversão de Tipagem de Propriedades | Utilize um dos métodos do pacote em conjunto com os decorators fornecidos.<br>Em geral, não será necessário ao menos que altere algo a nível de boilerplate.
 [Moment](https://www.npmjs.com/package/moment) | • Parsing e Formatação de Datas | Inicialize através de `moment()` ou `moment(stringDate)`, e siga os métodos conforme documentação.
 [Request IP](https://www.npmjs.com/package/moment) | • Detecção de IPs de Origem | Automaticamente aplicado na propriedade `req.metadata.ip` via `AppLoggerMiddleware`.
----
 
