@@ -11,7 +11,6 @@ import { AbstractProvider } from './abstract.provider';
  * Creates an abstract service tied with a repository
  */
 export abstract class AbstractService<Entity> extends AbstractProvider {
-  protected options: AbstractServiceOptions = { };
   protected DUPLICATE_ENTRY_MESSAGE: string = 'unique constraint violation';
   protected FK_FAIL_CREATE_MESSAGE: string = 'must reference an existing entity';
   protected FK_FAIL_DELETE_MESSAGE: string = 'constraint prevents cascade deletion';
@@ -19,7 +18,13 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
   protected NOT_FOUND_MESSAGE: string = 'entity with given id does not exist';
 
   /** */
-  public constructor(private readonly repository: EntityRepository<Entity>) { super(); }
+  public constructor(
+    private readonly repository: EntityRepository<Entity>,
+    protected readonly options: AbstractServiceOptions = { },
+  ) {
+    super();
+    if (!this.options.collections) this.options.collections = [ ];
+  }
 
   /**
    * Read and populate all entities that matches given criteria
@@ -28,7 +33,6 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param id
    */
   public async readEntities(params: Entity, partial: AbstractPartialDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
-    if (!this.options.collections) this.options.collections = [ ];
     const fullSearch = !partial.limit || !partial.offset && partial.offset !== 0;
     let results: Entity[];
     let total: number;

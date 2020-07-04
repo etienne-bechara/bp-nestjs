@@ -10,9 +10,7 @@ export class __PascalCaseName__Controller extends AbstractController<__PascalCas
 
   /** */
   public constructor(private readonly __CamelCaseName__Service: __PascalCaseName__Service) {
-    super(__CamelCaseName__Service);
-    
-    this.options = {
+    super(__CamelCaseName__Service, {
       routes: {
         exclude: [ ],
         // only: [ ],
@@ -22,8 +20,7 @@ export class __PascalCaseName__Controller extends AbstractController<__PascalCas
         create: __PascalCaseName__CreateDto,
         update: __PascalCaseName__UpdateDto,
       },
-    };
-
+    });
   }
-  
+
 }

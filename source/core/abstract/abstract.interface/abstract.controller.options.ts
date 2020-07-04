@@ -1,6 +1,6 @@
 import { ClassType } from 'class-transformer/ClassTransformer';
 
-export type AbstractControllerMethod = 'get' | 'getById' | 'post' | 'putById' | 'deleteById';
+import { AbstractControllerMethod } from '../abstract.enum';
 
 export interface AbstractControllerOptions {
   routes?: {
