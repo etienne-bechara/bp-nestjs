@@ -16,14 +16,11 @@
     "dev": "nest start --debug --watch",
     "lint": "eslint **/*.ts",
     "build": "nest build",
-    
     "blueprint:crud": "ts-node ./scripts/blueprint/blueprint.generate -t crud",
-
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
-
     "cache:reset": "mikro-orm cache:clear && nest build && mikro-orm cache:generate",
     "migration:create:dev": "npm run cache:reset && mikro-orm schema:update --dump && mikro-orm migration:create",
     "migration:create:stg": "npm run cache:reset && cp-cli .env.stg dist/.env && mikro-orm schema:update --dump && mikro-orm migration:create",
@@ -71,7 +68,7 @@
     "@typescript-eslint/parser": "3.5.0",
     "change-case": "4.1.1",
     "cp-cli": "2.0.0",
-    "eslint": "7.3.1",
+    "eslint": "7.4.0",
     "eslint-plugin-more": "1.0.0",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-simple-import-sort": "5.0.3",
