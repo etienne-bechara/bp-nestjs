@@ -84,6 +84,31 @@ export class Settings {
   public LOGGER_SENTRY_DSN: string;
 
   @IsOptional()
+  @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])
+  public ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
+
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString() @IsNotEmpty()
+  public ORM_HOST: string;
+
+  @ValidateIf((o) => o.ORM_TYPE)
+  @Transform((v) => parseInt(v))
+  @IsNumber()
+  public ORM_PORT: number;
+
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString() @IsNotEmpty()
+  public ORM_USERNAME: string;
+
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString()
+  public ORM_PASSWORD: string;
+
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString() @IsNotEmpty()
+  public ORM_DATABASE: string;
+
+  @IsOptional()
   @IsUrl()
   public REDIS_HOST: string;
 
@@ -93,36 +118,24 @@ export class Settings {
   public REDIS_PORT: number;
 
   @ValidateIf((o) => o.REDIS_HOST)
-  @IsOptional()
   @IsString()
   public REDIS_PASSWORD: string;
 
   @IsOptional()
-  @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])
-  public ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
+  @IsUrl()
+  public MAILER_HOST: string;
 
-  @ValidateIf((o) => o.ORM_TYPE)
-  @IsNotEmpty()
-  @IsString()
-  public ORM_HOST: string;
-
-  @ValidateIf((o) => o.ORM_TYPE)
+  @ValidateIf((o) => o.MAILER_HOST)
   @Transform((v) => parseInt(v))
   @IsNumber()
-  public ORM_PORT: number;
+  public MAILER_PORT: number;
 
-  @ValidateIf((o) => o.ORM_TYPE)
-  @IsNotEmpty()
-  @IsString()
-  public ORM_USERNAME: string;
+  @ValidateIf((o) => o.MAILER_HOST)
+  @IsString() @IsNotEmpty()
+  public MAILER_USERNAME: string;
 
-  @ValidateIf((o) => o.ORM_TYPE)
-  @IsString()
-  public ORM_PASSWORD: string;
-
-  @ValidateIf((o) => o.ORM_TYPE)
-  @IsNotEmpty()
-  @IsString()
-  public ORM_DATABASE: string;
+  @ValidateIf((o) => o.MAILER_HOST)
+  @IsString() @IsNotEmpty()
+  public MAILER_PASSWORD: string;
 
 }
