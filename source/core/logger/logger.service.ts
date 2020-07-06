@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 
@@ -16,18 +17,20 @@ export class LoggerService {
   private sentryEnabled: boolean;
 
   /** */
-  public constructor(private settings: Settings) { this.loggerSetup(); }
+  public constructor(private settings: Settings) { this.setupLogger(); }
 
   /**
-   * Set up Sentry integration and add a custom catch exception listener
+   * Enable Sentry integration if the minum level configured
+   * at settings matches the current environment
+   * Then add a process listener to catch any unhandled exception
    */
-  private loggerSetup(): void {
+  private setupLogger(): void {
     this.info(`Environment configured as ${this.settings.NODE_ENV}`, { localOnly: true });
 
-    this.sentryEnabled = this.settings.LOGGER_SENTRY_DSN
+    this.sentryEnabled =
+      this.settings.LOGGER_SENTRY_DSN
       && this.settings.LOGGER_SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
 
-    // Only enabls the integration if pass minimun environment
     if (this.sentryEnabled) {
       Sentry.init({
         dsn: this.settings.LOGGER_SENTRY_DSN,
@@ -40,53 +43,42 @@ export class LoggerService {
       this.warning('Sentry integration DISABLED', { localOnly: true });
     }
 
-    // Logs any uncaught exception as error
     process.on('uncaughtException', (err) => {
       this.error(err, { unexpected: true });
     });
   }
 
   /**
-   * Given a logged event by the application, translate its properties into
-   * the API standards according to message type being an error or string
+   *
+   * Normalizes incoming data object, and if stack is not present for errors
+   * crete it shifting the trace to ignore this file
    * @param params
    */
   private log(params: LoggerParams): void {
     try {
 
-      // If data is present but is not an object, make it one
-      if (params.data && typeof params.data !== 'object') params.data = { data: params.data };
-
-      // If level is error or higher but there is no error object, we must create it.
-      // Make sure to remove the top 2 stack traces since they reference this module
-      if (
-        params.level <= Math.max(LoggerLevel.ERROR, this.settings.LOGGER_SENTRY_MINIMUM_LEVEL)
-        && !(params.message instanceof Error)
-      ) {
-        params.message = new Error(params.message);
-        const stack = params.message.stack.split('\n');
-        stack.splice(1, 2);
-        params.message.stack = stack.join('\n');
+      if (!params.message) params.message = '';
+      if (params.data && typeof params.data !== 'object') {
+        params.data = { data: params.data };
       }
 
-      // Create separate entities for the error object (if present) and the message string
-      params.error = params.message instanceof Error ? params.message : undefined;
-      params.message = params.message instanceof Error
-        ? params.message.message.replace('Error: ', '')
-        : params.message;
+      if (params.message instanceof Error) {
+        params.error = params.message;
+        params.message = params.error.message;
+      }
+      else if (params.level <= LoggerLevel.ERROR) {
+        params.error = new Error(params.message);
+        const stack = params.error.stack.split('\n');
+        stack.splice(1, 2);
+        params.error.stack = stack.join('\n');
+      }
 
-      // Create separate stringified stack
-      params.stack = params.error
-        ? `at ${params.error.stack.split(' at ').splice(1).map((str) => str.replace(/\s+/g, ' ').trim()).join('\nat ')}`
-        : undefined;
-
-      // Logs the error locally and publish on cloud services
       this.printLog(params);
       this.publishLog(params);
     }
 
-    // Catch exceptions during the loggin procedure
-    // This should never happen unless connection is lost and Sentry upload fails
+    // Catch exceptions during the logging procedure
+    // This should never happen unless some connection is lost
     catch (e) {
       e.message = `Logger: Exception during event logging - ${e.message}`;
       if (this.sentryEnabled) Sentry.captureException(e);
@@ -101,17 +93,25 @@ export class LoggerService {
    * @param params
    */
   private printLog(params: LoggerParams): void {
-    const nowStr = moment().format('YYYY-MM-DD HH:mm:ss');
 
     if (this.settings.NODE_ENV === AppEnvironment.DEVELOPMENT) {
+      const nowStr = moment().format('YYYY-MM-DD HH:mm:ss');
+      const stackStr = params.error
+        ? `  at ${require('clean-stack')(params.error.stack)
+          .split(' at ').splice(1).map((str: string) =>
+            str.replace(/\s+/g, ' ').trim(),
+          ).join('\n  at ')}`
+        : undefined;
+
       console.log(chalk`{grey ${nowStr}} {${params.labelColor}  ${params.label} } {${params.messageColor} ${params.message}}`);
-      if (params.stack) console.log(chalk`{${params.messageColor} ${params.stack}}`);
+      if (stackStr && params.level <= LoggerLevel.ERROR) console.log(chalk`{grey ${stackStr}}`);
       if (params.data && !params.data.localOnly) console.log(params.data);
     }
+
     else if (params.level <= LoggerLevel.WARNING) {
-      console.log(`${nowStr}  ${params.label}  ${params.message}`);
-      if (params.error) console.error(params.error);
+      console.log(params.message);
       if (params.data && !params.data.localOnly) console.log(params.data);
+      if (params.error) console.error(params.error);
     }
   }
 

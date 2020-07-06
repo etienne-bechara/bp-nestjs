@@ -8,5 +8,4 @@ export interface LoggerParams {
   message: string | Error;
   data: any; // eslint-disable-line
   error?: Error;
-  stack?: string;
 }

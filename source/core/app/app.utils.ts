@@ -10,6 +10,7 @@ import globby from 'globby';
 
 import { Settings } from '../../settings';
 import { LoggerService } from '../logger/logger.service';
+import { AppEnvironment } from './app.enum';
 
 let cachedSettings: Settings;
 let loggerService: LoggerService;
@@ -33,6 +34,9 @@ export class AppUtils {
   /**
    * Parses and validates environment varaibles then
    * join them with settings, then caches the result
+   *
+   * At development environment enable reverse mapping
+   * of js files for easies stack debugging
    */
   public static getSettings(): Settings {
     if (!cachedSettings) {
@@ -45,6 +49,10 @@ export class AppUtils {
           console.error(e);
           process.exit(1);
         });
+
+      if (cachedSettings.NODE_ENV === AppEnvironment.DEVELOPMENT) {
+        require('source-map-support').install();
+      }
     }
     return cachedSettings;
   }
