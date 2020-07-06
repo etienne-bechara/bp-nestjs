@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import redis, { RedisClient } from 'redis';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
 
 @Injectable()
 export class RedisService extends AbstractProvider {
-  private redisEnabled: boolean;
   private redisClient: RedisClient;
 
   /** */
@@ -15,13 +14,12 @@ export class RedisService extends AbstractProvider {
   }
 
   /**
-   * Sets up the redis cloud connection
+   * Sets up the redis cloud client
    */
   private setupRedis(): void {
-    this.redisEnabled = this.settings.REDIS_HOST ? true : false;
 
-    if (!this.redisEnabled) {
-      this.logger.warning('Redis connection DISABLED', { localOnly: true });
+    if (!this.settings.REDIS_HOST) {
+      this.logger.warning('Redis client DISABLED', { localOnly: true });
       return undefined;
     }
 
@@ -31,7 +29,19 @@ export class RedisService extends AbstractProvider {
       password: this.settings.REDIS_PASSWORD,
     });
 
-    this.logger.success('Redis connection ENABLED', { localOnly: true });
+    this.logger.success('Redis client ENABLED', { localOnly: true });
+  }
+
+  /**
+   * Throw if redis client is not enabled
+   * Used at the beggining of all methods
+   */
+  private checkRedisClient(): void {
+    if (!this.redisClient) {
+      throw new InternalServerErrorException({
+        message: 'Redis client is DISABLED',
+      });
+    }
   }
 
   /**
@@ -41,11 +51,13 @@ export class RedisService extends AbstractProvider {
    * @param value
    */
   public async setKey(key: string, value: unknown, expiration?: number): Promise<void> {
+    this.checkRedisClient();
+
+    const stringValue = JSON.stringify(value);
+    this.logger.debug(`Redis: Setting key ${key} as ${stringValue}...`);
+
     return new Promise((resolve, reject) => {
-      this.redisClient.set(
-        key,
-        JSON.stringify(value),
-        'PX',
+      this.redisClient.set(key, stringValue, 'PX',
         expiration || this.settings.REDIS_DEFAULT_EXPIRATION,
         (err) => {
           if (err) reject(err);
@@ -60,6 +72,9 @@ export class RedisService extends AbstractProvider {
    * @param key
    */
   public async getKey(key: string): Promise<unknown> {
+    this.checkRedisClient();
+    this.logger.debug(`Redis: Reading key ${key}...`);
+
     return new Promise((resolve, reject) => {
       this.redisClient.get(key, (err, reply) => {
         if (err) reject(err);
