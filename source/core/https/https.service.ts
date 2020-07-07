@@ -8,15 +8,12 @@ import UserAgent from 'user-agents';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
 import { HttpsReturnType } from './https.enum';
-import { HttpsRequestParams } from './https.interface';
-import { HttpsSetupParams } from './https.interface/https.setup.params';
+import { HttpsRequestParams, HttpsServiceOptions } from './https.interface';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class HttpsService extends AbstractProvider {
-
   private defaultValidator: (status: number)=> boolean;
   private defaultReturnType: HttpsReturnType;
-
   private baseData: Record<string, unknown>;
   private baseHeaders: Record<string, string>;
   private instance: AxiosInstance;
@@ -30,7 +27,7 @@ export class HttpsService extends AbstractProvider {
    * - Remove validation inside axios handler
    * @param params
    */
-  public setupInstance(params: HttpsSetupParams): void {
+  public setupInstance(params: HttpsServiceOptions): void {
 
     this.defaultReturnType = params.defaultReturnType || HttpsReturnType.DATA;
     this.baseData = params.baseData;
@@ -61,6 +58,10 @@ export class HttpsService extends AbstractProvider {
    * @param params
    */
   public async request<T>(params: HttpsRequestParams): Promise<AxiosResponse | T> {
+    if (!this.instance) {
+      throw new InternalServerErrorException('https service must be configured with this.setupInstance()');
+    }
+
     const rawParms = JSON.parse(JSON.stringify(params));
     this.transformParams(params);
 
