@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { AnyEntity, Collection, EntityRepository, FilterQuery } from 'mikro-orm';
+import { AnyEntity, Collection, EntityRepository } from 'mikro-orm';
 
 import { AbstractPartialDto } from './abstract.dto';
 import { AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
@@ -23,64 +23,51 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
     protected readonly options: AbstractServiceOptions = { },
   ) {
     super();
-    if (!this.options.collections) this.options.collections = [ ];
   }
 
   /**
-   * Read and populate all entities that matches given criteria
-   * Then, populate any OneToMany collections configured at
-   * service options
+   * Read all entities that matches given criteria
    * @param id
    */
-  public async readEntities(params: Entity, partial: AbstractPartialDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
-    const fullSearch = !partial.limit || !partial.offset && partial.offset !== 0;
-    let results: Entity[];
-    let total: number;
+  public async read(params: Entity): Promise<Entity[]> {
+    return this.repository.find(params, {
+      populate: this.options.populate,
+      refresh: true,
+    });
+  }
 
-    if (fullSearch) {
-      results = await this.repository.find(params, {
-        populate: this.options.populate,
-      });
-    }
-    else {
-      [ results, total ] = await this.repository.findAndCount(params, {
-        populate: this.options.populate,
-        limit: partial.limit,
-        offset: partial.offset,
-      });
-    }
+  /**
+   * Read, populate and count all entities that matches given criteria
+   * Returns an object contining limit, offset, total and results
+   * @param id
+   */
+  public async readAndCount(params: Entity, partial: AbstractPartialDto = { }): Promise<AbstractPartialResponse<Entity>> {
+    const [ results, total ] = await this.repository.findAndCount(params, {
+      populate: this.options.populate,
+      refresh: true,
+      limit: partial.limit || null,
+      offset: partial.offset || 0,
+    });
 
-    await this.populateCollections(results);
-
-    return fullSearch ? results : {
-      limit: partial.limit,
-      offset: partial.offset,
+    return {
+      limit: partial.limit || null,
+      offset: partial.offset || 0,
       total,
       results,
     };
   }
 
   /**
-   * Given a set of entities and configured collection
-   * population rules, apply them asynchronously
-   * @param entities
-   */
-  public async populateCollections(entities: AnyEntity[]): Promise<void> {
-    await Promise.all(entities.map(async(entity) => {
-      await Promise.all(this.options.collections.map(async(collection) => {
-        entity[collection.name] = await collection.provider.repository.find({
-          [collection.reference]: entity.id,
-        });
-      }));
-    }));
-  }
-
-  /**
-   * Reads a single entity by its ID
+   * Reads a single entity by its ID and populate
+   * its configured collections
    * @param id
    */
-  public async readEntityById(id: FilterQuery<Entity>): Promise<Entity> {
-    const entity = await this.repository.findOne(id, this.options.populate);
+  public async readById(id: string): Promise<Entity> {
+    const params: AnyEntity = { id };
+    const [ entity ] = await this.repository.find(params, {
+      populate: this.options.populate,
+      refresh: true,
+    });
     if (!entity) throw new NotFoundException(this.NOT_FOUND_MESSAGE);
     return entity;
   }
@@ -90,7 +77,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * it into the database
    * @param data
    */
-  public async createEntity(data: Partial<Entity> | any): Promise<Entity> {
+  public async createFromDto(data: Partial<Entity> | any): Promise<Entity> {
 
     const newEntity = this.repository.create(data);
     for (const key in newEntity) {
@@ -107,7 +94,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
     catch (e) {
       this.queryExceptionHandler(e, data);
     }
-    return this.repository.findOne(newEntity, this.options.populate);
+    return this.readById(newEntity['id']);
   }
 
   /**
@@ -116,9 +103,9 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param id
    * @param data
    */
-  public async updateEntityById(id: FilterQuery<Entity>, data: Partial<Entity> | any): Promise<Entity> {
+  public async updateByIdFromDto(id: string, data: Partial<Entity> | any): Promise<Entity> {
 
-    await this.readEntityById(id);
+    await this.readById(id);
     try {
       await this.repository.createQueryBuilder()
         .update({ ...data })
@@ -128,15 +115,15 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
     catch (e) {
       this.queryExceptionHandler(e, data);
     }
-    return this.readEntityById(id);
+    return this.readById(id);
   }
 
   /**
    * Deletes a single entity by its id
    * @param id
    */
-  public async deleteEntityById(id: FilterQuery<Entity>): Promise<void> {
-    const entity = await this.readEntityById(id);
+  public async deleteById(id: string): Promise<void> {
+    const entity = await this.readById(id);
     try {
       await this.repository.removeAndFlush(entity);
     }
@@ -150,6 +137,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param e
    */
   protected queryExceptionHandler(e: Error, data: Partial<Entity> | any): void {
+
     if (e.message.match(/duplicate entry/gi)) {
       const violation = /entry '(.+?)' for/gi.exec(e.message);
       throw new ConflictException({
@@ -157,16 +145,19 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
         violation: violation ? violation[1] : null,
       });
     }
+
     else if (e.message.match(/cannot add.+foreign key.+fails/gi)) {
       const violation = /key \(`(.+?)`\) references/gi.exec(e.message);
       const failedConstraint = violation ? violation[1] : 'undefined';
       throw new BadRequestException(`${failedConstraint} ${this.FK_FAIL_CREATE_MESSAGE}`);
     }
+
     else if (e.message.match(/cannot delete.+foreign key.+fails/gi)) {
       const violation = /\.`(.+?)`, constraint/gi.exec(e.message);
       const failedConstraint = violation ? violation[1] : 'undefined';
       throw new ConflictException(`${failedConstraint} ${this.FK_FAIL_DELETE_MESSAGE}`);
     }
+
     else {
       throw new InternalServerErrorException({
         message: this.QUERY_FAIL_MESSAGE,

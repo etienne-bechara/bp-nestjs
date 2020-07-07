@@ -25,7 +25,7 @@ const OrmSettings: Options<IDatabaseDriver<Connection>> = {
   autoFlush: false,
   entities,
 
-  logger: (msg): void => AppUtils.getLogger().debug(`MikroORM ${msg}`),
+  logger: (msg): void => AppUtils.getLogger().debug(`ORM ${msg}`),
   namingStrategy: UnderscoreNamingStrategy,
   debug: isDevelopment,
 

@@ -73,6 +73,7 @@ Documentação | Reponsabilidades | Observação
 [MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.
 [Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Por padrão apenas erros em ambientes de homologação ou produção serão enviados para a plataforma.
 [Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.
+[Nodemailer](https://nodemailer.com/about/) | • Envio Automatizado de E-mails | **Opcional**<br>Habilite configurando as variáveis `MAILER_*` no `.env`.
 
 ### Bibliotecas
 
@@ -80,7 +81,5 @@ Documentação | Reponsabilidades | Utilização
 ---|---|---
 [Axios](https://www.npmjs.com/package/axios)    | • Requisições HTTP(s) externas | Foi criado um wrapper em torno da bilblioteca para padronização de exceções.<br>Injete o serviço `HttpsService` na classe que deseja utilizar.
 [Class Validator](https://www.npmjs.com/package/class-validator) | • Decorators para Validação de Objetos | Dentro da classe, antes da propriedade, utilize um ou mais dos decorators do pacote.<br>No caso dos controllers a validação é aplicada automaticamente.
-[Class Transformer](https://www.npmjs.com/package/class-transformer) | • Conversão de Objetos para Classes<br>• Conversão de Tipagem de Propriedades | Utilize um dos métodos do pacote em conjunto com os decorators fornecidos.<br>Em geral, não será necessário ao menos que altere algo a nível de boilerplate.
+[Class Transformer](https://www.npmjs.com/package/class-transformer) | • Conversão de Objetos para Classes<br>• Conversão de Tipo de Propriedades | Utilize um dos métodos do pacote em conjunto com os decorators fornecidos.<br>Em geral, não será necessário ao menos que altere algo a nível de boilerplate.
 [Moment](https://www.npmjs.com/package/moment) | • Parsing e Formatação de Datas | Inicialize através de `moment()` ou `moment(stringDate)`, e siga os métodos conforme documentação.
-[Request IP](https://www.npmjs.com/package/moment) | • Detecção de IPs de Origem | Automaticamente aplicado na propriedade `req.metadata.ip` via `AppLoggerMiddleware`.
-

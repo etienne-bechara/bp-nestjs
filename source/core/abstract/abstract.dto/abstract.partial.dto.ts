@@ -9,12 +9,12 @@ export class AbstractPartialDto {
   @Transform((v) => parseInt(v))
   @IsNumber()
   @Min(1)
-  public limit: number;
+  public limit?: number;
 
   @ValidateIf((o) => o.limit)
   @Transform((v) => parseInt(v))
   @IsNumber()
   @Min(0)
-  public offset: number;
+  public offset?: number;
 
 }

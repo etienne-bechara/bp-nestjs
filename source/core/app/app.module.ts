@@ -2,7 +2,8 @@ import { ClassSerializerInterceptor, Global, MiddlewareConsumer, Module, Validat
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 import { AppFilter } from './app.filter';
-import { AppAuthMiddleware, AppLoggerMiddleware } from './app.middleware';
+import { AppLoggerInterceptor } from './app.interceptor';
+import { AppAuthMiddleware } from './app.middleware';
 import { AppUtils } from './app.utils';
 
 const modules = AppUtils.globToRequire([ '../../**/*.module.js', '!../../**/app.module.js' ]);
@@ -20,6 +21,7 @@ const validationRules = AppUtils.getSettings().APP_VALIDATION_RULES;
     { provide: APP_FILTER, useClass: AppFilter },
     { provide: APP_PIPE, useFactory: (): ValidationPipe => new ValidationPipe(validationRules) },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: AppLoggerInterceptor },
   ],
 })
 export class AppModule {
@@ -31,7 +33,6 @@ export class AppModule {
   public configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(
-        AppLoggerMiddleware, // Handles custom parsing (must be first)
         AppAuthMiddleware,
       )
       .forRoutes('*');
