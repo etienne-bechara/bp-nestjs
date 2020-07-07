@@ -4,8 +4,8 @@ import { MikroOrmModule } from 'nestjs-mikro-orm';
 import { AppUtils } from '../app/app.utils';
 import OrmSettings from './orm.settings';
 
-const entities = AppUtils.globToRequire('../../**/*.entity.js');
 const enableOrm = AppUtils.getSettings().ORM_TYPE;
+const entities = AppUtils.globToRequire([ '../../**/*.entity.js', '!../../**/abstract*entity.js' ]);
 
 @Module({
   imports: [
