@@ -53,7 +53,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param params
    */
   @Get(':id')
-  public async getById(@Param() params: AbstractIdDto<Entity>): Promise<Entity> {
+  public async getById(@Param() params: AbstractIdDto): Promise<Entity> {
     await this.validateImplementation(AbstractControllerMethod.GET_BY_ID);
     return this.service.readById(params.id);
   }
@@ -92,7 +92,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param body
    */
   @Put(':id')
-  public async putById(@Param() params: AbstractIdDto<Entity>, @Body() body: Entity): Promise<Entity> {
+  public async putById(@Param() params: AbstractIdDto, @Body() body: Entity): Promise<Entity> {
     await this.validateImplementation(AbstractControllerMethod.PUT_BY_ID);
     if (!body) throw new BadRequestException(this.MISSING_BODY_MESSAGE);
 
@@ -105,7 +105,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param body
    */
   @Delete(':id')
-  public async deleteById(@Param() params: AbstractIdDto<Entity>): Promise<Entity> {
+  public async deleteById(@Param() params: AbstractIdDto): Promise<Entity> {
     await this.validateImplementation(AbstractControllerMethod.DELETE_BY_ID);
     return this.service.deleteById(params.id);
   }

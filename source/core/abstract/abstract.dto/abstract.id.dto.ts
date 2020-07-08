@@ -1,6 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class AbstractIdDto<Entity> {
+export class AbstractIdDto {
 
   @IsUUID()
   public id: string;
