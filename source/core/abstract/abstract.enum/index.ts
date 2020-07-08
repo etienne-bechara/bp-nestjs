@@ -1,1 +1,1 @@
-export * from './abastract.controller.mehod';
+export * from './abstract.controller.mehod';
