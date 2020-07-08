@@ -10,6 +10,9 @@ Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover inici
   * [Frameworks](#frameworks)
   * [Pacotes](#pacotes)
 - [Domain](#domain)
+- [Settings](#settings)
+  * [Variáveis de Ambiente](#vari-veis-de-ambiente)
+  * [Opções do Serviço](#op--es-do-servi-o)
 - [Entity](#entity)
 - [Modules](#modules)
 - [Controllers](#controllers)
@@ -116,6 +119,70 @@ Por exemplo, os usuários, as empresas, a autenticação, a API XPTO externa, et
 O domínio é representado por uma pasta dentro do diretório `/source`.
 
 Os inclusos no boilerplate estão dentro de `/source/core` para melhor organização.
+
+
+
+## Settings
+
+Cada domínio, pode ter uma grupo de configurações definidas em um arquivo `*.settings.ts`.
+
+Ao criar um serviço que extenda a class `AbstractProvider` (detalhes adiante), todas as configurações da aplicação estarão disponíveis em `this.settings`.
+
+As configurações são divididas em duas categorias:
+
+### Variáveis de Ambiente
+
+- Possuem informações sensíveis ou que variam de accordo com o ambiente.
+- São declaradas em modelo chave/valor dentro do arquivo `.env` na raiz do projeto.
+- Todas são inicializadas como `string`.
+- Utilize o decorator `@Transform()` da lib `class-transformer` para convertê-las de tipo.
+- Devem ser declaradas sem valor padrão.
+
+Exemplo:
+
+```ts
+export class AppSettings {
+
+  @IsIn(['DEVELOPMENT', 'STAGING', 'PRODUCTION'])
+  public NODE_ENV: 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION';
+
+  @Transform((v) => parseInt(v))
+  @IsNumber()
+  public PORT: number;
+
+  @IsOptional()
+  @IsString() @IsNotEmpty()
+  public APP_AUTHORIZATION: string;
+
+}
+```
+
+### Opções do Serviço
+
+- Não possuem informações sensíveis e são idênticas em qualquer ambiente.
+- São declaradas dentro do próprio arquivo `*.settings.ts`.
+- Devem ser inicializadas com valor padrão.
+
+Exemplo:
+
+```ts
+export class AppSettings {
+
+  public APP_TIMEOUT: number = 2 * 60 * 1000;
+
+  public APP_CORS_OPTIONS: CorsOptions | boolean = {
+    origin: '*',
+    methods: 'GET, POST, PUT, DELETE',
+    allowedHeaders: 'Content-Type, Accept',
+  };
+
+  public APP_VALIDATION_RULES: ValidationPipeOptions = {
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  };
+
+}
+```
 
 
 

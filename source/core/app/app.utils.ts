@@ -33,27 +33,39 @@ export class AppUtils {
 
   /**
    * Parses and validates environment varaibles then
-   * join them with settings, then caches the result
+   * join them with settings and caches the result
    *
    * At development environment enable reverse mapping
-   * of js files for easies stack debugging
+   * of js files for easier stack debugging
    */
   public static getSettings(): Settings {
     if (!cachedSettings) {
+
       const rawEnv = dotenv.config({ path: `${__dirname}/../../.env` }).parsed || { };
-      cachedSettings = plainToClass(Settings, rawEnv);
-      validateOrReject(cachedSettings, {
-        validationError: { target: false },
-      })
-        .catch((e) => {
-          console.error(e);
-          process.exit(1);
-        });
+      const settingsConstructors = this.globToRequire('../../**/*.settings.js');
+      const settings: any = { };
+
+      for (const constructor of settingsConstructors) {
+        const partialSettings: Record<string, unknown> = plainToClass(constructor, rawEnv);
+
+        validateOrReject(partialSettings, { validationError: { target: false } })
+          .catch((e) => {
+            console.error(e);
+            process.exit(1);
+          });
+
+        for (const key in partialSettings) {
+          settings[key] = partialSettings[key];
+        }
+      }
+
+      cachedSettings = settings;
 
       if (cachedSettings.NODE_ENV === AppEnvironment.DEVELOPMENT) {
         require('source-map-support').install();
       }
     }
+
     return cachedSettings;
   }
 

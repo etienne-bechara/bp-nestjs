@@ -31,13 +31,13 @@
     "orm:schema:sync:gen:prd": "npm run orm:cache:reset && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
     
     "orm:schema:sync:gen": "mikro-orm schema:update --dump && mikro-orm migration:create && npm run orm:schema:sync:help",
-    "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:sync:run",
+    "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:schema:sync:run",
     "orm:schema:sync:run": "mikro-orm migration:up"
   },
   "mikro-orm": {
     "useTsNode": true,
     "configPaths": [
-      "./dist/core/orm/orm.settings.js"
+      "./dist/core/orm/orm.connection.js"
     ]
   },
   "dependencies": {

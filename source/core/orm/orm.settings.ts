@@ -1,48 +1,41 @@
-import { Connection, IDatabaseDriver, Options, UnderscoreNamingStrategy } from 'mikro-orm';
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 
-import { AppEnvironment } from '../app/app.enum';
-import { AppUtils } from '../app/app.utils';
+import { Transform } from 'class-transformer';
+import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf } from 'class-validator';
 
-const settings = AppUtils.getSettings();
-const entities = AppUtils.globToRequire('../../**/*.entity.js');
+export class OrmSettings {
 
-const isDevelopment = settings.NODE_ENV === AppEnvironment.DEVELOPMENT;
+  /* Environment Variables */
 
-const OrmSettings: Options<IDatabaseDriver<Connection>> = {
+  @IsOptional()
+  @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])
+  public ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
 
-  type: settings.ORM_TYPE,
-  host: settings.ORM_HOST,
-  port: settings.ORM_PORT,
-  user: settings.ORM_USERNAME,
-  password: settings.ORM_PASSWORD,
-  dbName: settings.ORM_DATABASE,
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString() @IsNotEmpty()
+  public ORM_HOST: string;
 
-  pool: {
-    min: settings.ORM_POOL_MIN,
-    max: settings.ORM_POOL_MAX,
-  },
+  @ValidateIf((o) => o.ORM_TYPE)
+  @Transform((v) => parseInt(v))
+  @IsNumber()
+  public ORM_PORT: number;
 
-  autoFlush: false,
-  entities,
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString() @IsNotEmpty()
+  public ORM_USERNAME: string;
 
-  logger: (msg): void => AppUtils.getLogger().debug(`ORM ${msg}`),
-  namingStrategy: UnderscoreNamingStrategy,
-  debug: isDevelopment,
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString()
+  public ORM_PASSWORD: string;
 
-  cache: {
-    pretty: true,
-    options: {
-      cacheDir: isDevelopment ? 'dist/cache' : 'cache',
-    },
-  },
+  @ValidateIf((o) => o.ORM_TYPE)
+  @IsString() @IsNotEmpty()
+  public ORM_DATABASE: string;
 
-  migrations: {
-    tableName: 'app_migration',
-    path: isDevelopment ? 'dist/migration' : 'migration',
-    pattern: /^[\w-]+\d+\.[tj]s$/,
-    dropTables: isDevelopment,
-    emit: 'js',
-  },
-};
+  /* Provider Options */
 
-export default OrmSettings;
+  public ORM_POOL_MIN: number = 5;
+
+  public ORM_POOL_MAX: number = 25;
+
+}
