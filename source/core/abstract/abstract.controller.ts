@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
-import { BadRequestException, Body, Delete, Get, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Delete, Get, NotFoundException, NotImplementedException, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { validate } from 'class-validator';
@@ -69,7 +69,21 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
     if (!body) throw new BadRequestException(this.MISSING_BODY_MESSAGE);
 
     const dto = await this.plainToDto(body, this.options.dto.create);
-    return this.service.createFromDto(dto);
+    return this.service.create(dto);
+  }
+
+  /**
+   * Creates or updates a single entity validating its data
+   * across provided create DTO
+   * @param body
+   */
+  @Put()
+  public async put(@Body() body: Entity): Promise<Entity> {
+    await this.validateImplementation(AbstractControllerMethod.PUT);
+    if (!body) throw new BadRequestException(this.MISSING_BODY_MESSAGE);
+
+    const dto = await this.plainToDto(body, this.options.dto.create);
+    return this.service.upsert(dto);
   }
 
   /**
@@ -83,16 +97,15 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
     if (!body) throw new BadRequestException(this.MISSING_BODY_MESSAGE);
 
     const dto = await this.plainToDto(body, this.options.dto.update);
-    return this.service.updateByIdFromDto(params.id, dto);
+    return this.service.updateById(params.id, dto);
   }
 
   /**
    * Deletes a single entity by its id
    * @param body
    */
-  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  public async deleteById(@Param() params: AbstractIdDto<Entity>): Promise<void> {
+  public async deleteById(@Param() params: AbstractIdDto<Entity>): Promise<Entity> {
     await this.validateImplementation(AbstractControllerMethod.DELETE_BY_ID);
     return this.service.deleteById(params.id);
   }
@@ -104,20 +117,20 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
   public async validateImplementation(method: AbstractControllerMethod): Promise<void> {
 
     if (
-      this.options.routes.exclude && this.options.routes.exclude.includes(method) ||
-      this.options.routes.only && !this.options.routes.only.includes(method)
+      this.options.routes.exclude && this.options.routes.exclude.includes(method)
+      || this.options.routes.only && !this.options.routes.only.includes(method)
     ) {
       throw new NotFoundException(`Cannot ${method.split('By')[0].toUpperCase()} to path`);
     }
 
     if (
-      method === AbstractControllerMethod.GET && !this.options.dto.read ||
-      method === AbstractControllerMethod.POST && !this.options.dto.create ||
-      method === AbstractControllerMethod.PUT_BY_ID && !this.options.dto.update
+      method === AbstractControllerMethod.GET && !this.options.dto.read
+      || method === AbstractControllerMethod.POST && !this.options.dto.create
+      || method === AbstractControllerMethod.PUT && !this.options.dto.create
+      || method === AbstractControllerMethod.PUT_BY_ID && !this.options.dto.update
     ) {
       throw new NotImplementedException(this.MISSING_DTO_MESSAGE);
     }
-
   }
 
   /**

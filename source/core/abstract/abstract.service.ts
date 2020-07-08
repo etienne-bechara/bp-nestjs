@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { AnyEntity, Collection, EntityRepository } from 'mikro-orm';
+import { AnyEntity, EntityRepository } from 'mikro-orm';
 
 import { AbstractPartialDto } from './abstract.dto';
 import { AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
@@ -16,6 +17,9 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
   protected FK_FAIL_DELETE_MESSAGE: string = 'constraint prevents cascade deletion';
   protected QUERY_FAIL_MESSAGE: string = 'failed to execute query statement';
   protected NOT_FOUND_MESSAGE: string = 'entity with given id does not exist';
+  protected ENTITY_UNDEFINED_MESSAGE: string = 'cannot persist undefined entity';
+  protected UK_REFERENCE_FAIL_MESSAGE: string = 'unique constraint references more than one entity';
+  protected UK_MISSING_MESSAGE: string = 'missing unique key declaration for upsert';
 
   /** */
   public constructor(
@@ -29,7 +33,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Read all entities that matches given criteria
    * @param id
    */
-  public async read(params: Entity): Promise<Entity[]> {
+  public async read(params: Partial<Entity>): Promise<Entity[]> {
     return this.repository.find(params, {
       populate: this.options.populate,
       refresh: true,
@@ -73,28 +77,36 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
   }
 
   /**
-   * Given plain data, creates a single entity and persist
-   * it into the database
+   * Creates a new entity from raw data or from an already
+   * initialized entity
    * @param data
    */
-  public async createFromDto(data: Partial<Entity> | any): Promise<Entity> {
-
+  public async create(data: Partial<Entity> | any): Promise<Entity> {
     const newEntity = this.repository.create(data);
-    for (const key in newEntity) {
-      if (newEntity[key] instanceof Collection) {
-        delete newEntity[key];
+    await this.save(newEntity);
+    return this.readById(newEntity['id']);
+  }
+
+  /**
+   * Updates an already instatiated entity from raw data
+   * @param entity
+   * @param data
+   */
+  public async update(entity: Entity, data: Partial<Entity>): Promise<Entity> {
+    const dummyEntity = this.repository.create(data);
+    let updateRequired = false;
+
+    for (const key in data) {
+      if (entity[key] !== dummyEntity[key]) {
+        entity[key] = data[key];
+        updateRequired = true;
       }
     }
 
-    try {
-      await this.repository.createQueryBuilder()
-        .insert({ ...newEntity, ...data }) // Re-add `_id` props removed by .create
-        .execute();
-    }
-    catch (e) {
-      this.queryExceptionHandler(e, data);
-    }
-    return this.readById(newEntity['id']);
+    if (updateRequired) await this.save(entity);
+    return updateRequired
+      ? this.readById(entity['id'])
+      : entity;
   }
 
   /**
@@ -103,26 +115,64 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param id
    * @param data
    */
-  public async updateByIdFromDto(id: string, data: Partial<Entity> | any): Promise<Entity> {
+  public async updateById(id: string, data: Partial<Entity> | any): Promise<Entity> {
+    const target = await this.readById(id);
+    return this.update(target, data);
+  }
 
-    await this.readById(id);
+  /**
+   * Given a set of strings to use as constraint fields,
+   * creates or updates given entity and return its instance
+   * @param uniqueKey
+   * @param data
+   */
+  public async upsert(data: Partial<Entity> | any, uniqueKey?: string[] ): Promise<Entity> {
+    uniqueKey = uniqueKey || this.options.uniqueKey;
+    if (!uniqueKey) {
+      throw new InternalServerErrorException(this.UK_MISSING_MESSAGE);
+    }
+
+    const clause = { };
+    for (const key of uniqueKey) {
+      clause[key] = data[key];
+    }
+    const matchingEntities = await this.read(clause);
+
+    if (matchingEntities.length > 1) {
+      throw new ConflictException({
+        message: this.UK_REFERENCE_FAIL_MESSAGE,
+        unique_key: uniqueKey,
+        matches: matchingEntities.map((e) => e['id']),
+      });
+    }
+    else if (matchingEntities.length === 1) {
+      return this.update(matchingEntities[0], data);
+    }
+    return this.create(data);
+  }
+
+  /**
+   * Saves an already initialized entity and handles
+   * any of the several exception that might occuor
+   * @param entity
+   */
+  public async save(entity: Entity): Promise<void> {
+    if (!entity) {
+      throw new InternalServerErrorException(this.ENTITY_UNDEFINED_MESSAGE);
+    }
     try {
-      await this.repository.createQueryBuilder()
-        .update({ ...data })
-        .where({ id })
-        .execute();
+      await this.repository.persistAndFlush(entity);
     }
     catch (e) {
-      this.queryExceptionHandler(e, data);
+      this.queryExceptionHandler(e, entity);
     }
-    return this.readById(id);
   }
 
   /**
    * Deletes a single entity by its id
    * @param id
    */
-  public async deleteById(id: string): Promise<void> {
+  public async deleteById(id: string): Promise<Entity> {
     const entity = await this.readById(id);
     try {
       await this.repository.removeAndFlush(entity);
@@ -130,6 +180,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
     catch (e) {
       this.queryExceptionHandler(e, entity);
     }
+    return entity;
   }
 
   /**
