@@ -16,16 +16,23 @@
     "dev": "nest start --debug --watch",
     "lint": "eslint **/*.ts",
     "build": "nest build",
+
     "blueprint:crud": "ts-node ./scripts/blueprint/blueprint.generate -t crud",
+
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
+
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
-    "cache:reset": "mikro-orm cache:clear && nest build && mikro-orm cache:generate",
-    "migration:create:dev": "npm run cache:reset && mikro-orm schema:update --dump && mikro-orm migration:create",
-    "migration:create:stg": "npm run cache:reset && cp-cli .env.stg dist/.env && mikro-orm schema:update --dump && mikro-orm migration:create",
-    "migration:create:prd": "npm run cache:reset && cp-cli .env.prd dist/.env && mikro-orm schema:update --dump && mikro-orm migration:create",
-    "migration:up": "mikro-orm migration:up"
+
+    "orm:cache:reset": "nest build && mikro-orm cache:generate",
+    "orm:schema:sync:gen:dev": "npm run orm:cache:reset && npm run orm:schema:sync:gen",
+    "orm:schema:sync:gen:stg": "npm run orm:cache:reset && cp-cli .env.stg dist/.env && npm run orm:schema:sync:gen",
+    "orm:schema:sync:gen:prd": "npm run orm:cache:reset && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
+    
+    "orm:schema:sync:gen": "mikro-orm schema:update --dump && mikro-orm migration:create && npm run orm:schema:sync:help",
+    "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:sync:run",
+    "orm:schema:sync:run": "mikro-orm migration:up"
   },
   "mikro-orm": {
     "useTsNode": true,
@@ -37,7 +44,7 @@
     "@nestjs/common": "7.3.1",
     "@nestjs/core": "7.3.1",
     "@nestjs/platform-express": "7.3.1",
-    "@sentry/node": "5.19.0",
+    "@sentry/node": "5.19.1",
     "axios": "0.19.2",
     "chalk": "4.1.0",
     "class-transformer": "0.2.3",
@@ -62,12 +69,12 @@
     "@nestjs/cli": "7.4.1",
     "@nestjs/schematics": "7.0.1",
     "@types/fs-extra": "9.0.1",
-    "@types/node": "14.0.14",
+    "@types/node": "14.0.19",
     "@types/nodemailer": "6.4.0",
     "@types/redis": "2.8.24",
     "@types/user-agents": "1.0.0",
-    "@typescript-eslint/eslint-plugin": "3.5.0",
-    "@typescript-eslint/parser": "3.5.0",
+    "@typescript-eslint/eslint-plugin": "3.6.0",
+    "@typescript-eslint/parser": "3.6.0",
     "change-case": "4.1.1",
     "clean-stack": "3.0.0",
     "cp-cli": "2.0.0",
