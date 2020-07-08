@@ -22,18 +22,52 @@ export class AbstractEntityInterceptor extends AbstractProvider implements NestI
       .handle()
       .pipe(
         map((data) => {
-          if (data && Array.isArray(data)) {
-            data = data.map((d) => d && d.toJSON ? d.toJSON() : d);
-          }
-          else if (data && data.results && Array.isArray(data.results)) {
-            data.results = data.results.map((d) => d && d.toJSON ? d.toJSON() : d);
-          }
-          else if (data && data.toJSON) {
-            data = data.toJSON();
+          if (data) {
+            if (Array.isArray(data)) {
+              data = data.map((d) => d && d.toJSON ? d.toJSON() : d);
+              for (const d of data) {
+                this.eliminateRecursion(d.id, d);
+              }
+            }
+            else if (data.results && Array.isArray(data.results)) {
+              data.results = data.results.map((d) => d && d.toJSON ? d.toJSON() : d);
+              for (const d of data.results) {
+                this.eliminateRecursion(d.id, d);
+              }
+            }
+            else if (data.toJSON) {
+              data = data.toJSON();
+              this.eliminateRecursion(data.id, data);
+            }
           }
           return data;
         }),
       );
+  }
+
+  /**
+   * Given an object, eliminate properties that references
+   * defined parent id
+   * @param data
+   */
+  private eliminateRecursion(parentId: string, data: any): void {
+    if (!data || !parentId) return undefined;
+
+    if (Array.isArray(data)) {
+      for (const d of data) {
+        this.eliminateRecursion(parentId, d);
+      }
+    }
+    else if (typeof data === 'object') {
+      for (const key in data) {
+        if (typeof data[key] === 'object') {
+          this.eliminateRecursion(parentId, data[key]);
+        }
+        else if (key !== 'id' && data[key] === parentId) {
+          delete data[key];
+        }
+      }
+    }
   }
 
 }
