@@ -1,4 +1,6 @@
 export interface AbstractServiceOptions {
-  uniqueKey?: string[];
-  populate?: boolean | string[]
+  defaults?: {
+    uniqueKey?: string[];
+    populate?: boolean | string[]
+  }
 }

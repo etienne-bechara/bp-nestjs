@@ -20,8 +20,10 @@ export class __PascalCaseName__Service extends AbstractService<__PascalCaseName_
     private readonly __CamelCaseName__Repository: EntityRepository<__PascalCaseName__Entity>,
   ) {
     super(__CamelCaseName__Repository, {
-      uniqueKey: [ ], // Default key to match when upserting, can be overriden in method
-      populate: [ ], // Properties to cascade when selecting from the database
+      defaults: {
+        uniqueKey: [ ], // Default key to match when upserting (can be overriden in method)
+        populate: [ ], // Default properties to cascade read (can be overriden in method)
+      }
     });
   }
 

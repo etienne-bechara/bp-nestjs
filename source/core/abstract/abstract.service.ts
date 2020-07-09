@@ -27,15 +27,16 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
     protected readonly options: AbstractServiceOptions = { },
   ) {
     super();
+    if (!this.options.defaults) this.options.defaults = { };
   }
 
   /**
    * Read all entities that matches given criteria
    * @param id
    */
-  public async read(params: Partial<Entity>): Promise<Entity[]> {
+  public async read(params: Partial<Entity>, populate?: boolean | string[]): Promise<Entity[]> {
     return this.repository.find(params, {
-      populate: this.options.populate,
+      populate: populate || this.options.defaults.populate,
       refresh: true,
     });
   }
@@ -45,9 +46,9 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Returns an object contining limit, offset, total and results
    * @param id
    */
-  public async readAndCount(params: Entity, partial: AbstractPartialDto = { }): Promise<AbstractPartialResponse<Entity>> {
+  public async readAndCount(params: Entity, partial: AbstractPartialDto = { }, populate?: boolean | string[]): Promise<AbstractPartialResponse<Entity>> {
     const [ results, total ] = await this.repository.findAndCount(params, {
-      populate: this.options.populate,
+      populate: populate || this.options.defaults.populate,
       refresh: true,
       limit: partial.limit || null,
       offset: partial.offset || 0,
@@ -66,10 +67,10 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * its configured collections
    * @param id
    */
-  public async readById(id: string): Promise<Entity> {
+  public async readById(id: string, populate?: boolean | string[]): Promise<Entity> {
     const params: AnyEntity = { id };
     const [ entity ] = await this.repository.find(params, {
-      populate: this.options.populate,
+      populate: populate || this.options.defaults.populate,
       refresh: true,
     });
     if (!entity) throw new NotFoundException(this.NOT_FOUND_MESSAGE);
@@ -127,7 +128,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param data
    */
   public async upsert(data: Partial<Entity> | any, uniqueKey?: string[] ): Promise<Entity> {
-    uniqueKey = uniqueKey || this.options.uniqueKey;
+    uniqueKey = uniqueKey || this.options.defaults.uniqueKey;
     if (!uniqueKey) {
       throw new InternalServerErrorException(this.UK_MISSING_MESSAGE);
     }
@@ -198,7 +199,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
     }
 
     else if (e.message.match(/cannot add.+foreign key.+fails/gi)) {
-      const violation = /key \(`(.+?)`\) references/gi.exec(e.message);
+      const violation = /references `(.+?)`/gi.exec(e.message);
       const failedConstraint = violation ? violation[1] : 'undefined';
       throw new BadRequestException(`${failedConstraint} ${this.FK_FAIL_CREATE_MESSAGE}`);
     }
