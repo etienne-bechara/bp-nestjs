@@ -39,9 +39,9 @@ export class AppUtils {
    * of js files for easier stack debugging
    */
   public static getSettings(): Settings {
-    if (!cachedSettings) {
 
-      const rawEnv = dotenv.config({ path: `${__dirname}/../../.env` }).parsed || { };
+    if (!cachedSettings) {
+      const rawEnv = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
       const settingsConstructors = this.globToRequire('../../**/*.settings.js');
       const settings: any = { };
 

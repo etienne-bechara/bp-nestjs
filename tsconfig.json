@@ -4,6 +4,7 @@
     "module": "commonjs",
     "lib": ["es6","dom"],
     "outDir": "./dist",
+    "rootDir": "./",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "experimentalDecorators": true,

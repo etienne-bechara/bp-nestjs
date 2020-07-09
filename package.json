@@ -15,7 +15,7 @@
     "start": "nest start",
     "dev": "nest start --debug --watch",
     "lint": "eslint **/*.ts",
-    "build": "nest build",
+    "build": "nest build && mikro-orm cache:generate",
 
     "blueprint:crud": "ts-node ./scripts/blueprint/blueprint.generate -t crud",
 
@@ -25,10 +25,9 @@
 
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
 
-    "orm:cache:reset": "nest build && mikro-orm cache:generate",
-    "orm:schema:sync:gen:dev": "npm run orm:cache:reset && npm run orm:schema:sync:gen",
-    "orm:schema:sync:gen:stg": "npm run orm:cache:reset && cp-cli .env.stg dist/.env && npm run orm:schema:sync:gen",
-    "orm:schema:sync:gen:prd": "npm run orm:cache:reset && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
+    "orm:schema:sync:gen:dev": "npm run build && npm run orm:schema:sync:gen",
+    "orm:schema:sync:gen:stg": "npm run build && cp-cli .env.stg dist/.env && npm run orm:schema:sync:gen",
+    "orm:schema:sync:gen:prd": "npm run build && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
     
     "orm:schema:sync:gen": "mikro-orm schema:update --dump && mikro-orm migration:create && npm run orm:schema:sync:help",
     "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:schema:sync:run",
@@ -37,7 +36,7 @@
   "mikro-orm": {
     "useTsNode": true,
     "configPaths": [
-      "./dist/core/orm/orm.connection.js"
+      "./dist/source/core/orm/orm.connection.js"
     ]
   },
   "dependencies": {

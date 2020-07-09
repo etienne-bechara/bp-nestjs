@@ -23,6 +23,8 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
   },
 
   autoFlush: false,
+
+  baseDir: __dirname,
   entities,
 
   logger: (msg): void => AppUtils.getLogger().debug(`ORM ${msg}`),
@@ -32,13 +34,13 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
   cache: {
     pretty: true,
     options: {
-      cacheDir: isDevelopment ? 'dist/cache' : 'cache',
+      cacheDir: `${__dirname}/cache`,
     },
   },
 
   migrations: {
     tableName: 'app_migration',
-    path: isDevelopment ? 'dist/migration' : 'migration',
+    path: `${__dirname}/../../../migration`,
     pattern: /^[\w-]+\d+\.[tj]s$/,
     dropTables: isDevelopment,
     emit: 'js',

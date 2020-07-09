@@ -9,4 +9,4 @@ RUN npm install --only=production
 
 # Copy source code and execute application
 COPY . /app
-CMD ["node", "core/main.js"]
+CMD ["node", "source/core/main.js"]
