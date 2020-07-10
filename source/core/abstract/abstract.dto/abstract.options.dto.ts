@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, Matches, Max, Min } from 'class-validator';
 
-export class AbstractPartialDto {
+export class AbstractOptionsDto {
 
   @IsOptional()
   @Transform((v) => parseInt(v))
@@ -14,5 +12,9 @@ export class AbstractPartialDto {
   @Transform((v) => parseInt(v))
   @IsNumber() @Min(0)
   public offset?: number;
+
+  @IsOptional()
+  @Matches(/^[a-zA-Z0-9_]+:(asc|desc)$/)
+  public order?: string;
 
 }

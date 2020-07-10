@@ -7,7 +7,7 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { validate } from 'class-validator';
 import { unflatten } from 'flat';
 
-import { AbstractIdDto, AbstractPartialDto } from './abstract.dto';
+import { AbstractIdDto, AbstractOptionsDto } from './abstract.dto';
 import { AbstractControllerMethod } from './abstract.enum';
 import { AbstractEntityInterceptor } from './abstract.interceptor';
 import { AbstractControllerOptions, AbstractPartialResponse } from './abstract.interface';
@@ -42,13 +42,14 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param query
    */
   @Get()
-  public async get(@Query() query: Entity & AbstractPartialDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
+  public async get(@Query() query: Entity & AbstractOptionsDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
     await this.validateImplementation(AbstractControllerMethod.GET);
 
     const parsedQuery = this.parseQueryOperators(query);
     const dto = await this.plainToDtoOffset(parsedQuery.stripped, this.options.dto.read);
 
-    return this.service.readAndCount(parsedQuery.unflatted, dto.partial);
+    const { data: unflattedData } = this.splitDataOptions(parsedQuery.unflatted);
+    return this.service.readAndCount(unflattedData, dto.options);
   }
 
   /**
@@ -177,22 +178,37 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param object
    * @param type
    */
-  protected async plainToDtoOffset(object: unknown, type: ClassType<unknown>): Promise<{ data: any, partial: any }> { // eslint-disable-line
+  protected async plainToDtoOffset(object: any = { }, type: ClassType<unknown>): Promise<{ data: any, options: any }> { // eslint-disable-line
 
-    const dataObject = JSON.parse(JSON.stringify(object));
-    delete dataObject.limit;
-    delete dataObject.offset;
-
-    const partialObject = JSON.parse(JSON.stringify(object));
-    for (const key in partialObject) {
-      if (key === 'limit' || key === 'offset') continue;
-      delete partialObject[key];
-    }
+    const { data, options } = this.splitDataOptions(object);
 
     return {
-      data: await this.plainToDto(dataObject, type),
-      partial: await this.plainToDto(partialObject, AbstractPartialDto),
+      data: await this.plainToDto(data, type),
+      options: await this.plainToDto(options, AbstractOptionsDto),
     };
+  }
+
+  /**
+   * Given any object, remove properties related
+   * to query find options
+   * @param object
+   */
+  protected splitDataOptions(object: any = { }): { data: any, options: any} {
+    const optionKeys = [ 'limit', 'offset', 'order' ];
+
+    const data = { ...object };
+    for (const key of optionKeys) {
+      delete data[key];
+    }
+
+    const options = { ...object };
+    for (const key in options) {
+      if (!optionKeys.includes(key)) {
+        delete options[key];
+      }
+    }
+
+    return { data, options };
   }
 
   /**
@@ -202,7 +218,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * and ORM find execution
    * @param query
    */
-  protected parseQueryOperators(query: any): { source: any, stripped: any, unflatted: any } {
+  protected parseQueryOperators(query: any = { }): { source: any, stripped: any, unflatted: any } {
     const allowedOperators = [ 'eq', 'gt', 'gte', 'lt', 'lte', 'ne', 'like', 're' ];
 
     const source = { ...query };

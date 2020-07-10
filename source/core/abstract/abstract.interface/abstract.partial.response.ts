@@ -1,6 +1,7 @@
 export interface AbstractPartialResponse<Entity> {
+  order: string;
   limit: number;
   offset: number;
-  total: number;
-  results: Entity[];
+  count: number;
+  records: Entity[];
 }

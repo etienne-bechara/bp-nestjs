@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { AnyEntity, EntityRepository, FindOptions } from 'mikro-orm';
+import { AnyEntity, EntityRepository, QueryOrder } from 'mikro-orm';
 
-import { AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
+import { AbstractFindOptions, AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
 import { AbstractProvider } from './abstract.provider';
 
 /**
@@ -12,11 +12,12 @@ import { AbstractProvider } from './abstract.provider';
  */
 export abstract class AbstractService<Entity> extends AbstractProvider {
   protected DUPLICATE_ENTRY: string = 'unique constraint violation';
+  protected ENTITY_UNDEFINED: string = 'cannot persist undefined entity';
   protected FK_FAIL_CREATE: string = 'must reference an existing entity';
   protected FK_FAIL_DELETE: string = 'constraint prevents cascade deletion';
-  protected QUERY_FAIL: string = 'failed to execute query statement';
   protected NOT_FOUND: string = 'entity with given id does not exist';
-  protected ENTITY_UNDEFINED: string = 'cannot persist undefined entity';
+  protected PROPERTY_NON_EXISTANT: string = 'property does not exist on entity';
+  protected QUERY_FAIL: string = 'failed to execute query statement';
   protected UK_REFERENCE_FAIL: string = 'unique constraint references more than one entity';
   protected UK_MISSING: string = 'missing unique key declaration for upsert';
 
@@ -34,10 +35,17 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param params
    * @param populate
    */
-  private async find(params: Partial<Entity> | string, options: FindOptions = { }): Promise<any> {
+  private async find(
+    params: Partial<Entity> | string, options: AbstractFindOptions = { }, partial?: boolean,
+  ): Promise<Entity | Entity[] | AbstractPartialResponse<Entity>> {
 
+    // Assign defaults
     options.populate = options.populate || this.options.defaults.populate;
+    options.order = options.order || 'id:asc';
     options.refresh = true;
+    options.orderBy = {
+      [options.order.split(':')[0]]: QueryOrder[options.order.split(':')[1]],
+    };
 
     try {
       // One by ID
@@ -48,15 +56,18 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
         return entity;
       }
 
-      // Many with Offset
-      else if (options.limit) {
-        const limit = options.limit;
-        const offset = options.offset;
-        const [ results, total ] = await this.repository.findAndCount(params, options);
-        return { limit, offset, total, results };
+      // Many with Pagination
+      else if (partial) {
+        const [ records, count ] = await this.repository.findAndCount(params, options);
+        return {
+          order: options.order,
+          limit: options.limit,
+          offset: options.offset,
+          count, records,
+        };
       }
 
-      // Many
+      // Many as Array
       return this.repository.find(params, options);
     }
     catch (e) {
@@ -98,8 +109,9 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Read all entities that matches given criteria
    * @param id
    */
-  public async read(params: Partial<Entity>, options: FindOptions = { }): Promise<Entity[]> {
-    return this.find(params, options);
+  public async read(params: Partial<Entity>, options: AbstractFindOptions = { }): Promise<Entity[]> {
+    const entities = await this.find(params, options);
+    return Array.isArray(entities) ? entities : undefined;
   }
 
   /**
@@ -107,10 +119,11 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Returns an object contining limit, offset, total and results
    * @param id
    */
-  public async readAndCount(params: Entity, options: FindOptions = { }): Promise<AbstractPartialResponse<Entity>> {
+  public async readAndCount(params: Entity, options: AbstractFindOptions = { }): Promise<AbstractPartialResponse<Entity>> {
     if (!options.limit) options.limit = 1000;
     if (!options.offset) options.offset = 0;
-    return this.find(params, options);
+    const result = await this.find(params, options, true);
+    return 'records' in result ? result : undefined;
   }
 
   /**
@@ -118,8 +131,9 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * its configured collections
    * @param id
    */
-  public async readById(id: string, options: FindOptions = { }): Promise<Entity> {
-    return this.find(id, options);
+  public async readById(id: string, options: AbstractFindOptions = { }): Promise<Entity> {
+    const entity = await this.find(id, options);
+    return 'id' in entity ? entity : undefined;
   }
 
   /**
@@ -230,6 +244,12 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
       const violation = /\.`(.+?)`, constraint/gi.exec(e.message);
       const failedConstraint = violation ? violation[1] : 'undefined';
       throw new ConflictException(`${failedConstraint} ${this.FK_FAIL_DELETE}`);
+    }
+
+    else if (e.message.match(/query by not existing property/gi)) {
+      const violation = /.+\.(.+)/gi.exec(e.message);
+      const failedConstraint = violation ? violation[1] : 'undefined';
+      throw new BadRequestException(`${failedConstraint} ${this.PROPERTY_NON_EXISTANT}`);
     }
 
     else {
