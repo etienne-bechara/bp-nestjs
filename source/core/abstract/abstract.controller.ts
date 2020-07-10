@@ -48,10 +48,6 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
     const parsedQuery = this.parseQueryOperators(query);
     const dto = await this.plainToDtoOffset(parsedQuery.stripped, this.options.dto.read);
 
-    if (!dto.partial) dto.partial = { };
-    if (!dto.partial.limit) dto.partial.limit = 1000;
-    if (!dto.partial.offset) dto.partial.offset = 0;
-
     return this.service.readAndCount(parsedQuery.unflatted, dto.partial);
   }
 
@@ -226,11 +222,12 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
         throw new BadRequestException(`${operatorValidation[1]} ${this.OPERATOR_NOT_ALLOWED}`);
       }
 
-      stripped[key.split('$')[0]] = stripped[key];
+      stripped[key.split('$')[0].replace(/\.+$/, '')] = stripped[key];
       delete stripped[key];
 
-      unflatted[key.replace('$', '.$')] = unflatted[key];
-      delete unflatted[key];
+      const normalizedKey = key.replace(/\.+\$/, '$').replace('$', '.$');
+      unflatted[normalizedKey] = unflatted[key];
+      if (key !== normalizedKey) delete unflatted[key];
     }
 
     return {

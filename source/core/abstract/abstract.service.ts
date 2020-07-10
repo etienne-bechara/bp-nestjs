@@ -2,9 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { AnyEntity, EntityRepository } from 'mikro-orm';
+import { AnyEntity, EntityRepository, FindOptions } from 'mikro-orm';
 
-import { AbstractPartialDto } from './abstract.dto';
 import { AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
 import { AbstractProvider } from './abstract.provider';
 
@@ -35,35 +34,30 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param params
    * @param populate
    */
-  private async find(params: Partial<Entity> | string, partial: AbstractPartialDto = { }, populate?: boolean | string[]): Promise<any> {
+  private async find(params: Partial<Entity> | string, options: FindOptions = { }): Promise<any> {
 
-    const findOptions = {
-      populate: populate || this.options.defaults.populate,
-      refresh: true,
-    };
+    options.populate = options.populate || this.options.defaults.populate;
+    options.refresh = true;
 
     try {
       // One by ID
       if (typeof params === 'string') {
         const idParam: AnyEntity = { id: params };
-        const [ entity ] = await this.repository.find(idParam, findOptions);
+        const [ entity ] = await this.repository.find(idParam, options);
         if (!entity) throw new NotFoundException(this.NOT_FOUND);
         return entity;
       }
 
       // Many with Offset
-      else if (partial.limit) {
-        const limit = partial.limit || null;
-        const offset = partial.offset || 0;
-        const [ results, total ] = await this.repository.findAndCount(
-          params,
-          { ...findOptions, limit, offset },
-        );
+      else if (options.limit) {
+        const limit = options.limit;
+        const offset = options.offset;
+        const [ results, total ] = await this.repository.findAndCount(params, options);
         return { limit, offset, total, results };
       }
 
       // Many
-      return this.repository.find(params, findOptions);
+      return this.repository.find(params, options);
     }
     catch (e) {
       this.queryExceptionHandler(e, params);
@@ -104,12 +98,8 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Read all entities that matches given criteria
    * @param id
    */
-  public async read(params: Partial<Entity>, populate?: boolean | string[]): Promise<Entity[]> {
-    // return this.repository.find(params, {
-    //   populate: populate || this.options.defaults.populate,
-    //   refresh: true,
-    // });
-    return this.find(params, undefined, populate);
+  public async read(params: Partial<Entity>, options: FindOptions = { }): Promise<Entity[]> {
+    return this.find(params, options);
   }
 
   /**
@@ -117,8 +107,10 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Returns an object contining limit, offset, total and results
    * @param id
    */
-  public async readAndCount(params: Entity, partial: AbstractPartialDto = { }, populate?: boolean | string[]): Promise<AbstractPartialResponse<Entity>> {
-    return this.find(params, partial, populate);
+  public async readAndCount(params: Entity, options: FindOptions = { }): Promise<AbstractPartialResponse<Entity>> {
+    if (!options.limit) options.limit = 1000;
+    if (!options.offset) options.offset = 0;
+    return this.find(params, options);
   }
 
   /**
@@ -126,8 +118,8 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * its configured collections
    * @param id
    */
-  public async readById(id: string, populate?: boolean | string[]): Promise<Entity> {
-    return this.find(id, undefined, populate);
+  public async readById(id: string, options: FindOptions = { }): Promise<Entity> {
+    return this.find(id, options);
   }
 
   /**
