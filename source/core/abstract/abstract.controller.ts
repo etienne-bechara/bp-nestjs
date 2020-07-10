@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
 import { BadRequestException, Body, Delete, Get, NotFoundException, NotImplementedException, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
@@ -19,8 +20,10 @@ import { AbstractService } from './abstract.service';
  */
 @UseInterceptors(AbstractEntityInterceptor)
 export abstract class AbstractController<Entity> extends AbstractProvider {
-  protected MISSING_DTO_MESSAGE: string = 'missing dto implementation';
-  protected MISSING_BODY_MESSAGE: string = 'missing request body';
+  protected MISSING_DTO: string = 'missing dto implementation';
+  protected MISSING_BODY: string = 'missing request body';
+  protected OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';
+  protected OPERATOR_TOO_MANY: string = 'has too many filter operators';
 
   /** */
   public constructor(
@@ -41,11 +44,15 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
   @Get()
   public async get(@Query() query: Entity & AbstractPartialDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
     await this.validateImplementation(AbstractControllerMethod.GET);
-    const { data, partial } = await this.plainToDtoOffset(unflatten(query), this.options.dto.read);
 
-    return partial && partial.limit
-      ? this.service.readAndCount(data, partial)
-      : this.service.read(data);
+    const parsedQuery = this.parseQueryOperators(query);
+    const dto = await this.plainToDtoOffset(parsedQuery.stripped, this.options.dto.read);
+
+    if (!dto.partial) dto.partial = { };
+    if (!dto.partial.limit) dto.partial.limit = 1000;
+    if (!dto.partial.offset) dto.partial.offset = 0;
+
+    return this.service.readAndCount(parsedQuery.unflatted, dto.partial);
   }
 
   /**
@@ -66,7 +73,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
   @Post()
   public async post(@Body() body: Entity): Promise<Entity> {
     await this.validateImplementation(AbstractControllerMethod.POST);
-    if (!body) throw new BadRequestException(this.MISSING_BODY_MESSAGE);
+    if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.create);
     return this.service.create(dto);
@@ -80,7 +87,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
   @Put()
   public async put(@Body() body: Entity): Promise<Entity> {
     await this.validateImplementation(AbstractControllerMethod.PUT);
-    if (!body) throw new BadRequestException(this.MISSING_BODY_MESSAGE);
+    if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.create);
     return this.service.upsert(dto);
@@ -94,7 +101,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
   @Put(':id')
   public async putById(@Param() params: AbstractIdDto, @Body() body: Entity): Promise<Entity> {
     await this.validateImplementation(AbstractControllerMethod.PUT_BY_ID);
-    if (!body) throw new BadRequestException(this.MISSING_BODY_MESSAGE);
+    if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.update);
     return this.service.updateById(params.id, dto);
@@ -129,7 +136,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
       || method === AbstractControllerMethod.PUT && !this.options.dto.create
       || method === AbstractControllerMethod.PUT_BY_ID && !this.options.dto.update
     ) {
-      throw new NotImplementedException(this.MISSING_DTO_MESSAGE);
+      throw new NotImplementedException(this.MISSING_DTO);
     }
   }
 
@@ -189,6 +196,47 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
     return {
       data: await this.plainToDto(dataObject, type),
       partial: await this.plainToDto(partialObject, AbstractPartialDto),
+    };
+  }
+
+  /**
+   * Parses inbound query string that may include operators:
+   * $gt, $gte, $lt, $lte, $like, etc..
+   * And returns several versions of it for dto validation
+   * and ORM find execution
+   * @param query
+   */
+  protected parseQueryOperators(query: any): { source: any, stripped: any, unflatted: any } {
+    const allowedOperators = [ 'eq', 'gt', 'gte', 'lt', 'lte', 'ne', 'like', 're' ];
+
+    const source = { ...query };
+    const stripped = { ...query };
+    const unflatted = { ...query };
+
+    for (const key in source) {
+      const operatorValidation = key.split('$');
+
+      if (operatorValidation.length <= 1) {
+        continue;
+      }
+      else if (operatorValidation.length > 2) {
+        throw new BadRequestException(`${key} ${this.OPERATOR_TOO_MANY}`);
+      }
+      else if (!allowedOperators.includes(operatorValidation[1])) {
+        throw new BadRequestException(`${operatorValidation[1]} ${this.OPERATOR_NOT_ALLOWED}`);
+      }
+
+      stripped[key.split('$')[0]] = stripped[key];
+      delete stripped[key];
+
+      unflatted[key.replace('$', '.$')] = unflatted[key];
+      delete unflatted[key];
+    }
+
+    return {
+      source,
+      stripped: unflatten(stripped),
+      unflatted: unflatten(unflatted),
     };
   }
 

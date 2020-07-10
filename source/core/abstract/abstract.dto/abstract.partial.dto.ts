@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
 import { Transform } from 'class-transformer';
-import { IsNumber, Min, ValidateIf } from 'class-validator';
+import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 export class AbstractPartialDto {
 
-  @ValidateIf((o) => o.page)
+  @IsOptional()
   @Transform((v) => parseInt(v))
-  @IsNumber()
-  @Min(1)
+  @IsNumber() @Min(1) @Max(1000)
   public limit?: number;
 
-  @ValidateIf((o) => o.limit)
+  @IsOptional()
   @Transform((v) => parseInt(v))
-  @IsNumber()
-  @Min(0)
+  @IsNumber() @Min(0)
   public offset?: number;
 
 }
