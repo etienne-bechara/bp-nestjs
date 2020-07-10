@@ -25,13 +25,17 @@
 
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
 
-    "orm:schema:sync:gen:dev": "npm run build && npm run orm:schema:sync:gen",
-    "orm:schema:sync:gen:stg": "npm run build && cp-cli .env.stg dist/.env && npm run orm:schema:sync:gen",
-    "orm:schema:sync:gen:prd": "npm run build && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
-    
+    "orm:schema:sync:dev:gen": "npm run build && npm run orm:schema:sync:gen",
+    "orm:schema:sync:dev:run": "cp-cli .env dist/.env && mikro-orm migration:up",
+
+    "orm:schema:sync:stg:gen": "npm run build && cp-cli .env.stg dist/.env && npm run orm:schema:sync:gen",
+    "orm:schema:sync:stg:run": "cp-cli .env.stg dist/.env && mikro-orm migration:up",
+
+    "orm:schema:sync:prd:gen": "npm run build && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
+    "orm:schema:sync:prd:run": "cp-cli .env.prd dist/.env && mikro-orm migration:up",
+
     "orm:schema:sync:gen": "mikro-orm schema:update --dump && mikro-orm migration:create && npm run orm:schema:sync:help",
-    "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:schema:sync:run",
-    "orm:schema:sync:run": "mikro-orm migration:up"
+    "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:schema:sync:run"
   },
   "mikro-orm": {
     "useTsNode": true,

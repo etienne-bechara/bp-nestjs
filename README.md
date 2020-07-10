@@ -579,23 +579,25 @@ Caso prefira utilizá-las em sua completa extensão, incluindo versionamento e m
 Para criar uma migration de sincronismo da modelagem atual com os arquivos `*.entity.ts`, execute:
 
 ```bash
-npm run orm:schema:sync:gen:dev
+npm run orm:schema:sync:dev:gen
 ```
 
 Você pode criar arquivos `.env` separados para executar manualmente em ambientes de homologação ou produção conforme:
 
 ```bash
-npm run orm:schema:sync:gen:dev    // Utiliza arquivo .env
-npm run orm:schema:sync:gen:stg    // Utiliza arquivo .env.stg
-npm run orm:schema:sync:gen:prd    // Utiliza arquivo .env.prd
+npm run orm:schema:sync:dev:gen    // Utiliza arquivo .env
+npm run orm:schema:sync:stg:gen    // Utiliza arquivo .env.stg
+npm run orm:schema:sync:prd:gen    // Utiliza arquivo .env.prd
 ```
 
 Após executar o comando para o ambiente desejado, será gerado um arquivo `Migration*.js` na pasta `/dist/migration`.
 
-Revise as queries a serem a executadas e altere conforme desejar. Quando estiver satisfeito salve o arquivo e execute:
+Revise as queries a serem executadas e altere conforme desejar. Quando estiver satisfeito salve o arquivo e execute de acordo com o ambiente:
 
 ```
-npm run orm:schema:sync:run
+npm run orm:schema:sync:dev:run
+npm run orm:schema:sync:stg:run
+npm run orm:schema:sync:prd:run
 ```
 
 ## Blueprints
