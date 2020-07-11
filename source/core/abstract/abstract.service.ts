@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { AnyEntity, EntityRepository, QueryOrder } from 'mikro-orm';
 
 import { AbstractFindOptions, AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
@@ -19,7 +19,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
   protected PROPERTY_NON_EXISTANT: string = 'property does not exist on entity';
   protected QUERY_FAIL: string = 'failed to execute query statement';
   protected UK_REFERENCE_FAIL: string = 'unique constraint references more than one entity';
-  protected UK_MISSING: string = 'missing unique key declaration for upsert';
+  protected UK_MISSING: string = 'missing default unique key implementation';
 
   /** */
   public constructor(
@@ -47,32 +47,27 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
       [options.order.split(':')[0]]: QueryOrder[options.order.split(':')[1]],
     };
 
-    try {
-      // One by ID
-      if (typeof params === 'string') {
-        const idParam: AnyEntity = { id: params };
-        const [ entity ] = await this.repository.find(idParam, options);
-        if (!entity) throw new NotFoundException(this.NOT_FOUND);
-        return entity;
-      }
-
-      // Many with Pagination
-      else if (partial) {
-        const [ records, count ] = await this.repository.findAndCount(params, options);
-        return {
-          order: options.order,
-          limit: options.limit,
-          offset: options.offset,
-          count, records,
-        };
-      }
-
-      // Many as Array
-      return this.repository.find(params, options);
+    // One by ID
+    if (typeof params === 'string') {
+      const idParam: AnyEntity = { id: params };
+      const [ entity ] = await this.repository.find(idParam, options);
+      if (!entity) throw new NotFoundException(this.NOT_FOUND);
+      return entity;
     }
-    catch (e) {
-      this.queryExceptionHandler(e, params);
+
+    // Many with Pagination
+    else if (partial) {
+      const [ records, count ] = await this.repository.findAndCount(params, options);
+      return {
+        order: options.order,
+        limit: options.limit,
+        offset: options.offset,
+        count, records,
+      };
     }
+
+    // Many as Array
+    return this.repository.find(params, options);
   }
 
   /**
@@ -189,7 +184,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
   public async upsert(data: Partial<Entity> | any, uniqueKey?: string[] ): Promise<Entity> {
     uniqueKey = uniqueKey || this.options.defaults.uniqueKey;
     if (!uniqueKey) {
-      throw new InternalServerErrorException(this.UK_MISSING);
+      throw new NotImplementedException(this.UK_MISSING);
     }
 
     const clause = { };
