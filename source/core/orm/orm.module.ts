@@ -5,7 +5,12 @@ import { AppUtils } from '../app/app.utils';
 import OrmConnection from './orm.connection';
 
 const enableOrm = AppUtils.getSettings().ORM_TYPE;
+const logger = AppUtils.getLogger();
 const entities = AppUtils.globToRequire([ '../../**/*.entity.js', '!../../**/orm*entity.js' ]);
+
+enableOrm
+  ? logger.success('ORM connection ENABLED', { localOnly: true })
+  : logger.warning('ORM connection DISABLED', { localOnly: true });
 
 @Module({
   imports: [

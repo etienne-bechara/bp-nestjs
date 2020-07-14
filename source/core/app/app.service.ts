@@ -18,10 +18,6 @@ export class AppService extends AbstractProvider {
       cors: this.settings.APP_CORS_OPTIONS,
     });
 
-    this.settings.ORM_TYPE
-      ? this.logger.success('ORM connection ENABLED', { localOnly: true })
-      : this.logger.warning('ORM connection DISABLED', { localOnly: true });
-
     this.logger.debug(`Setting global request timeout to ${this.settings.APP_TIMEOUT / 1000}s...`);
     const httpServer = await this.server.listen(this.settings.PORT);
     httpServer.setTimeout(this.settings.APP_TIMEOUT);
