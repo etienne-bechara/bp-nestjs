@@ -7,19 +7,19 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { validate } from 'class-validator';
 import { unflatten } from 'flat';
 
-import { AbstractIdDto, AbstractOptionsDto } from './abstract.dto';
-import { AbstractControllerMethod } from './abstract.enum';
-import { AbstractEntityInterceptor } from './abstract.interceptor';
-import { AbstractControllerOptions, AbstractPartialResponse } from './abstract.interface';
-import { AbstractProvider } from './abstract.provider';
-import { AbstractService } from './abstract.service';
+import { AbstractProvider } from '../abstract/abstract.provider';
+import { OrmIdDto, OrmFilterDto } from './orm.dto';
+import { OrmControllerMethod } from './orm.enum';
+import { OrmEntityInterceptor } from './orm.interceptor';
+import { OrmControllerOptions, OrmPartialResponse } from './orm.interface';
+import { OrmService } from './orm.service';
 
 /**
  * Implements a very simples CRUD controller that
  * can be extended to prevent duplicate code
  */
-@UseInterceptors(AbstractEntityInterceptor)
-export abstract class AbstractController<Entity> extends AbstractProvider {
+@UseInterceptors(OrmEntityInterceptor)
+export abstract class OrmController<Entity> extends AbstractProvider {
   protected MISSING_DTO: string = 'missing dto implementation';
   protected MISSING_BODY: string = 'missing request body';
   protected OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';
@@ -27,8 +27,8 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
 
   /** */
   public constructor(
-    public readonly service: AbstractService<Entity>,
-    protected options: AbstractControllerOptions = { },
+    public readonly service: OrmService<Entity>,
+    protected options: OrmControllerOptions = { },
   ) {
     super();
     if (!this.options.dto) this.options.dto = { };
@@ -42,8 +42,8 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param query
    */
   @Get()
-  public async get(@Query() query: Entity & AbstractOptionsDto): Promise<Entity[] | AbstractPartialResponse<Entity>> {
-    await this.validateImplementation(AbstractControllerMethod.GET);
+  public async get(@Query() query: Entity & OrmFilterDto): Promise<Entity[] | OrmPartialResponse<Entity>> {
+    await this.validateImplementation(OrmControllerMethod.GET);
 
     const parsedQuery = this.parseQueryOperators(query);
     const dto = await this.plainToDtoOffset(parsedQuery.stripped, this.options.dto.read);
@@ -57,8 +57,8 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param params
    */
   @Get(':id')
-  public async getById(@Param() params: AbstractIdDto): Promise<Entity> {
-    await this.validateImplementation(AbstractControllerMethod.GET_BY_ID);
+  public async getById(@Param() params: OrmIdDto): Promise<Entity> {
+    await this.validateImplementation(OrmControllerMethod.GET_BY_ID);
     return this.service.readById(params.id);
   }
 
@@ -69,7 +69,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    */
   @Post()
   public async post(@Body() body: Entity): Promise<Entity> {
-    await this.validateImplementation(AbstractControllerMethod.POST);
+    await this.validateImplementation(OrmControllerMethod.POST);
     if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.create);
@@ -83,7 +83,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    */
   @Put()
   public async put(@Body() body: Entity): Promise<Entity> {
-    await this.validateImplementation(AbstractControllerMethod.PUT);
+    await this.validateImplementation(OrmControllerMethod.PUT);
     if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.create);
@@ -96,8 +96,8 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param body
    */
   @Put(':id')
-  public async putById(@Param() params: AbstractIdDto, @Body() body: Entity): Promise<Entity> {
-    await this.validateImplementation(AbstractControllerMethod.PUT_BY_ID);
+  public async putById(@Param() params: OrmIdDto, @Body() body: Entity): Promise<Entity> {
+    await this.validateImplementation(OrmControllerMethod.PUT_BY_ID);
     if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.update);
@@ -109,8 +109,8 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * @param body
    */
   @Delete(':id')
-  public async deleteById(@Param() params: AbstractIdDto): Promise<Entity> {
-    await this.validateImplementation(AbstractControllerMethod.DELETE_BY_ID);
+  public async deleteById(@Param() params: OrmIdDto): Promise<Entity> {
+    await this.validateImplementation(OrmControllerMethod.DELETE_BY_ID);
     return this.service.deleteById(params.id);
   }
 
@@ -118,7 +118,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
    * Validates if a given method is allowed to procede
    * @param method
    */
-  public async validateImplementation(method: AbstractControllerMethod): Promise<void> {
+  public async validateImplementation(method: OrmControllerMethod): Promise<void> {
 
     if (
       this.options.routes.exclude && this.options.routes.exclude.includes(method)
@@ -128,10 +128,10 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
     }
 
     if (
-      method === AbstractControllerMethod.GET && !this.options.dto.read
-      || method === AbstractControllerMethod.POST && !this.options.dto.create
-      || method === AbstractControllerMethod.PUT && !this.options.dto.create
-      || method === AbstractControllerMethod.PUT_BY_ID && !this.options.dto.update
+      method === OrmControllerMethod.GET && !this.options.dto.read
+      || method === OrmControllerMethod.POST && !this.options.dto.create
+      || method === OrmControllerMethod.PUT && !this.options.dto.create
+      || method === OrmControllerMethod.PUT_BY_ID && !this.options.dto.update
     ) {
       throw new NotImplementedException(this.MISSING_DTO);
     }
@@ -184,7 +184,7 @@ export abstract class AbstractController<Entity> extends AbstractProvider {
 
     return {
       data: await this.plainToDto(data, type),
-      options: await this.plainToDto(options, AbstractOptionsDto),
+      options: await this.plainToDto(options, OrmFilterDto),
     };
   }
 

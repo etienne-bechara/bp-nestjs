@@ -1,5 +1,5 @@
-import { AbstractReadDto } from '../../../core/abstract/abstract.dto';
+import { OrmReadDto } from '../../core/orm/orm.dto';
 
-export class __PascalCaseName__ReadDto extends AbstractReadDto {
+export class __PascalCaseName__ReadDto extends OrmReadDto {
 
 }

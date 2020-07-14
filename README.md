@@ -89,17 +89,20 @@ npm run update:major
 
 ## Componentes
 
+Vários dos frameworks que este projeto é composto são opcionais e podem ser facilmente excluídos para economia de memória RAM durante execução.
+
+
 ### Frameworks
 
 Documentação | Reponsabilidades | Observação 
 ---|---|---
 [NestJS](https://docs.nestjs.com/) | • Injeção de Dependências<br>• Inicialização do Servidor (Express)<br>• Middlewares e Fluxos de Validação<br>• Filtro Global de Exceções | Irá carregar automaticamente todos os arquivos nomeados como `*.module.ts`.
-[MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.
-[Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Por padrão apenas erros em ambientes de homologação ou produção serão enviados para a plataforma.
-[Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.
-[Nodemailer](https://nodemailer.com/about/) | • Envio Automatizado de E-mails | **Opcional**<br>Habilite configurando as variáveis `MAILER_*` no `.env`.
+[Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Não é possível removê-lo completamente, mas o consumo em execução é insignificante.
+[MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.<br>Para excluir remova a pasta `/core/orm`.
+[Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.<br>Para excluir remova a pasta `/core/redis`.
+[Nodemailer](https://nodemailer.com/about/) | • Envio Automatizado de E-mails | **Opcional**<br>Habilite configurando as variáveis `MAILER_*` no `.env`.<br>Para excluir remova a pasta `/core/mailer`.
 
-### Pacotes
+### Dependências
 
 Documentação | Reponsabilidades | Utilização 
 ---|---|---
@@ -201,15 +204,15 @@ Refira-se a [Mikro ORM - Decorators Reference](https://mikro-orm.io/docs/decorat
 
 Classe | Arquivo | Descrição
 ---|---|---
-AbstractIdEntity | `abstract.id.entity.ts` | Extenda essa classe para já incluir uma coluna UUID primária.
-AbstractTimestampEntity | `abstract.timestamp.entity.ts` | Extenda essa classe para já incluir colunas UUID primária, data de criação e data de atualização.
+OrmIdEntity | `ormid.entity.ts` | Extenda essa classe para já incluir uma coluna UUID primária.
+OrmTimestampEntity | `ormtimestamp.entity.ts` | Extenda essa classe para já incluir colunas UUID primária, data de criação e data de atualização.
 
 ### Exemplos
 
 ```ts
 @Entity({ collection: 'user' })
 export class UserEntity { 
-// utilize extends AbstractTimestampEntity acima para simplificar
+// utilize extends OrmTimestampEntity acima para simplificar
 
   @PrimaryKey()
   public id: string = v4();
@@ -284,7 +287,7 @@ Refira-se a [Nest JS - Controllers](https://docs.nestjs.com/controllers) para ma
 
 Classe | Arquivo | Descrição
 ---|---|---
-AbstractController | `abstract.controller.ts` | Extenda essa classe para já criar métodos GET, GET:id, POST, PUT, PUT:id, e DELETE:id.<br>Aplicável apenas se o ORM estiver habilitado.
+OrmController | `ormcontroller.ts` | Extenda essa classe para já criar métodos GET, GET:id, POST, PUT, PUT:id, e DELETE:id.<br>Aplicável apenas se o ORM estiver habilitado.
 
 ### Exemplos
 
@@ -308,7 +311,7 @@ Basedo em um serviço de ORM:
 
 ```ts
 @Controller('user')
-export class UserController extends AbstractController<UserEntity> {
+export class UserController extends OrmController<UserEntity> {
 
   public constructor(private readonly userService: UserService) {
     super(userService);
@@ -396,7 +399,7 @@ Refira-se a [Nest JS - Providers](https://docs.nestjs.com/providers) para mais i
 Classe | Arquivo | Descrição
 ---|---|---
 AbstractProvider | `abstract.provider.ts` | Extenda essa classe para já ter acesso ao logger, variáveis de ambiente e método de retry.
-AbstractService | `abstract.service.ts` | Extenda essa classe para já ter acesso a métodos de manipulação de dados via ORM com gerenciamento de exeções nas queries.
+OrmService | `ormservice.ts` | Extenda essa classe para já ter acesso a métodos de manipulação de dados via ORM com gerenciamento de exeções nas queries.
 HttpsService | `https.service.ts` | Wrapper sobre o Axios para padronizar exceções HTTP e adicionar amenidades.
 LoggerService | `logger.service.ts` | Disponível via AbstractProvider, realiza integração com Sentry e imprime no console durante desenvolvimento.
 MailerService | `mailer.service.ts` | Wrapper sobre o Nodemailer para envio automatizado de e-mails.
@@ -423,7 +426,7 @@ Baseado em serviço ORM:
 
 ```ts
 @Injectable()
-export class UserService extends AbstractService<UserEntity> {
+export class UserService extends OrmService<UserEntity> {
 
   public constructor(
     @InjectRepository(UserEntity)
@@ -514,7 +517,7 @@ Refira-se a [Nest JS - Interceptors](https://docs.nestjs.com/interceptors) para 
 Classe | Arquivo | Descrição
 ---|---|---
 AppLoggerInterceptor | `app.logger.interceptor.ts` | Extrai o IP da requisição bem faz o log da entrada e saída da requisição.
-AbstractEntityInterceptor | `abstract.entity.interceptor.ts` | Executa o método `toJSON()` das entidades antes de retorná-las. Aplicável apenas se utilizado o ORM.
+AbstractEntityInterceptor | `ormentity.interceptor.ts` | Executa o método `toJSON()` das entidades antes de retorná-las. Aplicável apenas se utilizado o ORM.
 
 ### Exemplo
 

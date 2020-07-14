@@ -1,6 +1,6 @@
 import { IsISO8601, IsOptional, IsUUID } from 'class-validator';
 
-export class AbstractReadDto {
+export class OrmReadDto {
 
   @IsOptional()
   @IsUUID()

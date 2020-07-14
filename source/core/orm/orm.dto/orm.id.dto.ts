@@ -1,6 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class AbstractIdDto {
+export class OrmIdDto {
 
   @IsUUID()
   public id: string;

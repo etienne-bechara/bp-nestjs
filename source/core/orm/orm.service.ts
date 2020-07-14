@@ -4,13 +4,13 @@
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { AnyEntity, EntityRepository, QueryOrder } from 'mikro-orm';
 
-import { AbstractFindOptions, AbstractPartialResponse, AbstractServiceOptions } from './abstract.interface';
-import { AbstractProvider } from './abstract.provider';
+import { AbstractProvider } from '../abstract/abstract.provider';
+import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.interface';
 
 /**
  * Creates an abstract service tied with a repository
  */
-export abstract class AbstractService<Entity> extends AbstractProvider {
+export abstract class OrmService<Entity> extends AbstractProvider {
   protected DUPLICATE_ENTRY: string = 'unique constraint violation';
   protected ENTITY_UNDEFINED: string = 'cannot persist undefined entity';
   protected FK_FAIL_CREATE: string = 'must reference an existing entity';
@@ -24,7 +24,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
   /** */
   public constructor(
     private readonly repository: EntityRepository<Entity>,
-    protected readonly options: AbstractServiceOptions = { },
+    protected readonly options: OrmServiceOptions = { },
   ) {
     super();
     if (!this.options.defaults) this.options.defaults = { };
@@ -36,8 +36,8 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * @param populate
    */
   private async find(
-    params: Partial<Entity> | string, options: AbstractFindOptions = { }, partial?: boolean,
-  ): Promise<Entity | Entity[] | AbstractPartialResponse<Entity>> {
+    params: Partial<Entity> | string, options: OrmFindOptions = { }, partial?: boolean,
+  ): Promise<Entity | Entity[] | OrmPartialResponse<Entity>> {
 
     // Assign defaults
     options.populate = options.populate || this.options.defaults.populate;
@@ -104,7 +104,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Read all entities that matches given criteria
    * @param id
    */
-  public async read(params: Partial<Entity>, options: AbstractFindOptions = { }): Promise<Entity[]> {
+  public async read(params: Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity[]> {
     const entities = await this.find(params, options);
     return Array.isArray(entities) ? entities : undefined;
   }
@@ -114,7 +114,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * Returns an object contining limit, offset, total and results
    * @param id
    */
-  public async readAndCount(params: Entity, options: AbstractFindOptions = { }): Promise<AbstractPartialResponse<Entity>> {
+  public async readAndCount(params: Entity, options: OrmFindOptions = { }): Promise<OrmPartialResponse<Entity>> {
     if (!options.limit) options.limit = 1000;
     if (!options.offset) options.offset = 0;
     const result = await this.find(params, options, true);
@@ -126,7 +126,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    * its configured collections
    * @param id
    */
-  public async readById(id: string, options: AbstractFindOptions = { }): Promise<Entity> {
+  public async readById(id: string, options: OrmFindOptions = { }): Promise<Entity> {
     const entity = await this.find(id, options);
     return 'id' in entity ? entity : undefined;
   }
@@ -183,7 +183,7 @@ export abstract class AbstractService<Entity> extends AbstractProvider {
    */
   public async upsert(data: Partial<Entity> | any, uniqueKey?: string[] ): Promise<Entity> {
     uniqueKey = uniqueKey || this.options.defaults.uniqueKey;
-    if (!uniqueKey) {
+    if (!uniqueKey || Object.keys(uniqueKey).length === 0) {
       throw new NotImplementedException(this.UK_MISSING);
     }
 

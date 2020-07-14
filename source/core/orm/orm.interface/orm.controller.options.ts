@@ -1,11 +1,11 @@
 import { ClassType } from 'class-transformer/ClassTransformer';
 
-import { AbstractControllerMethod } from '../abstract.enum';
+import { OrmControllerMethod } from '../orm.enum';
 
-export interface AbstractControllerOptions {
+export interface OrmControllerOptions {
   routes?: {
-    only?: AbstractControllerMethod[];
-    exclude?: AbstractControllerMethod[];
+    only?: OrmControllerMethod[];
+    exclude?: OrmControllerMethod[];
   },
   dto?: {
     create?: ClassType<unknown>,

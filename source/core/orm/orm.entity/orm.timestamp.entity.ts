@@ -1,8 +1,8 @@
 import { Index, Property } from 'mikro-orm';
 
-import { AbstractIdEntity } from '.';
+import { OrmIdEntity } from '.';
 
-export abstract class AbstractTimestampEntity extends AbstractIdEntity {
+export abstract class OrmTimestampEntity extends OrmIdEntity {
 
   @Index()
   @Property({ columnType: 'timestamp', onUpdate: () => new Date() })

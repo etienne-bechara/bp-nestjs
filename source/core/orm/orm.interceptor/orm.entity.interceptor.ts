@@ -5,10 +5,8 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AbstractProvider } from '../../abstract/abstract.provider';
-
 @Injectable()
-export class AbstractEntityInterceptor extends AbstractProvider implements NestInterceptor {
+export class OrmEntityInterceptor implements NestInterceptor {
 
   /**
    * If returning data contain entity classes, calls their stringify method

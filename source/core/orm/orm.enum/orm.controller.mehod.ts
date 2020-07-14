@@ -1,4 +1,4 @@
-export enum AbstractControllerMethod {
+export enum OrmControllerMethod {
   GET = 'GET',
   GET_BY_ID = 'GET_BY_ID',
   POST = 'POST',

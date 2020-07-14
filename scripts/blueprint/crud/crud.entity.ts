@@ -1,8 +1,8 @@
 import { Entity } from 'mikro-orm';
 
-import { AbstractTimestampEntity } from '../core/abstract/abstract.entity';
+import { OrmTimestampEntity } from '../core/orm/orm.entity';
 
 @Entity({ tableName: '__SnakeCaseName__' })
-export class __PascalCaseName__Entity extends AbstractTimestampEntity {
+export class __PascalCaseName__Entity extends OrmTimestampEntity {
 
 }

@@ -1,4 +1,4 @@
-export interface AbstractPartialResponse<Entity> {
+export interface OrmPartialResponse<Entity> {
   order: string;
   limit: number;
   offset: number;

@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsNumber, IsOptional, Matches, Max, Min } from 'class-validator';
 
-export class AbstractOptionsDto {
+export class OrmFilterDto {
 
   @IsOptional()
   @Transform((v) => parseInt(v))
