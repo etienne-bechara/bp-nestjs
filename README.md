@@ -2,17 +2,17 @@
 
 Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover iniciação rápida de projetos em Node.js.
 
-- [Utilização](#utiliza--o)
-  * [Depuração](#depura--o)
+- [Utilização](#utilização)
+  * [Depuração](#depuraçãoo)
   * [Boilerplate](#boilerplate)
-  * [Dependências](#depend-ncias)
+  * [Dependências](#dependências)
 - [Componentes](#componentes)
   * [Frameworks](#frameworks)
   * [Pacotes](#pacotes)
 - [Domain](#domain)
 - [Settings](#settings)
-  * [Variáveis de Ambiente](#vari-veis-de-ambiente)
-  * [Opções do Serviço](#op--es-do-servi-o)
+  * [Variáveis de Ambiente](#variáveis-de-ambiente)
+  * [Opções do Serviço](#opções-do-serviço)
 - [Entity](#entity)
 - [Modules](#modules)
 - [Controllers](#controllers)
