@@ -3,7 +3,7 @@
 Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover iniciação rápida de projetos em Node.js.
 
 - [Utilização](#utiliza--o)
-- [Manutenção](#manuten--o)
+  * [Depuração](#depura--o)
   * [Boilerplate](#boilerplate)
   * [Dependências](#depend-ncias)
 - [Componentes](#componentes)
@@ -43,9 +43,9 @@ git remote add orign https://github.com/eu/meu-projeto.git
 
 3\. Crie uma cópia do arquivo `.sample.env` como `.env`.
 
-4\. [Opcional] Configure o arquivo `.env` para sua aplicação.
+4\. [Opcional] Customize o arquivo `.env` para sua aplicação.
 
-5\. Execute `npm run dev` para subir a aplicação.
+5\. Execute `npm start` para subir a aplicação.
 
 Envie uma requisição `GET` para `localhost:8080`, o retorno a seguir indica que a aplicação subiu com sucesso:
 
@@ -57,9 +57,13 @@ Envie uma requisição `GET` para `localhost:8080`, o retorno a seguir indica qu
 }
 ```
 
+### Depuração
 
+Por padrão, a aplicação irá expor um sessão de debug na porta `9229`.
 
-## Manutenção
+Ao utilizar a ferramenta `VSCode` como IDE de desevolvimento, basta executar `npm start` e pressionar `F5` para conectar o debugger.
+
+Você pode criar os `breakpoint` diretamente no arquivo `.ts` que eles serão automaticamente mapeados pelos `.js` em execução.
 
 ### Boilerplate
 
