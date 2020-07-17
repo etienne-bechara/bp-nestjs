@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import https from 'https';
 import qs from 'qs';
 import UserAgent from 'user-agents';
@@ -16,6 +17,7 @@ export class HttpsService extends AppProvider {
   private settings: HttpsSettings = this.getSettings();
   private defaultValidator: (status: number)=> boolean;
   private defaultReturnType: HttpsReturnType;
+  private baseUrl: string;
   private baseData: Record<string, unknown>;
   private baseHeaders: Record<string, string>;
   private instance: AxiosInstance;
@@ -32,6 +34,7 @@ export class HttpsService extends AppProvider {
   public setupInstance(params: HttpsServiceOptions): void {
 
     this.defaultReturnType = params.defaultReturnType || HttpsReturnType.DATA;
+    this.baseUrl = params.baseUrl,
     this.baseData = params.baseData;
     this.defaultValidator = params.defaultValidator
       ? params.defaultValidator
@@ -44,7 +47,6 @@ export class HttpsService extends AppProvider {
     this.baseHeaders = params.baseHeaders;
 
     this.instance = axios.create({
-      baseURL: params.baseUrl,
       timeout: params.defaultTimeout || this.settings.HTTPS_DEFAULT_TIMEOUT,
       validateStatus: () => true,
       httpsAgent: params.ignoreHttpsErrors
@@ -59,7 +61,7 @@ export class HttpsService extends AppProvider {
    * In case of any errors, standardize the output for easy debugging
    * @param params
    */
-  public async request<T>(params: HttpsRequestParams): Promise<AxiosResponse | T> {
+  public async request<T>(params: HttpsRequestParams): Promise<T> {
     if (!this.instance) {
       throw new InternalServerErrorException('https service must be configured with this.setupInstance()');
     }
@@ -67,7 +69,7 @@ export class HttpsService extends AppProvider {
     const rawParms = JSON.parse(JSON.stringify(params));
     this.transformParams(params);
 
-    let errorPrefix, res: AxiosResponse<T>;
+    let errorPrefix, res;
     try {
       res = await this.instance(params);
       const validator = params.validateStatus || this.defaultValidator;
@@ -101,7 +103,8 @@ export class HttpsService extends AppProvider {
   private transformParams(params: HttpsRequestParams): void {
     if (!params.headers) params.headers = { };
 
-    // Join data and headers with respective base
+    // Join url, data and headers with respective base
+    if (this.baseUrl) params.url = `${this.baseUrl}${params.url}`;
     params.headers = { ...this.baseHeaders, ...params.headers };
     if (this.baseData) {
       if (params.data) params.data = { ...this.baseData, ...params.data };
@@ -127,31 +130,31 @@ export class HttpsService extends AppProvider {
   }
 
   /** GET */
-  public async get(url: string, params: HttpsRequestParams = { }): Promise<any> {
+  public async get<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'GET';
     params.url = url;
-    return this.request(params);
+    return this.request<T>(params);
   }
 
   /** POST */
-  public async post(url: string, params: HttpsRequestParams = { }): Promise<any> {
+  public async post<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'POST';
     params.url = url;
-    return this.request(params);
+    return this.request<T>(params);
   }
 
   /** PUT */
-  public async put(url: string, params: HttpsRequestParams = { }): Promise<any> {
+  public async put<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'PUT';
     params.url = url;
-    return this.request(params);
+    return this.request<T>(params);
   }
 
   /** DELETE */
-  public async delete(url: string, params: HttpsRequestParams = { }): Promise<any> {
+  public async delete<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'DELETE';
     params.url = url;
-    return this.request(params);
+    return this.request<T>(params);
   }
 
 }
