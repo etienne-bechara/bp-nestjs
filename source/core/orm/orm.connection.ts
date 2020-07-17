@@ -1,4 +1,5 @@
 import { Connection, IDatabaseDriver, Options, UnderscoreNamingStrategy } from 'mikro-orm';
+import { MySqlDriver } from 'mikro-orm/dist/drivers/MySqlDriver';
 
 import { AppEnvironment } from '../app/app.enum';
 import { AppUtils } from '../app/app.utils';
@@ -20,6 +21,11 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
   pool: {
     min: settings.ORM_POOL_MIN,
     max: settings.ORM_POOL_MAX,
+  },
+
+  driver: MySqlDriver,
+  driverOptions: {
+    connection: { enableKeepAlive: true },
   },
 
   autoFlush: false,
