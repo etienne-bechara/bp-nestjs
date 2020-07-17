@@ -101,10 +101,11 @@ Vários dos frameworks que este projeto é composto são opcionais e podem ser f
 Documentação | Reponsabilidades | Observação 
 ---|---|---
 [NestJS](https://docs.nestjs.com/) | • Injeção de Dependências<br>• Inicialização do Servidor (Express)<br>• Middlewares e Fluxos de Validação<br>• Filtro Global de Exceções | Irá carregar automaticamente todos os arquivos nomeados como `*.module.ts`.
-[Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Não é possível removê-lo completamente, mas o consumo em execução é insignificante.
+[Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Não é possível remover o logger (seu consumo em execução é insignificante).
 [MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.<br>Para excluir remova a pasta `/core/orm`.
 [Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.<br>Para excluir remova a pasta `/core/redis`.
 [Nodemailer](https://nodemailer.com/about/) | • Envio Automatizado de E-mails | **Opcional**<br>Habilite configurando as variáveis `MAILER_*` no `.env`.<br>Para excluir remova a pasta `/core/mailer`.
+[RapidAPI](https://rapidapi.com/) | • Acesso a centenas de APIs prontas<br>• Validação de e-mail e domínio | **Opcional**<br>Habilite configurando a variável `RAPID_API_AUTH` no `.env`.<br>Para excluir remova a pasta `/core/rapid-api`.
 
 ### Dependências
 
