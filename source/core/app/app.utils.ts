@@ -8,11 +8,12 @@ import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 import globby from 'globby';
 
-import { Settings } from '../../settings';
 import { LoggerService } from '../logger/logger.service';
+import { LoggerSettings } from '../logger/logger.settings';
 import { AppEnvironment } from './app.enum';
+import { AppSettings } from './app.settings';
 
-let cachedSettings: Settings;
+let cachedSettings: any;
 let loggerService: LoggerService;
 
 export class AppUtils {
@@ -32,13 +33,13 @@ export class AppUtils {
   }
 
   /**
-   * Parses and validates environment varaibles then
+   * Parses and validates environment variables then
    * join them with settings and caches the result
    *
    * At development environment enable reverse mapping
    * of js files for easier stack debugging
    */
-  public static getSettings(): Settings {
+  public static parseSettings<T>(): T {
 
     if (!cachedSettings) {
       const rawEnv = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
@@ -75,7 +76,9 @@ export class AppUtils {
    */
   public static getLogger(): LoggerService {
     if (!loggerService) {
-      loggerService = new LoggerService(this.getSettings());
+      loggerService = new LoggerService(
+        this.parseSettings<AppSettings & LoggerSettings>(),
+      );
     }
     return loggerService;
   }

@@ -3,9 +3,12 @@ import { ServerResponse } from 'http';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
 import { AppEnvironment } from './app.enum';
+import { AppSettings } from './app.settings';
 
 @Catch()
 export class AppFilter extends AbstractProvider implements ExceptionFilter {
+  private settings: AppSettings = this.getSettings();
+
   /** */
   public constructor() { super(); }
 

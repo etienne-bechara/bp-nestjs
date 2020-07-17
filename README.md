@@ -133,7 +133,15 @@ Os inclusos no boilerplate estão dentro de `/source/core` para melhor organiza�
 
 Cada domínio, pode ter uma grupo de configurações definidas em um arquivo `*.settings.ts`.
 
-Ao criar um serviço que extenda a class `AbstractProvider` (detalhes adiante), todas as configurações da aplicação estarão disponíveis em `this.settings`.
+Ao criar um serviço que extenda a class `AbstractProvider` (detalhes adiante), é possível obter as recém criadas configurações através do método `this.getSettings()`.
+
+Exemplo:
+
+```ts
+export class MailerService extends AbstractProvider {
+  private settings: MailerSettings = this.getSettings();
+}
+```
 
 As configurações são divididas em duas categorias:
 

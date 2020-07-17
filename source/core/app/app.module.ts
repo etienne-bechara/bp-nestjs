@@ -4,10 +4,11 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { AppFilter } from './app.filter';
 import { AppLoggerInterceptor } from './app.interceptor';
 import { AppAuthMiddleware } from './app.middleware';
+import { AppSettings } from './app.settings';
 import { AppUtils } from './app.utils';
 
 const modules = AppUtils.globToRequire([ '../../**/*.module.js', '!../../**/app.module.js' ]);
-const validationRules = AppUtils.getSettings().APP_VALIDATION_RULES;
+const validationRules = AppUtils.parseSettings<AppSettings>().APP_VALIDATION_RULES;
 
 /**
  * Load all modules which includes providers, controllers,

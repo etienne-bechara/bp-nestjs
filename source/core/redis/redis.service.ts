@@ -2,9 +2,11 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import redis, { RedisClient } from 'redis';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
+import { RedisSettings } from './redis.settings';
 
 @Injectable()
 export class RedisService extends AbstractProvider {
+  private settings: RedisSettings = this.getSettings();
   private redisClient: RedisClient;
 
   /** */

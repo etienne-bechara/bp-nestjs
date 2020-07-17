@@ -3,8 +3,10 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
 import { AppModule } from './app.module';
+import { AppSettings } from './app.settings';
 
 export class AppService extends AbstractProvider {
+  private settings: AppSettings = this.getSettings();
   private server: NestExpressApplication;
 
   /**

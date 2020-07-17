@@ -8,11 +8,13 @@ import { validate } from 'class-validator';
 import { unflatten } from 'flat';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
-import { OrmIdDto, OrmFilterDto } from './orm.dto';
+import { AppSettings } from '../app/app.settings';
+import { OrmFilterDto, OrmIdDto } from './orm.dto';
 import { OrmControllerMethod } from './orm.enum';
 import { OrmEntityInterceptor } from './orm.interceptor';
 import { OrmControllerOptions, OrmPartialResponse } from './orm.interface';
 import { OrmService } from './orm.service';
+import { OrmSettings } from './orm.settings';
 
 /**
  * Implements a very simples CRUD controller that
@@ -20,6 +22,7 @@ import { OrmService } from './orm.service';
  */
 @UseInterceptors(OrmEntityInterceptor)
 export abstract class OrmController<Entity> extends AbstractProvider {
+  protected settings: AppSettings & OrmSettings = this.getSettings();
   protected MISSING_DTO: string = 'missing dto implementation';
   protected MISSING_BODY: string = 'missing request body';
   protected OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';

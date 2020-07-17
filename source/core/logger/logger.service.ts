@@ -7,17 +7,19 @@ import * as Sentry from '@sentry/node';
 import chalk from 'chalk';
 import moment from 'moment';
 
-import { Settings } from '../../settings';
 import { AppEnvironment } from '../app/app.enum';
 import { LoggerLevel } from './logger.enum';
 import { LoggerParams } from './logger.interface';
+import { LoggerSettings } from './logger.settings';
 
 @Injectable()
 export class LoggerService {
   private sentryEnabled: boolean;
 
   /** */
-  public constructor(private settings: Settings) { this.setupLogger(); }
+  public constructor(private settings: LoggerSettings & { NODE_ENV: AppEnvironment}) {
+    this.setupLogger();
+  }
 
   /**
    * Enable Sentry integration if the minum level configured

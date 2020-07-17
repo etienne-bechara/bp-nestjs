@@ -3,9 +3,11 @@ import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 
 import { AbstractProvider } from '../abstract/abstract.provider';
+import { MailerSettings } from './mailer.settings';
 
 @Injectable()
 export class MailerService extends AbstractProvider {
+  private settings: MailerSettings = this.getSettings();
   private mailerTransporter: Mail;
 
   /** */

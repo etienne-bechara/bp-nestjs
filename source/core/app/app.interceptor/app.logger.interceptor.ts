@@ -8,9 +8,11 @@ import { finalize } from 'rxjs/operators';
 import { AbstractProvider } from '../../abstract/abstract.provider';
 import { AppEnvironment } from '../app.enum';
 import { AppRequest, AppResponse } from '../app.interface';
+import { AppSettings } from '../app.settings';
 
 @Injectable()
 export class AppLoggerInterceptor extends AbstractProvider implements NestInterceptor {
+  private settings: AppSettings = this.getSettings();
 
   /**
    * Isolates user agent and IP address, then prints request and

@@ -1,16 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Settings } from '../../settings';
 import { AppUtils } from '../app/app.utils';
 import { LoggerService } from '../logger/logger.service';
 import { AbstractRetryParams } from './abstract.interface';
 
 export abstract class AbstractProvider {
-  public settings: Settings = AppUtils.getSettings();
-  public logger: LoggerService = AppUtils.getLogger();
+  protected logger: LoggerService = AppUtils.getLogger();
+
+  /** Reads desired settings and type them accordingly */
+  protected getSettings<T>(): T {
+    return AppUtils.parseSettings<T>();
+  }
 
   /** Wait for desired milliseconds */
-  public async wait(ms: number): Promise<void> {
+  protected async wait(ms: number): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, ms));
   }
 
@@ -18,7 +22,7 @@ export abstract class AbstractProvider {
    * Retry a method for configured times or until desired timeout
    * @param params
    */
-  public async retry<T>(params: AbstractRetryParams): Promise<T> {
+  protected async retry<T>(params: AbstractRetryParams): Promise<T> {
     const p = params;
     this.logger.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
 
