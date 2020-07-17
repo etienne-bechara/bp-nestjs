@@ -10,8 +10,8 @@ const logger = AppUtils.getLogger();
 const entities = AppUtils.globToRequire([ '../../**/*.entity.js', '!../../**/orm*entity.js' ]);
 
 enableOrm
-  ? logger.success('ORM connection ENABLED', { localOnly: true })
-  : logger.warning('ORM connection DISABLED', { localOnly: true });
+  ? logger.success('[ENABLED] ORM connection ', { private: true })
+  : logger.warning('[DISABLED] ORM connection', { private: true });
 
 @Module({
   imports: [

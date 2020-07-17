@@ -21,7 +21,7 @@ export class RedisService extends AppProvider {
   private setupRedis(): void {
 
     if (!this.settings.REDIS_HOST) {
-      this.logger.warning('Redis client DISABLED', { localOnly: true });
+      this.logger.warning('[DISABLED] Redis client', { private: true });
       return undefined;
     }
 
@@ -31,7 +31,7 @@ export class RedisService extends AppProvider {
       password: this.settings.REDIS_PASSWORD,
     });
 
-    this.logger.success('Redis client ENABLED', { localOnly: true });
+    this.logger.success('[ENABLED] Redis client', { private: true });
   }
 
   /**

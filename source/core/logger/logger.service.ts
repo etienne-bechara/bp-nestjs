@@ -27,7 +27,7 @@ export class LoggerService {
    * Then add a process listener to catch any unhandled exception
    */
   private setupLogger(): void {
-    this.info(`Environment configured as ${this.settings.NODE_ENV}`, { localOnly: true });
+    this.info(`Environment configured as ${this.settings.NODE_ENV}`, { private: true });
 
     this.sentryEnabled =
       this.settings.LOGGER_SENTRY_DSN
@@ -39,10 +39,10 @@ export class LoggerService {
         environment: this.settings.NODE_ENV,
         integrations: (ints) => ints.filter((i) => i.name !== 'OnUncaughtException'),
       });
-      this.success('Sentry integration ENABLED', { localOnly: true });
+      this.success('[ENABLED] Sentry integration', { private: true });
     }
     else {
-      this.warning('Sentry integration DISABLED', { localOnly: true });
+      this.warning('[DISABLED] Sentry integration', { private: true });
     }
 
     process.on('uncaughtException', (err) => {
@@ -107,12 +107,12 @@ export class LoggerService {
 
       console.log(chalk`{grey ${nowStr}} {${params.labelColor}  ${params.label} } {${params.messageColor} ${params.message}}`);
       if (stackStr && params.level <= LoggerLevel.ERROR) console.log(chalk`{grey ${stackStr}}`);
-      if (params.data && !params.data.localOnly) console.log(params.data);
+      if (params.data && !params.data.private) console.log(params.data);
     }
 
     else if (params.level <= LoggerLevel.WARNING) {
       console.log(params.message);
-      if (params.data && !params.data.localOnly) console.log(params.data);
+      if (params.data && !params.data.private) console.log(params.data);
       if (params.error) console.error(params.error);
     }
   }
@@ -122,7 +122,7 @@ export class LoggerService {
    * @param params
    */
   private publishLog(params: LoggerParams): void {
-    if (params.data && params.data.localOnly) return undefined;
+    if (params.data && params.data.private) return undefined;
 
     if (this.sentryEnabled && params.level <= this.settings.LOGGER_SENTRY_MINIMUM_LEVEL) {
       let sentryLevel;

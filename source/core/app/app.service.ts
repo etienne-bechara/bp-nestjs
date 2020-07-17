@@ -14,7 +14,6 @@ export class AppService extends AppProvider {
    */
   public async bootServer(): Promise<void> {
 
-    this.logger.debug('Booting application...');
     this.server = await NestFactory.create(AppModule, {
       logger: [ 'error', 'warn' ],
       cors: this.settings.APP_CORS_OPTIONS,

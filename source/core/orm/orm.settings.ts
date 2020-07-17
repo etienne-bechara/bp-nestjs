@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 import { Transform } from 'class-transformer';
 import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf } from 'class-validator';
 
@@ -11,24 +9,24 @@ export class OrmSettings {
   @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])
   public ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
 
-  @ValidateIf((o) => o.ORM_TYPE)
+  @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString() @IsNotEmpty()
   public ORM_HOST: string;
 
-  @ValidateIf((o) => o.ORM_TYPE)
+  @ValidateIf((o) => !!o.ORM_TYPE)
   @Transform((v) => parseInt(v))
   @IsNumber()
   public ORM_PORT: number;
 
-  @ValidateIf((o) => o.ORM_TYPE)
+  @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString() @IsNotEmpty()
   public ORM_USERNAME: string;
 
-  @ValidateIf((o) => o.ORM_TYPE)
+  @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString()
   public ORM_PASSWORD: string;
 
-  @ValidateIf((o) => o.ORM_TYPE)
+  @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString() @IsNotEmpty()
   public ORM_DATABASE: string;
 

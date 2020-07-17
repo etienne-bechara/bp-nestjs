@@ -22,7 +22,7 @@ export class MailerService extends AppProvider {
   private setupMailer(): void {
 
     if (!this.settings.MAILER_HOST) {
-      this.logger.warning('Mailer transporter DISABLED', { localOnly: true });
+      this.logger.warning('Mailer transporter DISABLED', { private: true });
       return undefined;
     }
 
@@ -36,7 +36,7 @@ export class MailerService extends AppProvider {
       },
     });
 
-    this.logger.success('Mailer transporter ENABLED', { localOnly: true });
+    this.logger.success('[ENABLED] Mailer transporter', { private: true });
   }
 
   /**
