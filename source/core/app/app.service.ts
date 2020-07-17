@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import { AbstractProvider } from '../abstract/abstract.provider';
 import { AppModule } from './app.module';
+import { AppProvider } from './app.provider';
 import { AppSettings } from './app.settings';
 
-export class AppService extends AbstractProvider {
+export class AppService extends AppProvider {
   private settings: AppSettings = this.getSettings();
   private server: NestExpressApplication;
 

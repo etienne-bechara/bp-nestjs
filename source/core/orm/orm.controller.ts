@@ -7,7 +7,7 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { validate } from 'class-validator';
 import { unflatten } from 'flat';
 
-import { AbstractProvider } from '../abstract/abstract.provider';
+import { AppProvider } from '../app/app.provider';
 import { AppSettings } from '../app/app.settings';
 import { OrmFilterDto, OrmIdDto } from './orm.dto';
 import { OrmControllerMethod } from './orm.enum';
@@ -21,7 +21,7 @@ import { OrmSettings } from './orm.settings';
  * can be extended to prevent duplicate code
  */
 @UseInterceptors(OrmEntityInterceptor)
-export abstract class OrmController<Entity> extends AbstractProvider {
+export abstract class OrmController<Entity> extends AppProvider {
   protected settings: AppSettings & OrmSettings = this.getSettings();
   protected MISSING_DTO: string = 'missing dto implementation';
   protected MISSING_BODY: string = 'missing request body';

@@ -6,13 +6,13 @@ import https from 'https';
 import qs from 'qs';
 import UserAgent from 'user-agents';
 
-import { AbstractProvider } from '../abstract/abstract.provider';
+import { AppProvider } from '../app/app.provider';
 import { HttpsReturnType } from './https.enum';
 import { HttpsRequestParams, HttpsServiceOptions } from './https.interface';
 import { HttpsSettings } from './https.settings';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class HttpsService extends AbstractProvider {
+export class HttpsService extends AppProvider {
   private settings: HttpsSettings = this.getSettings();
   private defaultValidator: (status: number)=> boolean;
   private defaultReturnType: HttpsReturnType;

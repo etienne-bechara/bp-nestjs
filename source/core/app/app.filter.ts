@@ -1,12 +1,12 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { ServerResponse } from 'http';
 
-import { AbstractProvider } from '../abstract/abstract.provider';
 import { AppEnvironment } from './app.enum';
+import { AppProvider } from './app.provider';
 import { AppSettings } from './app.settings';
 
 @Catch()
-export class AppFilter extends AbstractProvider implements ExceptionFilter {
+export class AppFilter extends AppProvider implements ExceptionFilter {
   private settings: AppSettings = this.getSettings();
 
   /** */

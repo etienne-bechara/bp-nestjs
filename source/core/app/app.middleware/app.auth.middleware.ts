@@ -1,11 +1,11 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 
-import { AbstractProvider } from '../../abstract/abstract.provider';
 import { AppRequest, AppResponse } from '../app.interface';
+import { AppProvider } from '../app.provider';
 import { AppSettings } from '../app.settings';
 
 @Injectable()
-export class AppAuthMiddleware extends AbstractProvider implements NestMiddleware {
+export class AppAuthMiddleware extends AppProvider implements NestMiddleware {
   private settings: AppSettings = this.getSettings();
   /**
    * Implements a very basic authentication middleware that checks if

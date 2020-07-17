@@ -133,12 +133,12 @@ Os inclusos no boilerplate estão dentro de `/source/core` para melhor organiza�
 
 Cada domínio, pode ter uma grupo de configurações definidas em um arquivo `*.settings.ts`.
 
-Ao criar um serviço que extenda a class `AbstractProvider` (detalhes adiante), é possível obter as recém criadas configurações através do método `this.getSettings()`.
+Ao criar um serviço que extenda a class `AppProvider` (detalhes adiante), é possível obter as recém criadas configurações através do método `this.getSettings()`.
 
 Exemplo:
 
 ```ts
-export class MailerService extends AbstractProvider {
+export class MailerService extends AppProvider {
   private settings: MailerSettings = this.getSettings();
 }
 ```
@@ -410,10 +410,10 @@ Refira-se a [Nest JS - Providers](https://docs.nestjs.com/providers) para mais i
 
 Classe | Arquivo | Descrição
 ---|---|---
-AbstractProvider | `abstract.provider.ts` | Extenda essa classe para já ter acesso ao logger, variáveis de ambiente e método de retry.
+AppProvider | `abstract.provider.ts` | Extenda essa classe para já ter acesso ao logger, variáveis de ambiente e método de retry.
 OrmService | `ormservice.ts` | Extenda essa classe para já ter acesso a métodos de manipulação de dados via ORM com gerenciamento de exeções nas queries.
 HttpsService | `https.service.ts` | Wrapper sobre o Axios para padronizar exceções HTTP e adicionar amenidades.
-LoggerService | `logger.service.ts` | Disponível via AbstractProvider, realiza integração com Sentry e imprime no console durante desenvolvimento.
+LoggerService | `logger.service.ts` | Disponível via AppProvider, realiza integração com Sentry e imprime no console durante desenvolvimento.
 MailerService | `mailer.service.ts` | Wrapper sobre o Nodemailer para envio automatizado de e-mails.
 RedisService | `redis.service.ts` | Wrapper sobre o redis para ler e persistir dados chave/valor em cloud.
 
@@ -423,7 +423,7 @@ Customizado:
 
 ```ts
 @Injectable()
-export class UserService extends AbstractProvider {
+export class UserService extends AppProvider {
 
   /** Implemente seus métodos */
 
@@ -472,7 +472,7 @@ AppAuthMiddleware | `app.auth.middleware.ts` | Compara o header `Authorization` 
 Implementação:
 ```ts
 @Injectable()
-export class AppAuthMiddleware extends AbstractProvider implements NestMiddleware {
+export class AppAuthMiddleware extends AppProvider implements NestMiddleware {
 
   public use(req: AppRequest, res: AppResponse, next: ()=> void): void {
 
@@ -537,7 +537,7 @@ Implementação:
 
 ```ts
 @Injectable()
-export class AppLoggerInterceptor extends AbstractProvider implements NestInterceptor {
+export class AppLoggerInterceptor extends AppProvider implements NestInterceptor {
 
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req: AppRequest = context.switchToHttp().getRequest();

@@ -4,13 +4,13 @@
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { AnyEntity, EntityRepository, QueryOrder } from 'mikro-orm';
 
-import { AbstractProvider } from '../abstract/abstract.provider';
+import { AppProvider } from '../app/app.provider';
 import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.interface';
 
 /**
  * Creates an abstract service tied with a repository
  */
-export abstract class OrmService<Entity> extends AbstractProvider {
+export abstract class OrmService<Entity> extends AppProvider {
   protected DUPLICATE_ENTRY: string = 'unique constraint violation';
   protected ENTITY_UNDEFINED: string = 'cannot persist undefined entity';
   protected FK_FAIL_CREATE: string = 'must reference an existing entity';

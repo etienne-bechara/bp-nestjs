@@ -2,11 +2,11 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 
-import { AbstractProvider } from '../abstract/abstract.provider';
+import { AppProvider } from '../app/app.provider';
 import { MailerSettings } from './mailer.settings';
 
 @Injectable()
-export class MailerService extends AbstractProvider {
+export class MailerService extends AppProvider {
   private settings: MailerSettings = this.getSettings();
   private mailerTransporter: Mail;
 

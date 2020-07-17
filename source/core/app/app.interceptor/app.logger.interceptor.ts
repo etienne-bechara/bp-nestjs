@@ -5,13 +5,13 @@ import requestIp from 'request-ip';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { AbstractProvider } from '../../abstract/abstract.provider';
 import { AppEnvironment } from '../app.enum';
 import { AppRequest, AppResponse } from '../app.interface';
+import { AppProvider } from '../app.provider';
 import { AppSettings } from '../app.settings';
 
 @Injectable()
-export class AppLoggerInterceptor extends AbstractProvider implements NestInterceptor {
+export class AppLoggerInterceptor extends AppProvider implements NestInterceptor {
   private settings: AppSettings = this.getSettings();
 
   /**
