@@ -23,7 +23,7 @@ export class __PascalCaseName__Service extends OrmService<__PascalCaseName__Enti
       defaults: {
         uniqueKey: [ ], // Default key to match when upserting (can be overriden in method)
         populate: [ ], // Default properties to cascade read (can be overriden in method)
-      };
+      },
     });
   }
 
