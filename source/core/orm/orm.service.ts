@@ -136,7 +136,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * initialized entity
    * @param data
    */
-  public async create(data: Partial<Entity> | any): Promise<Entity> {
+  public async create(data: Partial<Entity>): Promise<Entity> {
     const newEntity = this.repository.create(data);
     await this.save(newEntity);
     return this.readById(newEntity['id']);
@@ -170,7 +170,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param id
    * @param data
    */
-  public async updateById(id: string, data: Partial<Entity> | any): Promise<Entity> {
+  public async updateById(id: string, data: Partial<Entity>): Promise<Entity> {
     const target = await this.readById(id);
     return this.update(target, data);
   }
@@ -181,7 +181,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param uniqueKey
    * @param data
    */
-  public async upsert(data: Partial<Entity> | any, uniqueKey?: string[] ): Promise<Entity> {
+  public async upsert(data: Partial<Entity>, uniqueKey?: string[] ): Promise<Entity> {
     uniqueKey = uniqueKey || this.options.defaults.uniqueKey;
     if (!uniqueKey || Object.keys(uniqueKey).length === 0) {
       throw new NotImplementedException(this.UK_MISSING);
