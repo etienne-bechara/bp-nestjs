@@ -47,7 +47,7 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
   },
 
   migrations: {
-    tableName: 'app_migration',
+    tableName: '_migration',
     path: `${__dirname}/../../../migration`,
     pattern: /^[\w-]+\d+\.[tj]s$/,
     dropTables: isDevelopment,
