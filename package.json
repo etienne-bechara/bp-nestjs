@@ -14,26 +14,19 @@
   "scripts": {
     "start": "nest start --debug --watch",
     "start:dist": "node ./source/core/main.js || node ./dist/source/core/main.js",
-
     "lint": "eslint **/*.ts",
     "build": "nest build && mikro-orm cache:generate",
-
     "blueprint:crud": "ts-node ./scripts/blueprint/blueprint.generate -t crud",
-
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
-
     "orm:schema:sync:dev:gen": "npm run build && npm run orm:schema:sync:gen",
     "orm:schema:sync:dev:run": "cp-cli .env dist/.env && mikro-orm migration:up",
-
     "orm:schema:sync:stg:gen": "npm run build && cp-cli .env.stg dist/.env && npm run orm:schema:sync:gen",
     "orm:schema:sync:stg:run": "cp-cli .env.stg dist/.env && mikro-orm migration:up",
-
     "orm:schema:sync:prd:gen": "npm run build && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
     "orm:schema:sync:prd:run": "cp-cli .env.prd dist/.env && mikro-orm migration:up",
-    
     "orm:schema:sync:gen": "mikro-orm schema:update --dump && mikro-orm migration:create && npm run orm:schema:sync:help",
     "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:schema:sync:run"
   },
@@ -72,24 +65,24 @@
     "@nestjs/cli": "7.4.1",
     "@nestjs/schematics": "7.0.1",
     "@types/fs-extra": "9.0.1",
-    "@types/node": "14.0.23",
+    "@types/node": "14.0.24",
     "@types/nodemailer": "6.4.0",
     "@types/redis": "2.8.25",
     "@types/user-agents": "1.0.0",
-    "@typescript-eslint/eslint-plugin": "3.6.1",
-    "@typescript-eslint/parser": "3.6.1",
+    "@typescript-eslint/eslint-plugin": "3.7.0",
+    "@typescript-eslint/parser": "3.7.0",
     "change-case": "4.1.1",
     "clean-stack": "3.0.0",
     "cp-cli": "2.0.0",
-    "eslint": "7.4.0",
+    "eslint": "7.5.0",
     "eslint-plugin-more": "1.0.0",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-simple-import-sort": "5.0.3",
     "fs-extra": "9.0.1",
-    "npm-check-updates": "7.0.1",
+    "npm-check-updates": "7.0.2",
     "source-map-support": "0.5.19",
     "ts-node": "8.10.2",
-    "typescript": "3.9.6",
+    "typescript": "3.9.7",
     "yargs": "15.4.1"
   }
 }
