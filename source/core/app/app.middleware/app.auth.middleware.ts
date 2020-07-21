@@ -7,6 +7,7 @@ import { AppSettings } from '../app.settings';
 @Injectable()
 export class AppAuthMiddleware extends AppProvider implements NestMiddleware {
   private settings: AppSettings = this.getSettings();
+
   /**
    * Implements a very basic authentication middleware that checks if
    * Authorization property at header matches configured token at env
