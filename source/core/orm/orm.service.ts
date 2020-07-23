@@ -176,21 +176,38 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Given a set of strings to use as constraint fields,
-   * creates or updates given entity and return its instance
+   * Validate provided unique key or the optionally configured
+   * default one. If none, throw an exception
    * @param uniqueKey
-   * @param data
    */
-  public async upsert(data: Partial<Entity>, uniqueKey?: string[] ): Promise<Entity> {
-    uniqueKey = uniqueKey || this.options.defaults.uniqueKey;
-    if (!uniqueKey || Object.keys(uniqueKey).length === 0) {
-      throw new NotImplementedException(this.UK_MISSING);
-    }
+  public validateUniqueKey(uniqueKey: string[]): string[] {
+    const defaultKey = this.options.defaults.uniqueKey;
+
+    const validKey = Array.isArray(uniqueKey) && uniqueKey.length > 0
+      ? uniqueKey
+      : Array.isArray(defaultKey) && defaultKey.length > 0
+        ? defaultKey
+        : undefined;
+
+    if (!validKey) throw new NotImplementedException(this.UK_MISSING);
+    return validKey;
+  }
+
+  /**
+   * Read, update or insert according to provided
+   * data, unique key and where or not to update
+   * @param data
+   * @param uniqueKey
+   * @param allowUpdate
+   */
+  public async readCreateOrUpdate(data: Partial<Entity>, uniqueKey?: string[], allowUpdate?: boolean): Promise<Entity> {
+    uniqueKey = this.validateUniqueKey(uniqueKey);
 
     const clause = { };
     for (const key of uniqueKey) {
       clause[key] = data[key];
     }
+
     const matchingEntities = await this.read(clause);
 
     if (matchingEntities.length > 1) {
@@ -201,9 +218,33 @@ export abstract class OrmService<Entity> extends AppProvider {
       });
     }
     else if (matchingEntities.length === 1) {
-      return this.update(matchingEntities[0], data);
+      return allowUpdate
+        ? this.update(matchingEntities[0], data)
+        : matchingEntities[0];
     }
-    return this.create(data);
+    else {
+      return this.create(data);
+    }
+  }
+
+  /**
+   * Based on incoming data and a unique key,
+   * create a new entity or update matching one
+   * @param uniqueKey
+   * @param data
+   */
+  public async upsert(data: Partial<Entity>, uniqueKey?: string[]): Promise<Entity> {
+    return this.readCreateOrUpdate(data, uniqueKey, true);
+  }
+
+  /**
+   * Based on incoming data and a unique key,
+   * create a new entity or returns matching one
+   * @param uniqueKey
+   * @param data
+   */
+  public async resert(data: Partial<Entity>, uniqueKey?: string[]): Promise<Entity> {
+    return this.readCreateOrUpdate(data, uniqueKey, false);
   }
 
   /**
