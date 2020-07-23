@@ -226,7 +226,6 @@ export abstract class OrmService<Entity> extends AppProvider {
 
     // When creating, allow a single retry (prevent parallel creation exception)
     try {
-      await this.wait(5000);
       const newEntity = await this.create(data);
       return newEntity;
     }
