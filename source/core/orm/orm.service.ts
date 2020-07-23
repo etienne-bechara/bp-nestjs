@@ -200,16 +200,17 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param uniqueKey
    * @param allowUpdate
    */
-  public async readCreateOrUpdate(data: Partial<Entity>, uniqueKey?: string[], allowUpdate?: boolean): Promise<Entity> {
-    uniqueKey = this.validateUniqueKey(uniqueKey);
+  public async readCreateOrUpdate(
+    data: Partial<Entity>, uniqueKey?: string[], allowUpdate?: boolean, failOnDuplicate?: boolean,
+  ): Promise<Entity> {
 
+    uniqueKey = this.validateUniqueKey(uniqueKey);
     const clause = { };
     for (const key of uniqueKey) {
       clause[key] = data[key];
     }
 
     const matchingEntities = await this.read(clause);
-
     if (matchingEntities.length > 1) {
       throw new ConflictException({
         message: this.UK_REFERENCE_FAIL,
@@ -222,8 +223,16 @@ export abstract class OrmService<Entity> extends AppProvider {
         ? this.update(matchingEntities[0], data)
         : matchingEntities[0];
     }
-    else {
-      return this.create(data);
+
+    // When creating, allow a single retry (prevent parallel creation exception)
+    try {
+      await this.wait(5000);
+      const newEntity = await this.create(data);
+      return newEntity;
+    }
+    catch (e) {
+      if (failOnDuplicate) throw e;
+      return this.readCreateOrUpdate(data, uniqueKey, false, true);
     }
   }
 
