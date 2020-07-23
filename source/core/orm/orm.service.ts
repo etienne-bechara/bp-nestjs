@@ -101,6 +101,24 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
+   * Validate provided unique key or the optionally configured
+   * default one. If none, throw an exception
+   * @param uniqueKey
+   */
+  private validateUniqueKey(uniqueKey: string[]): string[] {
+    const defaultKey = this.options.defaults.uniqueKey;
+
+    const validKey = Array.isArray(uniqueKey) && uniqueKey.length > 0
+      ? uniqueKey
+      : Array.isArray(defaultKey) && defaultKey.length > 0
+        ? defaultKey
+        : undefined;
+
+    if (!validKey) throw new NotImplementedException(this.UK_MISSING);
+    return validKey;
+  }
+
+  /**
    * Read all entities that matches given criteria
    * @param id
    */
@@ -173,24 +191,6 @@ export abstract class OrmService<Entity> extends AppProvider {
   public async updateById(id: string, data: Partial<Entity>): Promise<Entity> {
     const target = await this.readById(id);
     return this.update(target, data);
-  }
-
-  /**
-   * Validate provided unique key or the optionally configured
-   * default one. If none, throw an exception
-   * @param uniqueKey
-   */
-  public validateUniqueKey(uniqueKey: string[]): string[] {
-    const defaultKey = this.options.defaults.uniqueKey;
-
-    const validKey = Array.isArray(uniqueKey) && uniqueKey.length > 0
-      ? uniqueKey
-      : Array.isArray(defaultKey) && defaultKey.length > 0
-        ? defaultKey
-        : undefined;
-
-    if (!validKey) throw new NotImplementedException(this.UK_MISSING);
-    return validKey;
   }
 
   /**
