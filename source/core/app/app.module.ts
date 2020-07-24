@@ -7,7 +7,7 @@ import { AppAuthMiddleware } from './app.middleware';
 import { AppSettings } from './app.settings';
 import { AppUtils } from './app.utils';
 
-const modules = AppUtils.globToRequire([ '../../**/*.module.js', '!../../**/app.module.js' ]);
+const modules = AppUtils.globToRequire([ '../../**/*.module.js', '!../../**/app.module.js' ]).reverse();
 const validationRules = AppUtils.parseSettings<AppSettings>().APP_VALIDATION_RULES;
 
 /**
