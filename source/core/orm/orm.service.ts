@@ -128,6 +128,16 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
+   * Read first entity that matches given criteria
+   * @param id
+   */
+  public async readFirst(params: Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity> {
+    options.limit = 1;
+    const entities = await this.find(params, options);
+    return entities[0] && 'id' in entities[0] ? entities[0] : undefined;
+  }
+
+  /**
    * Read, populate and count all entities that matches given criteria
    * Returns an object contining limit, offset, total and results
    * @param id
