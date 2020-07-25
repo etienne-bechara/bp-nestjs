@@ -15,14 +15,16 @@ export class AppGuard extends AppProvider implements CanActivate {
    */
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: AppRequest = context.switchToHttp().getRequest();
-
     const authorization = req.headers.authorization;
-    if (!authorization && this.settings.APP_AUTHORIZATION) {
-      throw new UnauthorizedException('missing authorization header');
-    }
 
-    if (authorization !== this.settings.APP_AUTHORIZATION) {
-      throw new UnauthorizedException('invalid authorization header');
+    if (this.settings.APP_AUTHORIZATION) {
+      if (!authorization) {
+        throw new UnauthorizedException('missing authorization header');
+      }
+
+      if (authorization !== this.settings.APP_AUTHORIZATION) {
+        throw new UnauthorizedException('invalid authorization header');
+      }
     }
 
     return true;
