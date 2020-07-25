@@ -1,9 +1,9 @@
-import { ClassSerializerInterceptor, Global, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { ClassSerializerInterceptor, Global, Module, ValidationPipe } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 import { AppFilter } from './app.filter';
+import { AppGuard } from './app.guard';
 import { AppLoggerInterceptor } from './app.interceptor';
-import { AppAuthMiddleware } from './app.middleware';
 import { AppSettings } from './app.settings';
 import { AppUtils } from './app.utils';
 
@@ -19,24 +19,11 @@ const validationRules = AppUtils.parseSettings<AppSettings>().APP_VALIDATION_RUL
   imports: modules,
   exports: modules,
   providers: [
+    { provide: APP_GUARD, useClass: AppGuard },
     { provide: APP_FILTER, useClass: AppFilter },
     { provide: APP_PIPE, useFactory: (): ValidationPipe => new ValidationPipe(validationRules) },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AppLoggerInterceptor },
   ],
 })
-export class AppModule {
-
-  /**
-   * Apply desired authentication middle to each route
-   * @param consumer Application default consumer
-   */
-  public configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(
-        AppAuthMiddleware,
-      )
-      .forRoutes('*');
-  }
-
-}
+export class AppModule { }
