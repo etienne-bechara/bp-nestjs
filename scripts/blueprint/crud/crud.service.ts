@@ -13,7 +13,7 @@ export class __PascalCaseName__Service extends OrmService<__PascalCaseName__Enti
    * __PascalCaseName__ Entity manipulation
    *
    * We must inject the matching repository exported by ORM
-   * @param __CamelCaseName__Repository 
+   * @param __CamelCaseName__Repository
    */
   public constructor(
     @InjectRepository(__PascalCaseName__Entity)
