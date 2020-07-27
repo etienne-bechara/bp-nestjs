@@ -8,7 +8,7 @@ Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover inici
   * [Dependências](#dependências)
 - [Componentes](#componentes)
   * [Frameworks](#frameworks)
-  * [Pacotes](#pacotes)
+  * [Utilitários](#utilitários)
 - [Domain](#domain)
 - [Settings](#settings)
   * [Variáveis de Ambiente](#variáveis-de-ambiente)
@@ -22,7 +22,8 @@ Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover inici
 - [Interceptors](#interceptors)
 - [Filters](#filters)
 - [Migrations](#migrations)
-- [Blueprints](#blueprints)
+- [Models](#models)
+  * [API](#api)
   * [CRUD](#crud)
 
 
@@ -101,13 +102,14 @@ Vários dos frameworks que este projeto é composto são opcionais e podem ser f
 Documentação | Reponsabilidades | Observação 
 ---|---|---
 [NestJS](https://docs.nestjs.com/) | • Injeção de Dependências<br>• Inicialização do Servidor (Express)<br>• Middlewares e Fluxos de Validação<br>• Filtro Global de Exceções | Irá carregar automaticamente todos os arquivos nomeados como `*.module.ts`.
+[Jest](https://jestjs.io/docs/en/getting-started) | • Testes Unitários<br>• Testes E2E | Instalado apenas em ambiente de desenvolvimento.<br>Crie os arquivos de teste no padrão `*.spec.ts`.
 [Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Não é possível remover o logger (seu consumo em execução é insignificante).
 [MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.<br>Para excluir remova a pasta `/core/orm`.
 [Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.<br>Para excluir remova a pasta `/core/redis`.
 [Nodemailer](https://nodemailer.com/about/) | • Envio Automatizado de E-mails | **Opcional**<br>Habilite configurando as variáveis `MAILER_*` no `.env`.<br>Para excluir remova a pasta `/core/mailer`.
 [RapidAPI](https://rapidapi.com/) | • Acesso a centenas de APIs prontas<br>• Validação de e-mail e domínio | **Opcional**<br>Habilite configurando a variável `RAPID_API_AUTH` no `.env`.<br>Para excluir remova a pasta `/core/rapid-api`.
 
-### Dependências
+### Utilitários
 
 Documentação | Reponsabilidades | Utilização 
 ---|---|---
@@ -269,6 +271,7 @@ HttpsModule | `https.module.ts` | Carrega o serviço abstraído de requisições
 MailerModule | `mailer.module.ts` | Carrega o serviço opcional de envio de e-mails via SMTP.
 OrmModule | `orm.module.ts` | Carrega a camada opcional de abstração para armazenamento em banco de dados.
 RedisModule | `redis.module.ts` | Carrega o serviço opcional para armazenamento chave/valor de alta performance.
+
 
 
 ### Exemplos
@@ -587,6 +590,47 @@ AppFilter | `app.filter.ts` | Padroniza o retorno HTTP em caso de exceções.
 
 
 
+## Testes
+
+Os testes são baseados no framework Jest, todavia para total isolamento nas execuções, o NestJS provê um pacote para compilação individual de módulos temporários `@nestjs/testing`.
+
+Para usufruir desta funcionalidade, configure seus testes com um método `beforeEach()` implementando `createTestingModule()` conforme exemplo a seguir:
+
+```ts
+import { Test } from '@nestjs/testing';
+import { HttpsModule } from '../https/https.module';
+import { HttpsService } from '../https/https.service';
+import { RapidApiService } from './rapid-api.service';
+
+describe('RapidApiService', () => {
+  let rapidApiService: RapidApiService;
+
+  beforeEach(async() => {
+    const testModule = await Test.createTestingModule({
+      imports: [ HttpsModule ],
+      providers: [ RapidApiService, HttpsService ],
+    }).compile();
+
+    rapidApiService = testModule.get(RapidApiService);
+  });
+
+  describe('checkEmailDomain', () => {
+
+    it('should flag e-mail as valid', async() => {
+      expect(await rapidApiService.checkEmailDomain('john.doe@gmail.com'))
+        .toMatchObject({ valid: true, block: false, disposable: false });
+    });
+
+    /* Write more tests here */
+
+  });
+});
+```
+
+Agora basta executar `npm run test` e todos os testes descritos em arquivos `*.spec.ts` serão aplicados.
+
+
+
 ## Migrations
 
 >O conceito de migration neste projeto foi reduzido a gerações individuais com intuito de sincronizar a modelagem atual com as entidades declaradas.<br>
@@ -616,9 +660,37 @@ npm run orm:schema:sync:stg:run
 npm run orm:schema:sync:prd:run
 ```
 
-## Blueprints
+## Models
 
-Criar serviços, controllers e DTOs de algo repetitivo pode ser bastante tedioso, por isso foi desenvolvido uma maneira mais simples para estas implentações.
+Criar serviços, controllers e DTOs de algo repetitivo pode ser bastante tedioso, sendo assim foi desenvolvido uma maneira mais simples para realizar estas implementações.
+
+### API
+
+Cria todos os arquivos recomendados para implementação de um serviço de API externo.
+
+Dado um domínio de sua escolha, por exemplo: `gmaps`, execute o script:
+
+```
+npm run model:api -- -n gmaps
+```
+
+A seguinte estrutura de arquivos será criada dentro de `/source`:
+
+```
+gmaps
+|- gmaps.dto
+   | - index.ts
+|- gmaps.interface
+   | - index.ts
+|- gmaps.service.ts
+|- gmaps.settings.ts
+```
+
+Agora, por padrão, as variáveis de ambiente `GMAPS_HOST` e `GMAPS_AUTH` serão mandatórias. Você pode configurar a validação no arquivo `gmaps.settings.ts`.
+
+A estratégia de autenticação do modelo é colocar o `*_AUTH` no header `Authorization`. Dependendo do serviço será necessário modificar.
+
+
 
 ### CRUD
 
@@ -627,7 +699,7 @@ Cria todos os arquivos recomendados para implementação de uma entidade com mé
 Dado um domínio de sua escolha, por exemplo: `user`, execute o script:
 
 ```
-npm run blueprint:crud -- -n user
+npm run model:crud -- -n user
 ```
 
 A seguinte estrutura de arquivos será criada dentro de `/source`:
@@ -643,7 +715,6 @@ user
 |- user.entity.ts
 |- user.module.ts
 |- user.service.ts
-
 ```
 
 Agora é só definir a entidade em `user.entity.ts` e configurar a validação dos dtos que todos os métodos estarão implementados.

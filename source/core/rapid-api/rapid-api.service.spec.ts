@@ -36,4 +36,3 @@ describeIfEnv('RAPID_API_AUTH', true, 'RapidApiService', () => {
 
   });
 });
-

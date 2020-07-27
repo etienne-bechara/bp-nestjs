@@ -22,7 +22,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
 
-    "blueprint:crud": "ts-node ./scripts/blueprint/blueprint.generate -t crud",
+    "model:api": "ts-node ./model/model.cli -t api",
+    "model:crud": "ts-node ./model/model.cli -t crud",
 
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
