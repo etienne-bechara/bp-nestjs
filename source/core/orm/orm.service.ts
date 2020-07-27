@@ -125,12 +125,21 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Read first entity that matches given criteria
+   * Read a supposedly unique entity, if the constraint
+   * fails throw a conflict exception
    * @param id
    */
-  public async readFirst(params: Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity> {
-    options.limit = 1;
+  public async readUnique(params: Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity> {
     const entities = await this.find(params, options);
+
+    if (Array.isArray(entities) && entities.length > 1) {
+      throw new ConflictException({
+        message: this.UK_REFERENCE_FAIL,
+        params,
+        entities,
+      });
+    }
+
     return entities[0] && 'id' in entities[0] ? entities[0] : undefined;
   }
 
