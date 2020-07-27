@@ -14,11 +14,13 @@
     "sourceMap": true,
   },
   "include": [
-    "source"
+    "source",
+    "test"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "scripts"
+    "scripts",
+    "**/*spec.ts"
   ]
 }

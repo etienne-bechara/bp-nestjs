@@ -2,9 +2,11 @@
 /node_modules
 /dist
 
+# Test Coverage
+/coverage
+
 # Debugging Folder
 /source/debug
 
 # Application Secrets
 .env*
-

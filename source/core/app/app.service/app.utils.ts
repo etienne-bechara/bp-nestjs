@@ -53,7 +53,7 @@ export class AppUtils {
 
     if (!cachedSettings) {
       const rawEnv = dotenv.config({ path: `${__dirname}/../../../../.env` }).parsed || { };
-      const settingsConstructors = this.globToRequire('./**/*.settings.js');
+      const settingsConstructors = this.globToRequire('./**/*.settings.{js,ts}');
       const settings: any = { };
 
       for (const constructor of settingsConstructors) {
@@ -76,7 +76,6 @@ export class AppUtils {
         require('source-map-support').install();
       }
     }
-
     return cachedSettings;
   }
 
