@@ -1,7 +1,5 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable no-console */
 
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';

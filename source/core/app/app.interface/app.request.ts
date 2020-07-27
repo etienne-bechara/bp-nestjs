@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { IncomingMessage } from 'http';
 
 export class AppRequest extends IncomingMessage {

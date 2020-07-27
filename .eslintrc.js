@@ -35,6 +35,8 @@ module.exports =  {
     '@typescript-eslint/restrict-template-expressions': ['off'], // Allow any values inside template literals
     '@typescript-eslint/no-unsafe-member-access': ['off'], // Allow member access of an any type (used at catch handlers)
     '@typescript-eslint/no-unsafe-call': ['off'], // Allow call of an any type (used at catch handlers)
+    '@typescript-eslint/no-explicit-any': ['off'], // Allow usage of "any" type (use with moderation)
+    '@typescript-eslint/no-unsafe-return': ['off'], // Allow return of "any" typed values (use with moderation)
 
     /**
      * ADDITIONAL ERROR SEVERITY RULES

@@ -6,6 +6,6 @@ export interface LoggerParams {
   messageColor: string;
   label: string;
   message: string | Error;
-  data: any; // eslint-disable-line
+  data: any;
   error?: Error;
 }

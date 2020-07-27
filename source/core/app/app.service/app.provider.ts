@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { LoggerService } from '../../logger/logger.service';
 import { AppRetryParams } from '../app.interface';
 import { AppUtils } from './app.utils';

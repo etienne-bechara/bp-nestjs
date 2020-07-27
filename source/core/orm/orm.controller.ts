@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 import { BadRequestException, Body, Delete, Get, NotFoundException, NotImplementedException, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
@@ -146,7 +143,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    * @param object
    * @param type
    */
-  protected async plainToDto(object: unknown, type: ClassType<unknown>): Promise<any> { // eslint-disable-line
+  protected async plainToDto(object: unknown, type: ClassType<unknown>): Promise<any> {
 
     const typedObject = plainToClass(type, object);
     const failedConstraints = await validate(typedObject, this.settings.APP_VALIDATION_RULES);
@@ -181,7 +178,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    * @param object
    * @param type
    */
-  protected async plainToDtoOffset(object: any = { }, type: ClassType<unknown>): Promise<{ data: any, options: any }> { // eslint-disable-line
+  protected async plainToDtoOffset(object: any = { }, type: ClassType<unknown>): Promise<{ data: any, options: any }> {
 
     const { data, options } = this.splitDataOptions(object);
 
