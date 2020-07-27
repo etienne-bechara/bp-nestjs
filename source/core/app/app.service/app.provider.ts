@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { AppRetryParams } from '../app/app.interface';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../../logger/logger.service';
+import { AppRetryParams } from '../app.interface';
 import { AppUtils } from './app.utils';
 
 export abstract class AppProvider {

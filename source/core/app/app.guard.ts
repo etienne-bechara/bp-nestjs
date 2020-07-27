@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { AppRequest } from '../../core/app/app.interface';
-import { AppProvider } from './app.provider';
+import { AppProvider } from './app.service';
 import { AppSettings } from './app.settings';
 
 @Injectable()

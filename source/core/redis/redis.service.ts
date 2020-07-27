@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import redis, { RedisClient } from 'redis';
 
-import { AppProvider } from '../app/app.provider';
+import { AppProvider } from '../app/app.service';
 import { RedisSettings } from './redis.settings';
 
 @Injectable()

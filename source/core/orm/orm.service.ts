@@ -4,7 +4,7 @@
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { AnyEntity, EntityRepository, QueryOrder } from 'mikro-orm';
 
-import { AppProvider } from '../app/app.provider';
+import { AppProvider } from '../app/app.service';
 import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.interface';
 
 /**

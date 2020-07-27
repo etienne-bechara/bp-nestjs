@@ -8,10 +8,10 @@ import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 import globby from 'globby';
 
-import { LoggerService } from '../logger/logger.service';
-import { LoggerSettings } from '../logger/logger.settings';
-import { AppEnvironment } from './app.enum';
-import { AppSettings } from './app.settings';
+import { LoggerService } from '../../logger/logger.service';
+import { LoggerSettings } from '../../logger/logger.settings';
+import { AppEnvironment } from '../app.enum';
+import { AppSettings } from '../app.settings';
 
 let cachedSettings: any;
 let loggerService: LoggerService;
@@ -21,14 +21,26 @@ export class AppUtils {
   /**
    * Given a glob path string, find all matching files
    * and return an array of all required exports
+   *
+   * Always use runtime root as entry point
    * @param globPath
    */
-  public static globToRequire(globPath: string | string[], cwd: string = __dirname): any[] {
-    const matchingFiles = globby.sync(globPath, { cwd });
+  public static globToRequire(globPath: string | string[]): any[] {
+    globPath = Array.isArray(globPath) ? globPath : [ globPath ];
+
+    const globRootPath = globPath.map((p) => {
+      if (!p.startsWith('./') && !p.startsWith('!./')) {
+        throw new Error("glob paths must start with './' or '!./'");
+      }
+      return p.replace(/^!\.\//, '!../../../').replace(/^\.\//, '../../../');
+    });
+
+    const matchingFiles = globby.sync(globRootPath, { cwd: __dirname });
     const exportsArrays = matchingFiles.map((file) => {
       const exportsObject = require(file);
       return Object.keys(exportsObject).map((key) => exportsObject[key]);
     });
+
     return [].concat(...exportsArrays);
   }
 
@@ -42,8 +54,8 @@ export class AppUtils {
   public static parseSettings<T>(): T {
 
     if (!cachedSettings) {
-      const rawEnv = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
-      const settingsConstructors = this.globToRequire('../../**/*.settings.js');
+      const rawEnv = dotenv.config({ path: `${__dirname}/../../../../.env` }).parsed || { };
+      const settingsConstructors = this.globToRequire('./**/*.settings.js');
       const settings: any = { };
 
       for (const constructor of settingsConstructors) {

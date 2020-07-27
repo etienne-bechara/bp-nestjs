@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import { AppModule } from './app.module';
+import { AppModule } from '../app.module';
+import { AppSettings } from '../app.settings';
 import { AppProvider } from './app.provider';
-import { AppSettings } from './app.settings';
 
 export class AppService extends AppProvider {
   private settings: AppSettings = this.getSettings();

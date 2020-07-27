@@ -7,7 +7,7 @@ import https from 'https';
 import qs from 'qs';
 import UserAgent from 'user-agents';
 
-import { AppProvider } from '../app/app.provider';
+import { AppProvider } from '../app/app.service';
 import { HttpsReturnType } from './https.enum';
 import { HttpsRequestParams, HttpsServiceOptions } from './https.interface';
 import { HttpsSettings } from './https.settings';

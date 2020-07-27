@@ -7,7 +7,7 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { validate } from 'class-validator';
 import { unflatten } from 'flat';
 
-import { AppProvider } from '../app/app.provider';
+import { AppProvider } from '../app/app.service';
 import { AppSettings } from '../app/app.settings';
 import { OrmFilterDto, OrmIdDto } from './orm.dto';
 import { OrmControllerMethod } from './orm.enum';

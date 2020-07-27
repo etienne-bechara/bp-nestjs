@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 import { ServerResponse } from 'http';
 
 import { AppEnvironment } from './app.enum';
-import { AppProvider } from './app.provider';
+import { AppProvider } from './app.service';
 import { AppSettings } from './app.settings';
 
 @Catch()
