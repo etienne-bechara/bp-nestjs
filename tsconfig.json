@@ -12,15 +12,5 @@
     "resolveJsonModule": true,
     "removeComments": true,
     "sourceMap": true,
-  },
-  "include": [
-    "source",
-    "test"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "scripts",
-    "**/*spec.ts"
-  ]
+  }
 }
