@@ -6,10 +6,10 @@ import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 import globby from 'globby';
 
-import { LoggerService } from '../../logger/logger.service';
-import { LoggerSettings } from '../../logger/logger.settings';
-import { AppEnvironment } from '../app.enum';
-import { AppSettings } from '../app.settings';
+import { LoggerService } from '../logger/logger.service';
+import { LoggerSettings } from '../logger/logger.settings';
+import { AppEnvironment } from './app.enum';
+import { AppSettings } from './app.settings';
 
 let cachedSettings: any;
 let loggerService: LoggerService;
@@ -30,7 +30,7 @@ export class AppUtils {
       if (!p.startsWith('./') && !p.startsWith('!./')) {
         throw new Error("glob paths must start with './' or '!./'");
       }
-      return p.replace(/^!\.\//, '!../../../').replace(/^\.\//, '../../../');
+      return p.replace(/^!\.\//, '!../../').replace(/^\.\//, '../../');
     });
 
     const matchingFiles = globby.sync(globRootPath, { cwd: __dirname });
@@ -52,7 +52,7 @@ export class AppUtils {
   public static parseSettings<T>(): T {
 
     if (!cachedSettings) {
-      const rawEnv = dotenv.config({ path: `${__dirname}/../../../../.env` }).parsed || { };
+      const rawEnv = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
       const settingsConstructors = this.globToRequire('./**/*.settings.{js,ts}');
       const settings: any = { };
 

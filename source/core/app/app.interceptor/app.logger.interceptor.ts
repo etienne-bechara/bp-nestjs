@@ -5,7 +5,7 @@ import { finalize } from 'rxjs/operators';
 
 import { AppEnvironment } from '../app.enum';
 import { AppRequest, AppResponse } from '../app.interface';
-import { AppProvider } from '../app.service';
+import { AppProvider } from '../app.provider';
 import { AppSettings } from '../app.settings';
 
 @Injectable()

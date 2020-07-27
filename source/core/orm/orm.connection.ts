@@ -2,8 +2,8 @@ import { Connection, IDatabaseDriver, Options, UnderscoreNamingStrategy } from '
 import { MySqlDriver } from 'mikro-orm/dist/drivers/MySqlDriver';
 
 import { AppEnvironment } from '../app/app.enum';
-import { AppUtils } from '../app/app.service/app.utils';
 import { AppSettings } from '../app/app.settings';
+import { AppUtils } from '../app/app.utils';
 import { OrmSettings } from './orm.settings';
 
 const settings = AppUtils.parseSettings<AppSettings & OrmSettings>();

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MikroOrmModule } from 'nestjs-mikro-orm';
 
-import { AppUtils } from '../app/app.service/app.utils';
+import { AppUtils } from '../app/app.utils';
 import OrmConnection from './orm.connection';
 import { OrmSettings } from './orm.settings';
 

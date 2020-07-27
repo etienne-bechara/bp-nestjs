@@ -1,5 +1,5 @@
-import { LoggerService } from '../../logger/logger.service';
-import { AppRetryParams } from '../app.interface';
+import { LoggerService } from '../logger/logger.service';
+import { AppRetryParams } from './app.interface';
 import { AppUtils } from './app.utils';
 
 export abstract class AppProvider {
