@@ -21,6 +21,7 @@ Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover inici
 - [Middlewares](#middlewares)
 - [Interceptors](#interceptors)
 - [Filters](#filters)
+- [Testes](#testes)
 - [Migrations](#migrations)
 - [Models](#models)
   * [API](#api)
