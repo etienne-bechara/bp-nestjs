@@ -1,1 +1,1 @@
-export * from './orm.controller.mehod';
+export * from './orm.controller.method';
