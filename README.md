@@ -634,32 +634,29 @@ Agora basta executar `npm run test` e todos os testes descritos em arquivos `*.s
 
 ## Migrations
 
->O conceito de migration neste projeto foi reduzido a gerações individuais com intuito de sincronizar a modelagem atual com as entidades declaradas.<br>
-Caso prefira utilizá-las em sua completa extensão, incluindo versionamento e métodos de up() e down(), refira-se a documentação do ORM: [Mikro ORM - Migrations](https://mikro-orm.io/docs/migrations/)
+>Para utilizar migrations com versionamento e rollback refira-se a documentação oficial: [Mikro ORM - Migrations](https://mikro-orm.io/docs/migrations/)
 
-Para criar uma migration de sincronismo da modelagem atual com os arquivos `*.entity.ts`, execute:
+Este boilerplate permite sincronizar a modelagem atual com as entidades definidas nos arquivos `*.entity.ts`.
 
-```bash
-npm run orm:schema:sync:dev:gen
-```
-
-Você pode criar arquivos `.env` separados para executar manualmente em ambientes de homologação ou produção conforme:
+Por padrão, é possível possuir até três ambientes configurados em arquivos `.env` separados sendo:
 
 ```bash
-npm run orm:schema:sync:dev:gen    // Utiliza arquivo .env
-npm run orm:schema:sync:stg:gen    // Utiliza arquivo .env.stg
-npm run orm:schema:sync:prd:gen    // Utiliza arquivo .env.prd
+.env      # Desenvolvimento
+.env.stg  # Homologação
+.env.prd  # Produção
 ```
 
-Após executar o comando para o ambiente desejado, será gerado um arquivo `Migration*.js` na pasta `/dist/migration`.
+Para realizar a migração de sincronismo execute:
 
-Revise as queries a serem executadas e altere conforme desejar. Quando estiver satisfeito salve o arquivo e execute de acordo com o ambiente:
+```bash
+npm run orm:sync:dev  # Utiliza arquivo .env
+npm run orm:sync:stg  # Utiliza arquivo .env.stg
+npm run orm:sync:prd  # Utiliza arquivo .env.prd
+```
 
-```
-npm run orm:schema:sync:dev:run
-npm run orm:schema:sync:stg:run
-npm run orm:schema:sync:prd:run
-```
+Caso prefira apenas visualizar a migração e não executá-la, substitua o script `orm:sync` por `orm:dump`. As queries serão impressas no console.
+
+
 
 ## Models
 

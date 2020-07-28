@@ -16,7 +16,7 @@
     "start:dist": "node ./source/core/main.js || node ./dist/source/core/main.js",
 
     "lint": "eslint **/*.ts",
-    "build": "nest build && mikro-orm cache:generate",
+    "build": "nest build",
 
     "test": "jest",
     "test:watch": "jest --watch",
@@ -29,15 +29,19 @@
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
-
-    "orm:schema:sync:dev:gen": "npm run build && npm run orm:schema:sync:gen",
-    "orm:schema:sync:dev:run": "cp-cli .env dist/.env && mikro-orm migration:up",
-    "orm:schema:sync:stg:gen": "npm run build && cp-cli .env.stg dist/.env && npm run orm:schema:sync:gen",
-    "orm:schema:sync:stg:run": "cp-cli .env.stg dist/.env && mikro-orm migration:up",
-    "orm:schema:sync:prd:gen": "npm run build && cp-cli .env.prd dist/.env && npm run orm:schema:sync:gen",
-    "orm:schema:sync:prd:run": "cp-cli .env.prd dist/.env && mikro-orm migration:up",
-    "orm:schema:sync:gen": "mikro-orm schema:update --dump && mikro-orm migration:create && npm run orm:schema:sync:help",
-    "orm:schema:sync:help": "echo Review generated schema sync migration at: && echo ./dist/migration/Migration*.js && echo. && echo If everything is correct, apply changes by executing: && echo npm run orm:schema:sync:run"
+    
+    "orm:build": "nest build && mikro-orm cache:generate",
+    "orm:set:dev": "cp-cli .env dist/.env",
+    "orm:set:stg": "cp-cli .env.stg dist/.env",
+    "orm:set:prd": "cp-cli .env.prd dist/.env",
+    "orm:sync:dev": "npm run orm:build && npm run orm:set:dev && npm run orm:sync:run",
+    "orm:sync:stg": "npm run orm:build && npm run orm:set:stg && npm run orm:sync:run",
+    "orm:sync:prd": "npm run orm:build && npm run orm:set:prd && npm run orm:sync:run",
+    "orm:sync:run": "mikro-orm schema:update --dump && mikro-orm schema:update --run",
+    "orm:dump:dev": "npm run orm:build && npm run orm:set:dev && npm run orm:dump:run",
+    "orm:dump:stg": "npm run orm:build && npm run orm:set:stg && npm run orm:dump:run",
+    "orm:dump:prd": "npm run orm:build && npm run orm:set:prd && npm run orm:dump:run",
+    "orm:dump:run": "mikro-orm schema:update --dump"
   },
   "dependencies": {
     "@nestjs/common": "7.3.2",
