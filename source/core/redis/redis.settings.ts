@@ -20,6 +20,6 @@ export class RedisSettings {
 
   /* Provider Options */
 
-  public REDIS_DEFAULT_EXPIRATION: number = 1 * 24 * 60 * 60 * 1000;
+  public REDIS_DEFAULT_EXPIRATION: number = 1 * 24 * 60 * 60 * 1000; // 1 day
 
 }

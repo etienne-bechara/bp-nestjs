@@ -8,7 +8,7 @@ import { RapidApiService } from './rapid-api.service';
 describeIfEnv('RAPID_API_AUTH', true, 'RapidApiService', () => {
   let rapidApiService: RapidApiService;
 
-  beforeEach(async() => {
+  beforeAll(async() => {
     const testModule = await Test.createTestingModule({
       imports: [ HttpsModule ],
       providers: [ RapidApiService, HttpsService ],
@@ -19,20 +19,20 @@ describeIfEnv('RAPID_API_AUTH', true, 'RapidApiService', () => {
 
   describe('checkEmailDomain', () => {
 
-    it('should flag e-mail as valid', async() => {
+    it('should flag @gmail.com as valid', async() => {
       expect(await rapidApiService.checkEmailDomain('john.doe@gmail.com'))
         .toMatchObject({ valid: true, block: false, disposable: false });
     });
 
-    it('should flag e-mail as disposable', async() => {
+    it('should flag @temp-mail.com as disposable', async() => {
       expect(await rapidApiService.checkEmailDomain('john.doe@temp-mail.com'))
         .toMatchObject({ disposable: true });
     });
 
-    it('should flag e-mail as invalid', async() => {
-      expect(await rapidApiService.checkEmailDomain('john.doe@hf8d9sahgbf8io.com'))
+    it('should flag @gj87ghb as invalid', async() => {
+      expect(await rapidApiService.checkEmailDomain('john.doe@gj87ghb.com'))
         .toMatchObject({ valid: false });
     });
-
   });
+
 });

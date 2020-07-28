@@ -18,8 +18,8 @@
     "lint": "eslint **/*.ts",
     "build": "nest build",
 
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "jest --verbose",
+    "test:watch": "jest --verbose --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
 
     "model:api": "ts-node ./model/model.cli -t api",
