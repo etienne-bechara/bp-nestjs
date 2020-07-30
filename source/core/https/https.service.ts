@@ -53,34 +53,50 @@ export class HttpsService extends AppProvider {
   }
 
   /**
-   * Handles all requests, if a custom status validation function
-   * is passed use it, otherwise apply the default validator
-   * In case of any errors, standardize the output for easy debugging
+   * Handles all requests, extending default axios functionality with:
+   * • Better validation: Include returned data in case of validation failure
+   * • Better timeout: Based on server timing instead of only after DNS resolve
+   * • Error standardisation: Add several data for easier debugging
    * @param params
    */
   public async request<T>(params: HttpsRequestParams): Promise<T> {
+    let errorPrefix, res;
+
     if (!this.instance) {
       throw new InternalServerErrorException('https service must be configured with this.setupInstance()');
     }
 
-    const rawParms = JSON.parse(JSON.stringify(params));
+    params.timeout = params.timeout || this.instance.defaults.timeout;
+    const rawParams = Object.assign({ }, params);
     this.transformParams(params);
 
-    let errorPrefix, res;
     try {
-      res = await this.instance(params);
+      const source = axios.CancelToken.source();
+      params.cancelToken = source.token;
+
+      res = await Promise.race([
+        this.instance(params),
+        this.wait(params.timeout),
+      ]);
+
       const validator = params.validateStatus || this.defaultValidator;
-      if (!validator(res.status)) errorPrefix = 'Request Failed';
+      if (!res) {
+        source.cancel();
+        errorPrefix = 'Request timeout';
+      }
+      else if (!validator(res.status)) {
+        errorPrefix = 'Request failed';
+      }
     }
     catch (e) {
-      if (e.message.includes('timeout')) errorPrefix = 'Request Timed Out';
-      else errorPrefix = 'Request Exception';
+      if (e.message.includes('timeout')) errorPrefix = 'Request timeout';
+      else errorPrefix = 'Request exception';
     }
 
     if (errorPrefix) {
       throw new InternalServerErrorException({
-        message: `${errorPrefix}: ${rawParms.method} ${rawParms.url}`,
-        config: rawParms,
+        message: `${errorPrefix}: ${rawParams.method} ${rawParams.url}`,
+        config: rawParams,
         status: res ? res.status : undefined,
         headers: res ? res.headers : undefined,
         data: res ? res.data : undefined,
@@ -123,7 +139,6 @@ export class HttpsService extends AppProvider {
         params.url = params.url.replace(replaceRegex, value);
       }
     }
-
   }
 
   /** GET */
