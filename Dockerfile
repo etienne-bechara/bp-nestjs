@@ -1,4 +1,4 @@
-# Use minimum viable LTS Node.js
+# Use smallest current Node.js image
 FROM node:14-alpine
 EXPOSE 8080
 

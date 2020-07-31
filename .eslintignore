@@ -1,4 +1,3 @@
-# Ignore all non-typescript folders
+# Non TypeScript folders
 /node_modules
-/dist
-/scripts
+/build

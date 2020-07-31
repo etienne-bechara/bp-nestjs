@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 
-import { describeIfEnv } from '../../../test/test.utils';
+import { describeIfEnv } from '../test/test.utils';
 import { RedisService } from './redis.service';
 
 describeIfEnv('REDIS_HOST', true, 'RedisService', () => {

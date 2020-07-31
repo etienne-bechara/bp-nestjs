@@ -7,18 +7,18 @@ import { argv } from 'yargs';
 
 /**
  * Creates a folder inside ./source that matches
- * desired model and replace its naming variables
+ * desired draft and replace its naming variables
  */
-function generateModel(): void {
+function generateDraft(): void {
   try {
     const type = argv.t ? argv.t.toString() : null;
     if (!type) {
       return printError(
-        'missing model type',
-        'npm run model:{model_type} -- -n {domain_name}',
+        'missing draft type',
+        'npm run draft:{draft_type} -- -n {domain_name}',
       );
     }
-    return generateModelByType(type);
+    return generateDraftByType(type);
   }
   catch (e) {
     return printError(e.message);
@@ -26,24 +26,24 @@ function generateModel(): void {
 }
 
 /**
- * Copy all files inside model folder to project ./source,
+ * Copy all files inside draft folder to project ./source,
  * renaming according to provided domain name
  *
  * Then replace all placeholders according to desired case
  */
-function generateModelByType(type: string): void {
+function generateDraftByType(type: string): void {
   const name: string = argv.n ? argv.n.toString() : null;
 
   if (!name) {
     return printError(
       'missing domain name [-n]',
-      `npm run model:${type} -- -n {domain_name}`,
+      `npm run draft:${type} -- -n {domain_name}`,
     );
   }
 
   globby.sync(`./${type}/**/*`, { cwd: __dirname }).map((file) => {
 
-    const source = file.replace('./', './model/');
+    const source = file.replace('./', './draft/');
     const destination = file.replace('./', './source/')
       .replace(new RegExp(type, 'g'), dotCase(name));
 
@@ -69,7 +69,7 @@ function generateModelByType(type: string): void {
 function printError(message: string, example?: string): void {
   console.error(`
   
-  Model Generation Failed!
+  Draft Generation Failed!
   Error: ${message}
 
   ${example ? `
@@ -79,4 +79,4 @@ function printError(message: string, example?: string): void {
   `);
 }
 
-void generateModel();
+void generateDraft();

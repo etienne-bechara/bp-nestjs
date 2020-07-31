@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
 
-import { describeIfEnv } from '../../../test/test.utils';
 import { HttpsModule } from '../https/https.module';
 import { HttpsService } from '../https/https.service';
+import { describeIfEnv } from '../test/test.utils';
 import { RapidApiService } from './rapid-api.service';
 
 describeIfEnv('RAPID_API_AUTH', true, 'RapidApiService', () => {

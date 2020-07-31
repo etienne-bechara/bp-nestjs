@@ -23,7 +23,7 @@ Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover inici
 - [Filters](#filters)
 - [Testes](#testes)
 - [Migrations](#migrations)
-- [Models](#models)
+- [Drafts](#drafts)
   * [API](#api)
   * [CRUD](#crud)
 
@@ -658,7 +658,7 @@ Caso prefira apenas visualizar a migração e não executá-la, substitua o scri
 
 
 
-## Models
+## Drafts
 
 Criar serviços, controllers e DTOs de algo repetitivo pode ser bastante tedioso, sendo assim foi desenvolvido uma maneira mais simples para realizar estas implementações.
 
@@ -669,7 +669,7 @@ Cria todos os arquivos recomendados para implementação de um serviço de API e
 Dado um domínio de sua escolha, por exemplo: `gmaps`, execute o script:
 
 ```
-npm run model:api -- -n gmaps
+npm run draft:api -- -n gmaps
 ```
 
 A seguinte estrutura de arquivos será criada dentro de `/source`:
@@ -697,7 +697,7 @@ Cria todos os arquivos recomendados para implementação de uma entidade com mé
 Dado um domínio de sua escolha, por exemplo: `user`, execute o script:
 
 ```
-npm run model:crud -- -n user
+npm run draft:crud -- -n user
 ```
 
 A seguinte estrutura de arquivos será criada dentro de `/source`:

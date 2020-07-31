@@ -1,6 +1,6 @@
-# Packages and Distributable Artifact
+# Packages and Build
 /node_modules
-/dist
+/build
 
 # Test Coverage
 /coverage

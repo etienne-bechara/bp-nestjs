@@ -13,7 +13,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nest start --debug --watch",
-    "start:dist": "node ./source/core/main.js || node ./dist/source/core/main.js",
+    "start:prd": "node ./source/core/main.js || node ./build/source/core/main.js",
 
     "lint": "eslint **/*.ts",
     "build": "nest build",
@@ -22,8 +22,8 @@
     "test:watch": "jest --verbose --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
 
-    "model:api": "ts-node ./model/model.cli -t api",
-    "model:crud": "ts-node ./model/model.cli -t crud",
+    "draft:api": "ts-node ./draft/draft.cli -t api",
+    "draft:crud": "ts-node ./draft/draft.cli -t crud",
 
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
@@ -104,7 +104,7 @@
   "mikro-orm": {
     "useTsNode": true,
     "configPaths": [
-      "./dist/source/core/orm/orm.connection.js"
+      "./build/source/core/orm/orm.connection.js"
     ]
   },
   "jest": {
