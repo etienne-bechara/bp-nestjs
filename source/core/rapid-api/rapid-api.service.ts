@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { AppProvider } from '../app/app.provider';
 import { HttpsService } from '../https/https.service';
-import { RapidApiMailCheck } from './rapid-api.interface/rapid-api.mailcheck';
+import { RapidApiMailCheck } from './rapid-api.interface';
 import { RapidApiSettings } from './rapid-api.settings';
 
 @Injectable()
