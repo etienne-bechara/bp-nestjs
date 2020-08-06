@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException, NotImplementedException } from '@nestjs/common';
-import { AnyEntity, EntityRepository, QueryOrder } from 'mikro-orm';
+import { AnyEntity, EntityRepository, FilterQuery, QueryOrder } from 'mikro-orm';
 
 import { AppProvider } from '../app/app.provider';
 import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.interface';
@@ -33,7 +33,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param populate
    */
   private async find(
-    params: Partial<Entity> | string, options: OrmFindOptions = { }, partial?: boolean,
+    params: FilterQuery<Entity> | Partial<Entity> | string, options: OrmFindOptions = { }, partial?: boolean,
   ): Promise<Entity | Entity[] | OrmPartialResponse<Entity>> {
 
     // Assign defaults
@@ -119,7 +119,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * Read all entities that matches given criteria
    * @param id
    */
-  public async read(params: Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity[]> {
+  public async read(params: FilterQuery<Entity> | Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity[]> {
     const entities = await this.find(params, options);
     return Array.isArray(entities) ? entities : undefined;
   }
@@ -129,7 +129,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * fails throw a conflict exception
    * @param id
    */
-  public async readUnique(params: Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity> {
+  public async readUnique(params: FilterQuery<Entity> | Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity> {
     const entities = await this.find(params, options);
 
     if (Array.isArray(entities) && entities.length > 1) {
@@ -148,7 +148,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * Returns an object contining limit, offset, total and results
    * @param id
    */
-  public async readAndCount(params: Entity, options: OrmFindOptions = { }): Promise<OrmPartialResponse<Entity>> {
+  public async readAndCount(params: FilterQuery<Entity> | Entity, options: OrmFindOptions = { }): Promise<OrmPartialResponse<Entity>> {
     if (!options.limit) options.limit = 1000;
     if (!options.offset) options.offset = 0;
     const result = await this.find(params, options, true);
