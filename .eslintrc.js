@@ -1,7 +1,8 @@
 /* eslint-disable */
 
 /**
- * Use the recommended TypeScript parser with default options
+ * To install on a fresh repository:
+ * npm i -D @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-plugin-more eslint-plugin-promise eslint-plugin-simple-import-sort
  */
 module.exports =  {
   parser: '@typescript-eslint/parser',

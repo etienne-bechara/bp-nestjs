@@ -1,3 +1,4 @@
-# Non TypeScript folders
 /node_modules
 /build
+
+.eslintrc.js
