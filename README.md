@@ -641,17 +641,17 @@ Este boilerplate permite sincronizar a modelagem atual com as entidades definida
 Por padrão, é possível possuir até três ambientes configurados em arquivos `.env` separados sendo:
 
 ```bash
-.env      # Desenvolvimento
-.env.stg  # Homologação
-.env.prd  # Produção
+.env              # Desenvolvimento
+.env.staging      # Homologação
+.env.production   # Produção
 ```
 
 Para realizar a migração de sincronismo execute:
 
 ```bash
 npm run orm:sync:dev  # Utiliza arquivo .env
-npm run orm:sync:stg  # Utiliza arquivo .env.stg
-npm run orm:sync:prd  # Utiliza arquivo .env.prd
+npm run orm:sync:stg  # Utiliza arquivo .env.staging
+npm run orm:sync:prd  # Utiliza arquivo .env.production
 ```
 
 Caso prefira apenas visualizar a migração e não executá-la, substitua o script `orm:sync` por `orm:dump`. As queries serão impressas no console.

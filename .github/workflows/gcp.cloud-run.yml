@@ -51,7 +51,10 @@ jobs:
       run: npm install
 
     - name: Build Deployable Artifact
-      run: npm run build
+      run: npm run build:prd
+
+    - name: Execute Lint Check
+      run: npm run test
 
     - name: Execute Unit Tests
       run: npm run test

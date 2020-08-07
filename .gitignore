@@ -1,6 +1,7 @@
-# Packages and Build
+# Packages, Cache and Build
 /node_modules
 /build
+/source/core/orm/cache
 
 # Test Coverage
 /coverage

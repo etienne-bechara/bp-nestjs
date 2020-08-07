@@ -12,11 +12,13 @@
   },
   "license": "MIT",
   "scripts": {
+    "dev": "npm start",
     "start": "nest start --debug --watch",
     "start:prd": "node ./source/core/main.js || node ./build/source/core/main.js",
 
     "lint": "eslint **/*.ts",
     "build": "nest build",
+    "build:prd": "npm run build && mikro-orm cache:generate",
 
     "test": "jest --verbose",
     "test:watch": "jest --verbose --watch",
@@ -28,20 +30,19 @@
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
-    "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
+    "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --squash --allow-unrelated-histories",
     
-    "orm:build": "nest build && mikro-orm cache:generate",
-    "orm:set:dev": "cp-cli .env dist/.env",
-    "orm:set:stg": "cp-cli .env.stg dist/.env",
-    "orm:set:prd": "cp-cli .env.prd dist/.env",
-    "orm:sync:dev": "npm run orm:build && npm run orm:set:dev && npm run orm:sync:run",
-    "orm:sync:stg": "npm run orm:build && npm run orm:set:stg && npm run orm:sync:run",
-    "orm:sync:prd": "npm run orm:build && npm run orm:set:prd && npm run orm:sync:run",
-    "orm:sync:run": "mikro-orm schema:update --dump && mikro-orm schema:update --run",
-    "orm:dump:dev": "npm run orm:build && npm run orm:set:dev && npm run orm:dump:run",
-    "orm:dump:stg": "npm run orm:build && npm run orm:set:stg && npm run orm:dump:run",
-    "orm:dump:prd": "npm run orm:build && npm run orm:set:prd && npm run orm:dump:run",
-    "orm:dump:run": "mikro-orm schema:update --dump"
+    "orm:set:dev": "cp-cli .env build/.env",
+    "orm:set:stg": "cp-cli .env.staging build/.env",
+    "orm:set:prd": "cp-cli .env.production build/.env",
+    "orm:dump:dev": "npm run build:prd && npm run orm:set:dev && npm run orm:dump:run",
+    "orm:dump:stg": "npm run build:prd && npm run orm:set:stg && npm run orm:dump:run",
+    "orm:dump:prd": "npm run build:prd && npm run orm:set:prd && npm run orm:dump:run",
+    "orm:dump:run": "mikro-orm schema:update --dump",
+    "orm:sync:dev": "npm run build:prd && npm run orm:set:dev && npm run orm:sync:run",
+    "orm:sync:stg": "npm run build:prd && npm run orm:set:stg && npm run orm:sync:run",
+    "orm:sync:prd": "npm run build:prd && npm run orm:set:prd && npm run orm:sync:run",
+    "orm:sync:run": "npm run orm:dump:run && mikro-orm schema:update --run"
   },
   "dependencies": {
     "@nestjs/common": "7.3.2",
