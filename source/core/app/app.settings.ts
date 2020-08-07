@@ -26,8 +26,8 @@ export class AppSettings {
 
   public APP_CORS_OPTIONS: CorsOptions | boolean = {
     origin: '*',
-    methods: 'GET, POST, PUT, DELETE',
-    allowedHeaders: 'Content-Type, Accept',
+    methods: 'DELETE, GET, OPTIONS, POST, PUT',
+    allowedHeaders: 'Accept, Authorization, Content-Type',
   };
 
   public APP_VALIDATION_RULES: ValidationPipeOptions = {
