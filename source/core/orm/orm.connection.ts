@@ -7,7 +7,7 @@ import { AppUtils } from '../app/app.utils';
 import { OrmSettings } from './orm.settings';
 
 const settings = AppUtils.parseSettings<AppSettings & OrmSettings>();
-const entities = AppUtils.globToRequire('./**/*.entity.js');
+const entities = AppUtils.globToRequire('./**/*.entity.{ts,js}');
 
 const isDevelopment = settings.NODE_ENV === AppEnvironment.DEVELOPMENT;
 
@@ -27,7 +27,13 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
 
   driver: MySqlDriver,
   driverOptions: {
-    connection: { enableKeepAlive: true },
+    connection: {
+      enableKeepAlive: true,
+      dateStrings: [
+        'DATE',
+        'DATETIME',
+      ],
+    },
   },
 
   autoFlush: false,
@@ -48,10 +54,10 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
 
   migrations: {
     tableName: '_migration',
-    path: `${__dirname}/../../../migration`,
+    path: `${__dirname}/../../../../migration`,
     pattern: /^[\w-]+\d+\.[tj]s$/,
     dropTables: isDevelopment,
-    emit: 'js',
+    emit: 'ts',
   },
 };
 
