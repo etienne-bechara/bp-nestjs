@@ -1,0 +1,89 @@
+# This workflow will build a docker container, publish it to Google Container Registry,
+# and deploy it on Cloud Run when a push is made at master branch
+#
+# To configure this workflow, set up secrets in your workspace:
+# - GCP_PROJECT with the name of the project
+# - GCP_SA_EMAIL with the service account email
+# - GCP_SA_KEY with the JSON service account key
+
+name: Google Cloud Run
+# on:
+#   push:
+#     branches:
+#       - master
+
+# Environment variables available to all jobs and steps in this workflow
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  ENV_FILE: ${{ secrets.ENV_FILE }}
+  GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+  REGISTRY_HOSTNAME: gcr.io
+  REGISTRY_IMAGE_NAME: cdb-unit-price-api
+  CLOUD_RUN_SERVICE_NAME: cdb-unit-price-api
+  CLOUD_RUN_REGION: us-east1
+  CLOUD_RUN_CPU: 1
+  CLOUD_RUN_MEMORY: 1Gi
+  CLOUD_RUN_TIMEOUT: 60s
+  CLOUD_RUN_MAX_INSTANCES: 10
+  CLOUD_RUN_CONCURRENCY: 20
+
+jobs:
+  compile-test-build-publish-deploy:
+    name: Production Deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - name: Use Checkout
+      uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Create Environment File
+      run: echo "$ENV_FILE" > .env
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Deployable Artifact
+      run: npm run build
+
+    - name: Execute Unit Tests
+      run: npm run test
+
+    - name: Authenticate Google Cloud Platform
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Configure Google Cloud CLI Tool
+      run: |
+        gcloud auth configure-docker
+      
+    - name: Build Container Image
+      run: |        
+        docker build -t "$REGISTRY_HOSTNAME"/"$GCP_PROJECT"/"$REGISTRY_IMAGE_NAME":"$GITHUB_SHA" \
+          build/.
+
+    - name: Publish Image to Container Registry
+      run: |
+        docker push $REGISTRY_HOSTNAME/$GCP_PROJECT/$REGISTRY_IMAGE_NAME:$GITHUB_SHA
+
+    - name: Deploy Image on Google Cloud Run
+      run: |
+        gcloud run deploy $CLOUD_RUN_SERVICE_NAME \
+          --project $GCP_PROJECT \
+          --image $REGISTRY_HOSTNAME/$GCP_PROJECT/$REGISTRY_IMAGE_NAME:$GITHUB_SHA \
+          --region $CLOUD_RUN_REGION \
+          --cpu $CLOUD_RUN_CPU \
+          --memory $CLOUD_RUN_MEMORY \
+          --timeout $CLOUD_RUN_TIMEOUT \
+          --max-instances $CLOUD_RUN_MAX_INSTANCES \
+          --concurrency $CLOUD_RUN_CONCURRENCY \
+          --platform managed \
+          --allow-unauthenticated
