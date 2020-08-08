@@ -3,7 +3,6 @@
 
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
-import chalk from 'chalk';
 import moment from 'moment';
 
 import { AppEnvironment } from '../app/app.enum';
@@ -14,6 +13,7 @@ import { LoggerSettings } from './logger.settings';
 @Injectable()
 export class LoggerService {
   private sentryEnabled: boolean;
+  private chalk: any;
 
   /** */
   public constructor(private settings: LoggerSettings & { NODE_ENV: AppEnvironment}) {
@@ -26,6 +26,10 @@ export class LoggerService {
    * Then add a process listener to catch any unhandled exception
    */
   private setupLogger(): void {
+    this.chalk = this.settings.NODE_ENV === AppEnvironment.DEVELOPMENT
+      ? require('chalk')
+      : undefined;
+
     this.info(`Environment configured as ${this.settings.NODE_ENV}`, { private: true });
 
     this.sentryEnabled =
@@ -104,8 +108,8 @@ export class LoggerService {
           ).join('\n  at ')}`
         : undefined;
 
-      console.log(chalk`{grey ${nowStr}} {${params.labelColor}  ${params.label} } {${params.messageColor} ${params.message}}`);
-      if (stackStr && params.level <= LoggerLevel.ERROR) console.log(chalk`{grey ${stackStr}}`);
+      console.log(this.chalk`{grey ${nowStr}} {${params.labelColor}  ${params.label} } {${params.messageColor} ${params.message}}`);
+      if (stackStr && params.level <= LoggerLevel.ERROR) console.log(this.chalk`{grey ${stackStr}}`);
       if (params.data && !params.data.private) console.log(params.data);
     }
 
