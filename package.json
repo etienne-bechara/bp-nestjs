@@ -1,7 +1,7 @@
 {
-  "name": "nestjs-boilerplate",
+  "name": "bp-nestjs-backend",
   "version": "0.1.0",
-  "description": "Opinated Serverless Boilertplate Based on NestJS and Written in TypeScript",
+  "description": "Full back-end boilerplate based on NestJS and MikroORM. Written in TypeScript.",
   "author": {
     "name": "Etienne Bechara",
     "email": "et.rodrigues@hotmail.com"
