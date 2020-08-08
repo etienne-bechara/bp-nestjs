@@ -66,13 +66,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
       message = exception.getResponse();
 
       if (status === HttpStatus.BAD_REQUEST) {
-        const constraints = Array.isArray(message['message'])
-          ? message['message']
-          : [ message['message'] ];
-
-        message = constraints.length > 1
-          ? 'request validation failed'
-          : constraints[0];
+        message = 'request validation failed';
       }
       else if (message && typeof message === 'object') {
         if (message['message'] && typeof message['message'] === 'string') {
@@ -104,11 +98,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
         const constraints = Array.isArray(details['message'])
           ? details['message']
           : [ details['message'] ];
-
-        details = constraints.length > 1
-          ? details = { constraints }
-          : { };
-
+        details = { constraints };
       }
       else if (details && typeof details === 'object') {
         delete details['statusCode'];
