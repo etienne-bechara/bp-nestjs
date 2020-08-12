@@ -56,7 +56,7 @@ jobs:
       run: npm run build:cache
 
     - name: Execute Lint Check
-      run: npm run test
+      run: npm run lint
 
     - name: Execute Unit Tests
       run: npm run test
