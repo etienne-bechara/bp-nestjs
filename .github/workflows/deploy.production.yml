@@ -20,8 +20,8 @@ env:
   ENV_FILE: ${{ secrets.PRD_ENV_FILE }}
   GCP_PROJECT: ${{ secrets.PRD_GCP_PROJECT }}
   REGISTRY_HOSTNAME: gcr.io
-  REGISTRY_IMAGE_NAME: cdb-unit-price-api
-  CLOUD_RUN_SERVICE_NAME: cdb-unit-price-api
+  REGISTRY_IMAGE_NAME: prd-${{ github.event.repository.name }}
+  CLOUD_RUN_SERVICE_NAME: prd-${{ github.event.repository.name }}
   CLOUD_RUN_REGION: us-east1
   CLOUD_RUN_CPU: 1
   CLOUD_RUN_MEMORY: 1Gi
