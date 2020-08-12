@@ -9,7 +9,7 @@ export abstract class OrmTimestampEntity extends OrmIdEntity {
   public updated: Date = new Date();
 
   @Index()
-  @Property({ columnType: 'timestamp' })
+  @Property({ columnType: 'timestamp', default: 'CURRENT_TIMESTAMP' })
   public created: Date = new Date();
 
 }
