@@ -30,7 +30,7 @@
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
-    "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --squash --allow-unrelated-histories",
+    "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories",
     
     "migration:set:dev": "npm run build:cache && cp-cli .env build/.env",
     "migration:set:stg": "npm run build:cache && cp-cli .env.staging build/.env",
