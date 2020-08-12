@@ -18,7 +18,7 @@
 
     "lint": "eslint **/*.ts",
     "build": "nest build",
-    "build:prd": "npm run build && mikro-orm cache:generate",
+    "build:cache": "npm run build && mikro-orm cache:generate",
 
     "test": "jest --verbose",
     "test:watch": "jest --verbose --watch",
@@ -32,17 +32,21 @@
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --squash --allow-unrelated-histories",
     
-    "orm:set:dev": "cp-cli .env build/.env",
-    "orm:set:stg": "cp-cli .env.staging build/.env",
-    "orm:set:prd": "cp-cli .env.production build/.env",
-    "orm:dump:dev": "npm run build:prd && npm run orm:set:dev && npm run orm:dump:run",
-    "orm:dump:stg": "npm run build:prd && npm run orm:set:stg && npm run orm:dump:run",
-    "orm:dump:prd": "npm run build:prd && npm run orm:set:prd && npm run orm:dump:run",
-    "orm:dump:run": "mikro-orm schema:update --dump",
-    "orm:sync:dev": "npm run build:prd && npm run orm:set:dev && npm run orm:sync:run",
-    "orm:sync:stg": "npm run build:prd && npm run orm:set:stg && npm run orm:sync:run",
-    "orm:sync:prd": "npm run build:prd && npm run orm:set:prd && npm run orm:sync:run",
-    "orm:sync:run": "npm run orm:dump:run && mikro-orm schema:update --run"
+    "migration:set:dev": "npm run build:cache && cp-cli .env build/.env",
+    "migration:set:stg": "npm run build:cache && cp-cli .env.staging build/.env",
+    "migration:set:prd": "npm run build:cache && cp-cli .env.production build/.env",
+
+    "migration:dump:dev": "npm run migration:set:dev && mikro-orm schema:update --dump",
+    "migration:dump:stg": "npm run migration:set:stg && mikro-orm schema:update --dump",
+    "migration:dump:prd": "npm run migration:set:prd && mikro-orm schema:update --dump",
+
+    "migration:sync:dev": "npm run migration:set:dev && npm run migration:dump:run && mikro-orm schema:update --run",
+    "migration:sync:stg": "npm run migration:set:stg && npm run migration:dump:run && mikro-orm schema:update --run",
+    "migration:sync:prd": "npm run migration:set:prd && npm run migration:dump:run && mikro-orm schema:update --run",
+
+    "migration:create:dev": "npm run migration:set:dev && mikro-orm migration:create",
+    "migration:create:stg": "npm run migration:set:stg && mikro-orm migration:create",
+    "migration:create:prd": "npm run migration:set:prd && mikro-orm migration:create"
   },
   "dependencies": {
     "@nestjs/common": "7.4.2",

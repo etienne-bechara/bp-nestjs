@@ -53,7 +53,7 @@ jobs:
       run: npm install
 
     - name: Build Deployable Artifact
-      run: npm run build:prd
+      run: npm run build:cache
 
     - name: Execute Lint Check
       run: npm run test
