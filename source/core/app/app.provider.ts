@@ -11,7 +11,7 @@ export abstract class AppProvider {
   }
 
   /** Wait for desired milliseconds */
-  protected async wait(ms: number): Promise<void> {
+  protected async halt(ms: number): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, ms));
   }
 
@@ -40,7 +40,7 @@ export abstract class AppProvider {
         tentatives++;
 
         this.logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || 'infinite'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || 'infinite '}s...`);
-        await this.wait(p.delay || 0);
+        await this.halt(p.delay || 0);
       }
     }
 
