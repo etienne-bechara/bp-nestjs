@@ -1,22 +1,24 @@
 # This workflow will build a docker container, publish it to Google Container Registry,
-# and deploy it on Cloud Run when a push is made at master branch
+# and deploy it on Cloud Run when a release is published (or when pushed to master)
 #
 # To configure this workflow, set up secrets in your workspace:
-# - GCP_PROJECT with the name of the project
-# - GCP_SA_EMAIL with the service account email
-# - GCP_SA_KEY with the JSON service account key
+# - PRD_GCP_PROJECT: Project ID at Google Cloud
+# - PRD_GCP_SA_KEY: JSON Service Account Key to authenticate CLI
+# - PRD_ENV_FILE: .env file to be injected on container
+#
 
 name: Google Cloud Run
-# on:
-#   push:
-#     branches:
-#       - master
+on:
+  release:
+    types: [published]
+  # push:
+  #   branches: [master]
 
 # Environment variables available to all jobs and steps in this workflow
 env:
   GITHUB_SHA: ${{ github.sha }}
-  ENV_FILE: ${{ secrets.ENV_FILE }}
-  GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+  ENV_FILE: ${{ secrets.PRD_ENV_FILE }}
+  GCP_PROJECT: ${{ secrets.PRD_GCP_PROJECT }}
   REGISTRY_HOSTNAME: gcr.io
   REGISTRY_IMAGE_NAME: cdb-unit-price-api
   CLOUD_RUN_SERVICE_NAME: cdb-unit-price-api
@@ -62,7 +64,7 @@ jobs:
     - name: Authenticate Google Cloud Platform
       uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        service_account_key: ${{ secrets.PRD_GCP_SA_KEY }}
 
     - name: Configure Google Cloud CLI Tool
       run: |
@@ -90,3 +92,7 @@ jobs:
           --concurrency $CLOUD_RUN_CONCURRENCY \
           --platform managed \
           --allow-unauthenticated
+
+    - name: Execute Migrations
+      run: |
+        npx mikro-orm migration:up
