@@ -76,7 +76,7 @@ export class HttpsService extends AppProvider {
 
       res = await Promise.race([
         this.instance(params),
-        this.wait(params.timeout),
+        this.halt(params.timeout),
       ]);
 
       const validator = params.validateStatus || this.defaultValidator;
