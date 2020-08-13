@@ -5,5 +5,5 @@ export interface AppRetryParams {
   retries?: number;
   timeout?: number;
   delay?: number;
-  validateRetry?: (e: any)=> boolean;
+  retryIf?: (e: any)=> boolean;
 }

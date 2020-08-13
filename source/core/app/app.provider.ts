@@ -36,7 +36,7 @@ export abstract class AppProvider {
 
         if (p.retries && tentatives > p.retries) throw e;
         else if (p.timeout && elapsed > p.timeout) throw e;
-        else if (p.validateRetry && !p.validateRetry(e)) throw e;
+        else if (p.retryIf && !p.retryIf(e)) throw e;
         tentatives++;
 
         this.logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || 'infinite'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || 'infinite '}s...`);
