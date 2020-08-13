@@ -5,5 +5,5 @@ export interface AppRetryParams {
   retries?: number;
   timeout?: number;
   delay?: number;
-  retryIf?: (e: any)=> boolean;
+  breakIf?: (e: any)=> boolean;
 }
