@@ -1,3 +1,5 @@
+import https from 'https';
+
 import { HttpsReturnType } from '../https.enum';
 
 /**
@@ -13,7 +15,6 @@ export interface HttpsServiceOptions {
   baseData?: Record<string, unknown>;
   baseHeaders?: Record<string, string>;
 
-  ignoreHttpsErrors?: boolean;
-  randomizeUserAgent?: boolean;
+  httpsAgent?: https.Agent;
 
 }

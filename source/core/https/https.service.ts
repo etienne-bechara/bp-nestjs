@@ -1,8 +1,6 @@
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
-import https from 'https';
 import qs from 'qs';
-import UserAgent from 'user-agents';
 
 import { AppProvider } from '../app/app.provider';
 import { HttpsReturnType } from './https.enum';
@@ -38,17 +36,12 @@ export class HttpsService extends AppProvider {
       : (s): boolean => s < 400;
 
     if (!params.baseHeaders) params.baseHeaders = { };
-    if (params.randomizeUserAgent) {
-      params.baseHeaders['user-agent'] = new UserAgent().toString();
-    }
     this.baseHeaders = params.baseHeaders;
 
     this.instance = axios.create({
       timeout: params.defaultTimeout || this.settings.HTTPS_DEFAULT_TIMEOUT,
       validateStatus: () => true,
-      httpsAgent: params.ignoreHttpsErrors
-        ? new https.Agent({ rejectUnauthorized: false })
-        : undefined,
+      httpsAgent: params.httpsAgent,
     });
   }
 
