@@ -107,8 +107,7 @@ Documentação | Reponsabilidades | Observação
 [Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Não é possível remover o logger (seu consumo em execução é insignificante).
 [MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.<br>Para excluir remova a pasta `/core/orm`.
 [Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.<br>Para excluir remova a pasta `/core/redis`.
-[Nodemailer](https://nodemailer.com/about/) | • Envio Automatizado de E-mails | **Opcional**<br>Habilite configurando as variáveis `MAILER_*` no `.env`.<br>Para excluir remova a pasta `/core/mailer`.
-[RapidAPI](https://rapidapi.com/) | • Acesso a centenas de APIs prontas<br>• Validação de e-mail e domínio | **Opcional**<br>Habilite configurando a variável `RAPID_API_KEY` no `.env`.<br>Para excluir remova a pasta `/core/rapid-api`.
+
 
 ### Utilitários
 
@@ -268,8 +267,7 @@ Refira-se a [Nest JS - Modules](https://docs.nestjs.com/modules) para mais infor
 Classe | Arquivo | Descrição
 ---|---|---
 AppModule | `app.module.ts` | Ponto de entrada da aplicação, carrega todos os outros módulos.
-HttpsModule | `https.module.ts` | Carrega o serviço abstraído de requisições HTTP(s) baseado em Axios.
-MailerModule | `mailer.module.ts` | Carrega o serviço opcional de envio de e-mails via SMTP.
+HttpsModule | `https.module.ts` | Carrega o serviço abstraído de requisições HTTP(s) baseado em Axios. opcional de envio de e-mails via SMTP.
 OrmModule | `orm.module.ts` | Carrega a camada opcional de abstração para armazenamento em banco de dados.
 RedisModule | `redis.module.ts` | Carrega o serviço opcional para armazenamento chave/valor de alta performance.
 
@@ -419,7 +417,6 @@ AppProvider | `abstract.provider.ts` | Extenda essa classe para já ter acesso a
 OrmService | `ormservice.ts` | Extenda essa classe para já ter acesso a métodos de manipulação de dados via ORM com gerenciamento de exeções nas queries.
 HttpsService | `https.service.ts` | Wrapper sobre o Axios para padronizar exceções HTTP e adicionar amenidades.
 LoggerService | `logger.service.ts` | Disponível via AppProvider, realiza integração com Sentry e imprime no console durante desenvolvimento.
-MailerService | `mailer.service.ts` | Wrapper sobre o Nodemailer para envio automatizado de e-mails.
 RedisService | `redis.service.ts` | Wrapper sobre o redis para ler e persistir dados chave/valor em cloud.
 
 ### Exemplos
@@ -599,31 +596,32 @@ Para usufruir desta funcionalidade, configure seus testes com um método `before
 
 ```ts
 import { Test } from '@nestjs/testing';
-import { HttpsModule } from '../https/https.module';
-import { HttpsService } from '../https/https.service';
-import { RapidApiService } from './rapid-api.service';
+import { RedisService } from './redis.service';
 
-describe('RapidApiService', () => {
-  let rapidApiService: RapidApiService;
+describe('RedisService', () => {
+  const rng = Math.random();
+  let redisService: RedisService;
 
-  beforeEach(async() => {
+  beforeAll(async() => {
     const testModule = await Test.createTestingModule({
-      imports: [ HttpsModule ],
-      providers: [ RapidApiService, HttpsService ],
+      providers: [ RedisService ],
     }).compile();
 
-    rapidApiService = testModule.get(RapidApiService);
+    redisService = testModule.get(RedisService);
   });
 
-  describe('checkEmailDomain', () => {
-
-    it('should flag e-mail as valid', async() => {
-      expect(await rapidApiService.checkEmailDomain('john.doe@gmail.com'))
-        .toMatchObject({ valid: true, block: false, disposable: false });
+  describe('setKey', () => {
+    it('should persist a random number', async() => {
+      expect(await redisService.setKey('TEST_KEY', { rng }, 10 * 1000))
+        .toBeUndefined();
     });
+  });
 
-    /* Write more tests here */
-
+  describe('getKey', () => {
+    it('should read persisted random number', async() => {
+      expect(await redisService.getKey('TEST_KEY'))
+        .toMatchObject({ rng });
+    });
   });
 });
 ```

@@ -1,5 +1,5 @@
 {
-  "name": "bp-nestjs-backend",
+  "name": "bp-nestjs",
   "version": "0.1.0",
   "description": "Full back-end boilerplate based on NestJS and MikroORM. Written in TypeScript.",
   "author": {
@@ -8,45 +8,65 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/etienne-bechara/nestjs-boilerplate"
+    "url": "https://github.com/etienne-bechara/bp-nestjs"
   },
   "license": "MIT",
   "scripts": {
+    "==== Build & Run ====": "",
+    "build": "nest build",
+    "build:cache": "npm run build && mikro-orm cache:generate",
     "dev": "npm start",
     "start": "nest start --debug --watch",
     "start:prd": "node ./source/core/main.js || node ./build/source/core/main.js",
-
+    "==== Lint & Test ====": "",
     "lint": "eslint **/*.ts",
-    "build": "nest build",
-    "build:cache": "npm run build && mikro-orm cache:generate",
-
     "test": "jest --verbose --forceExit",
     "test:watch": "jest --verbose --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
-
-    "draft:api": "ts-node ./draft/draft.cli -t api",
-    "draft:crud": "ts-node ./draft/draft.cli -t crud",
-
+    "==== Package Update ====": "",
     "update:patch": "ncu -u --semverLevel minor && npm i && npm audit fix",
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "update:boilerplate": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories --squash",
-    
-    "migration:set:dev": "npm run build:cache && cp-cli .env build/.env",
-    "migration:set:stg": "npm run build:cache && cp-cli .env.staging build/.env",
-    "migration:set:prd": "npm run build:cache && cp-cli .env.production build/.env",
-
+    "==== Boilerplate Generation ====": "",
+    "draft:api": "ts-node ./draft/draft.cli -t api",
+    "draft:crud": "ts-node ./draft/draft.cli -t crud",
+    "==== Migration Dump ====": "",
     "migration:dump:dev": "npm run migration:set:dev && mikro-orm schema:update --dump",
     "migration:dump:stg": "npm run migration:set:stg && mikro-orm schema:update --dump",
     "migration:dump:prd": "npm run migration:set:prd && mikro-orm schema:update --dump",
-
+    "==== Migration Sync ====": "",
     "migration:sync:dev": "npm run migration:set:dev && npm run migration:dump:run && mikro-orm schema:update --run",
     "migration:sync:stg": "npm run migration:set:stg && npm run migration:dump:run && mikro-orm schema:update --run",
     "migration:sync:prd": "npm run migration:set:prd && npm run migration:dump:run && mikro-orm schema:update --run",
-
+    "==== Migration Create ====": "",
     "migration:create:dev": "npm run migration:set:dev && mikro-orm migration:create",
     "migration:create:stg": "npm run migration:set:stg && mikro-orm migration:create",
-    "migration:create:prd": "npm run migration:set:prd && mikro-orm migration:create"
+    "migration:create:prd": "npm run migration:set:prd && mikro-orm migration:create",
+    "==== Migration Helpers ====": "",
+    "migration:set:dev": "npm run build:cache && cp-cli .env build/.env",
+    "migration:set:stg": "npm run build:cache && cp-cli .env.staging build/.env",
+    "migration:set:prd": "npm run build:cache && cp-cli .env.production build/.env"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./build/source/core/orm/orm.connection.js"
+    ]
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "source",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    }
   },
   "dependencies": {
     "@nestjs/common": "7.4.2",
@@ -63,7 +83,6 @@
     "moment": "2.27.0",
     "mysql2": "2.1.0",
     "nestjs-mikro-orm": "1.0.3",
-    "nodemailer": "6.4.11",
     "qs": "6.9.4",
     "redis": "3.0.2",
     "reflect-metadata": "0.1.13",
@@ -79,10 +98,8 @@
     "@types/fs-extra": "9.0.1",
     "@types/jest": "26.0.9",
     "@types/node": "14.0.27",
-    "@types/nodemailer": "6.4.0",
     "@types/redis": "2.8.25",
     "@types/supertest": "2.0.10",
-    "@types/user-agents": "1.0.0",
     "@typescript-eslint/eslint-plugin": "3.8.0",
     "@typescript-eslint/parser": "3.8.0",
     "chalk": "4.1.0",
@@ -104,25 +121,5 @@
     "tsconfig-paths": "3.9.0",
     "typescript": "3.9.7",
     "yargs": "15.4.1"
-  },
-  "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./build/source/core/orm/orm.connection.js"
-    ]
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "rootDir": "source",
-    "testRegex": ".spec.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    }
   }
 }
