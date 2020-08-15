@@ -1,6 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import jwt from 'jsonwebtoken';
 
 import { AppRequest } from '../../core/app/app.interface';
+import { AppAuthStrategy } from './app.enum';
 import { AppProvider } from './app.provider';
 import { AppSettings } from './app.settings';
 
@@ -9,20 +11,39 @@ export class AppGuard extends AppProvider implements CanActivate {
   private settings: AppSettings = this.getSettings();
 
   /**
-   * Implements a very basic authentication guard that checks if
-   * Authorization property at header matches configured token
+   * Implements very basic global authentication according to
+   * configured environment variables
+   * Refer to .sample.env for detailed information
    * @param context
    */
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: AppRequest = context.switchToHttp().getRequest();
-    const authorization = req.headers.authorization;
+    const authString = req.headers.authorization;
 
-    if (this.settings.APP_AUTHORIZATION) {
-      if (!authorization) {
-        throw new UnauthorizedException('missing authorization header');
+    // None
+    if (this.settings.AUTH_GLOBAL_STRATEGY === AppAuthStrategy.NONE) {
+      return true;
+    }
+    else if (!authString) {
+      throw new UnauthorizedException('missing authorization header');
+    }
+
+    // JWT HS256
+    if (this.settings.AUTH_GLOBAL_STRATEGY === AppAuthStrategy.JWT_HS256) {
+      try {
+        req.metadata.jwtPayload = jwt.verify(
+          authString.replace('Bearer ', ''),
+          this.settings.AUTH_JWT_HS256_CLIENT_SECRET,
+        );
       }
+      catch (e) {
+        throw new UnauthorizedException('invalid authorization header');
+      }
+    }
 
-      if (authorization !== this.settings.APP_AUTHORIZATION) {
+    // Static Token
+    else if (this.settings.AUTH_GLOBAL_STRATEGY === AppAuthStrategy.STATIC_TOKEN) {
+      if (authString !== this.settings.AUTH_STATIC_TOKEN) {
         throw new UnauthorizedException('invalid authorization header');
       }
     }

@@ -79,6 +79,7 @@
     "dotenv": "8.2.0",
     "flat": "5.0.2",
     "globby": "11.0.1",
+    "jsonwebtoken": "8.5.1",
     "mikro-orm": "3.6.15",
     "moment": "2.27.0",
     "mysql2": "2.1.0",

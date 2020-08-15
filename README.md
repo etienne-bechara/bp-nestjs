@@ -467,26 +467,23 @@ Refira-se a [Nest JS - Middleware](https://docs.nestjs.com/middleware) para mais
 
 Classe | Arquivo | Descrição
 ---|---|---
-AppAuthMiddleware | `app.auth.middleware.ts` | Compara o header `Authorization` com o valor definido em `APP_AUTHORIZATION` e falha se diferente.
+AppAuthMiddleware | `app.metadata.middleware.ts` | Extrai o IP e User Agent da requisição e os separa em uma propriedade de metadados
 
 ### Exemplos
 
 Implementação:
 ```ts
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Request, Response } from '../app.interface';
+
 @Injectable()
-export class AppAuthMiddleware extends AppProvider implements NestMiddleware {
+export class AppMetadataMiddleware implements NestMiddleware {
 
-  public use(req: AppRequest, res: AppResponse, next: ()=> void): void {
-
-    const authorization = req.headers.authorization;
-    if (!authorization && this.settings.APP_AUTHORIZATION) {
-      throw new UnauthorizedException('missing authorization header');
-    }
-
-    if (authorization !== this.settings.APP_AUTHORIZATION) {
-      throw new UnauthorizedException('invalid authorization header');
-    }
-
+  public async use(req: Request, res: Response, next: any): Promise<void> {
+    req['metadata'] = {
+      ip: requestIp.getClientIp(req) || null,
+      userAgent: req.headers ? req.headers['user-agent'] : null,
+    };
     next();
   }
 
@@ -502,7 +499,7 @@ export class AppModule {
     consumer
       .apply(
         // Aplique quantos quiser em ordem
-        AppAuthMiddleware,
+        AppMetadataMiddleware,
       )
       // Você pode escolher as rotas com:
       // .forRoutes({ method, path }, { method, path });
