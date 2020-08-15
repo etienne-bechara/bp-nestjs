@@ -55,7 +55,7 @@ export class AppUtils {
 
     if (!cachedSettings) {
       const rawEnv = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
-      const settingsConstructors = this.globToRequire('./**/*.settings.{js,ts}');
+      const settingsConstructors = AppUtils.globToRequire('./**/*.settings.{js,ts}');
       const settings: any = { };
 
       for (const constructor of settingsConstructors) {
@@ -88,7 +88,7 @@ export class AppUtils {
   public static getLogger(): LoggerService {
     if (!loggerService) {
       loggerService = new LoggerService(
-        this.parseSettings<AppSettings & LoggerSettings>(),
+        AppUtils.parseSettings<AppSettings & LoggerSettings>(),
       );
     }
     return loggerService;
@@ -107,9 +107,9 @@ export class AppUtils {
    * @param params
    */
   public static async retryOnException<T>(params: AppRetryParams): Promise<T> {
-    const logger = this.getLogger();
+    const logger = AppUtils.getLogger();
     const p = params;
-    logger.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
+    logger.debug(`${p.method}(): running with ${p.retries || '∞'} retries and ${p.timeout / 1000 || '∞ '}s timeout...`);
 
     const startTime = new Date().getTime();
     let tentatives = 1;
@@ -128,12 +128,12 @@ export class AppUtils {
         else if (p.breakIf && p.breakIf(e)) throw e;
         tentatives++;
 
-        logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || 'infinite'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || 'infinite '}s...`);
-        await this.halt(p.delay || 0);
+        logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || '∞'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`);
+        await AppUtils.halt(p.delay || 0);
       }
     }
 
-    this.getLogger().debug(`${p.method}() finished successfully!`);
+    logger.debug(`${p.method}() finished successfully!`);
     return result;
   }
 
@@ -159,7 +159,7 @@ export class AppUtils {
       describe.skip(name, fn);
     }
     else if (silent) {
-      this.describeSilent(name, fn);
+      AppUtils.describeSilent(name, fn);
     }
     else {
       describe(name, fn);
