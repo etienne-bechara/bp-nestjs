@@ -170,7 +170,7 @@ export class HttpsService extends AppProvider {
     try {
       res = await Promise.race([
         this.instance(finalParams),
-        this.halt(timeout),
+        this.utils.halt(timeout),
       ]);
 
       if (!res) {

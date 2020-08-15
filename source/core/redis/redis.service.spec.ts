@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 
-import { describeIfEnv } from '../test/test.utils';
+import { AppUtils } from '../app/app.utils';
 import { RedisService } from './redis.service';
 
-describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
+AppUtils.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
   const rng = Math.random();
   let redisService: RedisService;
 

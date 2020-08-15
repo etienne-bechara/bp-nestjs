@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
 
@@ -9,6 +10,7 @@ import globby from 'globby';
 import { LoggerService } from '../logger/logger.service';
 import { LoggerSettings } from '../logger/logger.settings';
 import { AppEnvironment } from './app.enum';
+import { AppRetryParams } from './app.interface';
 import { AppSettings } from './app.settings';
 
 let cachedSettings: any;
@@ -90,6 +92,78 @@ export class AppUtils {
       );
     }
     return loggerService;
+  }
+
+  /**
+   * Asynchronously wait for desired amount of milliseconds
+   * @param ms
+   */
+  public static async halt(ms: number): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Retry a method for configured times or until desired timeout
+   * @param params
+   */
+  public static async retryOnException<T>(params: AppRetryParams): Promise<T> {
+    const logger = this.getLogger();
+    const p = params;
+    logger.debug(`${p.method}(): running with ${p.retries || 'infinite'} retries and ${p.timeout / 1000 || 'infinite '}s timeout...`);
+
+    const startTime = new Date().getTime();
+    let tentatives = 1;
+    let result: T;
+
+    while (true) {
+      try {
+        result = await p.instance[p.method](...p.args);
+        break;
+      }
+      catch (e) {
+        const elapsed = new Date().getTime() - startTime;
+
+        if (p.retries && tentatives > p.retries) throw e;
+        else if (p.timeout && elapsed > p.timeout) throw e;
+        else if (p.breakIf && p.breakIf(e)) throw e;
+        tentatives++;
+
+        logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || 'infinite'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || 'infinite '}s...`);
+        await this.halt(p.delay || 0);
+      }
+    }
+
+    this.getLogger().debug(`${p.method}() finished successfully!`);
+    return result;
+  }
+
+  /**
+   * Runs a test group mocking console.log and console.info
+   * @param name
+   * @param fn
+   */
+  public static describeSilent(name: string, fn: any): void {
+    console.log = jest.fn();
+    console.info = jest.fn();
+    fn();
+  }
+
+  /**
+   * Describes a test only if desired environment variable
+   * is present
+   * @param variable
+   */
+  public static describeIfEnv(variable: string, silent: boolean, name: string, fn: jest.EmptyFunction): void {
+    const variableExists = dotenv.config().parsed[variable];
+    if (!variableExists) {
+      describe.skip(name, fn);
+    }
+    else if (silent) {
+      this.describeSilent(name, fn);
+    }
+    else {
+      describe(name, fn);
+    }
   }
 
 }
