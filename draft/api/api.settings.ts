@@ -8,7 +8,7 @@ export class _Pascal_Settings {
   public _Constant__HOST: string;
 
   @IsString() @IsNotEmpty()
-  public _Constant__AUTH: string;
+  public _Constant__API_KEY: string;
 
   /* Provider Options */
 

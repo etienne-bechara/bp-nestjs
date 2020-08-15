@@ -13,10 +13,10 @@ export class RapidApiService extends AppProvider {
   /** */
   public constructor(private readonly httpsService: HttpsService) {
     super();
-    if (this.settings.RAPID_API_AUTH) {
+    if (this.settings.RAPID_API_KEY) {
       this.httpsService.setupInstance({
         baseUrl: this.settings.RAPID_API_HOST,
-        baseHeaders: { 'x-rapidapi-key': this.settings.RAPID_API_AUTH },
+        baseHeaders: { 'x-rapidapi-key': this.settings.RAPID_API_KEY },
       });
       this.logger.success('[ENABLED] RapidAPI integration', { private: true });
       this.enabled = true;

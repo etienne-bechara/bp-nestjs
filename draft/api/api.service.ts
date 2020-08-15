@@ -16,9 +16,11 @@ export class _Pascal_Service extends AppProvider {
   public constructor(private readonly httpsService: HttpsService) {
     super();
     this.httpsService.setupInstance({
-      baseUrl: this.settings._Constant__HOST,
-      baseHeaders: { 'Authorization': this.settings._Constant__AUTH },
       defaultReturnType: HttpsReturnType.DATA,
+      baseUrl: this.settings._Constant__HOST,
+      baseHeaders: {
+        'Authorization': this.settings._Constant__API_KEY,
+      },
     });
   }
 

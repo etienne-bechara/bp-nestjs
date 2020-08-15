@@ -108,7 +108,7 @@ Documentação | Reponsabilidades | Observação
 [MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.<br>Para excluir remova a pasta `/core/orm`.
 [Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.<br>Para excluir remova a pasta `/core/redis`.
 [Nodemailer](https://nodemailer.com/about/) | • Envio Automatizado de E-mails | **Opcional**<br>Habilite configurando as variáveis `MAILER_*` no `.env`.<br>Para excluir remova a pasta `/core/mailer`.
-[RapidAPI](https://rapidapi.com/) | • Acesso a centenas de APIs prontas<br>• Validação de e-mail e domínio | **Opcional**<br>Habilite configurando a variável `RAPID_API_AUTH` no `.env`.<br>Para excluir remova a pasta `/core/rapid-api`.
+[RapidAPI](https://rapidapi.com/) | • Acesso a centenas de APIs prontas<br>• Validação de e-mail e domínio | **Opcional**<br>Habilite configurando a variável `RAPID_API_KEY` no `.env`.<br>Para excluir remova a pasta `/core/rapid-api`.
 
 ### Utilitários
 

@@ -6,7 +6,7 @@ export class RapidApiSettings {
 
   @IsOptional()
   @IsString() @IsNotEmpty()
-  public RAPID_API_AUTH: string;
+  public RAPID_API_KEY: string;
 
   /* Provider Options */
 
