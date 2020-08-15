@@ -169,7 +169,7 @@ export class HttpsService extends AppProvider {
 
     try {
       res = await Promise.race([
-        this.instance(params),
+        this.instance(finalParams),
         this.halt(timeout),
       ]);
 
@@ -184,7 +184,7 @@ export class HttpsService extends AppProvider {
     catch (e) {
       errorMsg = e.message.includes('timeout')
         ? `timed out after ${timeout / 1000}s`
-        : `failed with error ${e.message}`;
+        : `failed due to ${e.message}`;
     }
 
     if (errorMsg) {
