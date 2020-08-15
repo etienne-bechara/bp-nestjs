@@ -12,9 +12,17 @@ export interface HttpsServiceOptions {
   defaultTimeout?: number;
 
   baseUrl?: string;
+  baseQuery?: Record<string, string>;
   baseData?: Record<string, unknown>;
   baseHeaders?: Record<string, string>;
 
   httpsAgent?: https.Agent;
+  ignoreHttpsErrors?: boolean;
+
+  ssl?: {
+    cert: string;
+    key: string;
+    passphrase?: string;
+  }
 
 }

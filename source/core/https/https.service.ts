@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import https from 'https';
 import qs from 'qs';
 
 import { AppProvider } from '../app/app.provider';
@@ -10,128 +11,195 @@ import { HttpsSettings } from './https.settings';
 @Injectable({ scope: Scope.TRANSIENT })
 export class HttpsService extends AppProvider {
   private settings: HttpsSettings = this.getSettings();
-  private defaultValidator: (status: number)=> boolean;
   private defaultReturnType: HttpsReturnType;
+  private defaultTimeout: number;
+  private defaultValidator: (status: number)=> boolean;
   private baseUrl: string;
-  private baseData: Record<string, unknown>;
   private baseHeaders: Record<string, string>;
+  private baseQuery: Record<string, string>;
+  private baseData: Record<string, unknown>;
+  private httpsAgent: https.Agent;
   private instance: AxiosInstance;
 
   /**
-   * Creates new HTTP instance based on Axios params
-   * Change the following default behaviours:
-   * - Sets default timeout according to settings
-   * - Sets default return type to data
-   * - Save custom status validation at instance level
-   * - Remove validation inside axios handler
+   * Creates new HTTP instance based on Axios, validator is
+   * set to always true since we are customizing the response
+   * handler to standardize exception reporting
    * @param params
    */
   public setupInstance(params: HttpsServiceOptions): void {
+    this.setDefaultParams(params);
+    this.setBaseParams(params);
+    this.setHttpsAgent(params);
+    this.instance = axios.create({
+      timeout: this.defaultTimeout,
+      validateStatus: () => true,
+      httpsAgent: this.httpsAgent,
+    });
+  }
 
+  /**
+   * Defines and stores instance defaults, if not available set them to:
+   * • Return type to DATA (Axios response data)
+   * • Timeout to global default configured at https.setting
+   * • Validator to pass on status lower than 400 (< bad request)
+   * @param params
+   */
+  private setDefaultParams(params: HttpsServiceOptions): void {
     this.defaultReturnType = params.defaultReturnType || HttpsReturnType.DATA;
-    this.baseUrl = params.baseUrl,
-    this.baseData = params.baseData;
+    this.defaultTimeout = params.defaultTimeout || this.settings.HTTPS_DEFAULT_TIMEOUT;
     this.defaultValidator = params.defaultValidator
       ? params.defaultValidator
       : (s): boolean => s < 400;
+  }
 
-    if (!params.baseHeaders) params.baseHeaders = { };
-    this.baseHeaders = params.baseHeaders;
+  /**
+   * Store base URL, body and headers if configured at setup
+   * @param params
+   */
+  private setBaseParams(params: HttpsServiceOptions): void {
+    this.baseUrl = params.baseUrl,
+    this.baseHeaders = params.baseHeaders || { };
+    this.baseQuery = params.baseQuery;
+    this.baseData = params.baseData;
+  }
 
-    this.instance = axios.create({
-      timeout: params.defaultTimeout || this.settings.HTTPS_DEFAULT_TIMEOUT,
-      validateStatus: () => true,
-      httpsAgent: params.httpsAgent,
-    });
+  /**
+   * Configures the https agent according to priority:
+   * • If httpsAgent property is set, use it
+   * • If ssl property is set, decode certificate and use it
+   * • If ignoreHttpsErrors, customize it with a simple rejectUnauthorized
+   * @param params
+   */
+  private setHttpsAgent(params: HttpsServiceOptions): void {
+    if (params.httpsAgent) {
+      this.httpsAgent = params.httpsAgent;
+    }
+    else if (params.ssl) {
+      this.httpsAgent = new https.Agent({
+        cert: Buffer.from(params.ssl.cert, 'base64').toString('ascii'),
+        key: Buffer.from(params.ssl.key, 'base64').toString('ascii'),
+        passphrase: params.ssl.passphrase,
+        rejectUnauthorized: !params.ignoreHttpsErrors,
+      });
+    }
+    else if (params.ignoreHttpsErrors) {
+      this.httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+    }
+  }
+
+  /**
+   * Given configured params for an http request, join previously configured
+   * base URL, headers, query and data, returning a clone.
+   * In case of conflicts the defaults are overwritten
+   * @param param
+   */
+  private mergeBaseParams(params: HttpsRequestParams): HttpsRequestParams {
+    const mergedParams = Object.assign({ }, params);
+
+    if (this.baseUrl) {
+      mergedParams.url = `${this.baseUrl}${params.url}`;
+    }
+
+    if (this.baseHeaders || params.headers) {
+      if (!params.headers) params.headers = { };
+      mergedParams.headers = { ...this.baseHeaders, ...params.headers };
+    }
+
+    if (this.baseQuery) {
+      mergedParams.params = { ...this.baseQuery, ...params.params };
+    }
+
+    if (this.baseData) {
+      if (params.data) mergedParams.data = { ...this.baseData, ...params.data };
+      if (params.form) mergedParams.form = { ...this.baseData, ...params.form };
+    }
+
+    return mergedParams;
+  }
+
+  /**
+   * Apply the following request params replacements:
+   * • URLs with :param_name to its equivalent at replacements property
+   * • Request data as stringified form if property is present
+   * @param params
+   */
+  private replaceVariantParams(params: HttpsRequestParams): HttpsRequestParams {
+    const replacedParams = Object.assign({ }, params);
+
+    if (params.replacements) {
+      for (const key in params.replacements) {
+        const replaceRegex = new RegExp(`:${key}`, 'g');
+        const value = encodeURIComponent(params.replacements[key].toString());
+        replacedParams.url = replacedParams.url.replace(replaceRegex, value);
+      }
+    }
+
+    if (params.form) {
+      replacedParams.headers['content-type'] = 'application/x-www-form-urlencoded';
+      replacedParams.data = qs.stringify(params.form);
+    }
+
+    return replacedParams;
   }
 
   /**
    * Handles all requests, extending default axios functionality with:
    * • Better validation: Include returned data in case of validation failure
    * • Better timeout: Based on server timing instead of only after DNS resolve
-   * • Error standardisation: Add several data for easier debugging
+   * • Error standardization: Add several data for easier debugging
    * @param params
    */
   public async request<T>(params: HttpsRequestParams): Promise<T> {
-    let errorPrefix, res;
-
     if (!this.instance) {
-      throw new InternalServerErrorException('https service must be configured with this.setupInstance()');
+      throw new InternalServerErrorException('https service must be configured');
     }
 
-    params.timeout = params.timeout || this.instance.defaults.timeout;
-    const rawParams = Object.assign({ }, params);
-    this.transformParams(params);
+    const finalParams = this.replaceVariantParams(this.mergeBaseParams(params));
+    const returnType = finalParams.returnType || this.defaultReturnType;
+    const validator = finalParams.validateStatus || this.defaultValidator;
+    const timeout = finalParams.timeout || this.defaultTimeout;
+    const cancelSource = axios.CancelToken.source();
+
+    let errorMsg: string;
+    let res: AxiosResponse | void;
+    finalParams.cancelToken = cancelSource.token;
 
     try {
-      const source = axios.CancelToken.source();
-      params.cancelToken = source.token;
-
       res = await Promise.race([
         this.instance(params),
-        this.halt(params.timeout),
+        this.halt(timeout),
       ]);
 
-      const validator = params.validateStatus || this.defaultValidator;
       if (!res) {
-        source.cancel();
-        errorPrefix = 'Request timeout';
+        cancelSource.cancel();
+        errorMsg = `timed out after ${timeout / 1000}s`;
       }
       else if (!validator(res.status)) {
-        errorPrefix = 'Request failed';
+        errorMsg = `failed with status code ${res.status}`;
       }
     }
     catch (e) {
-      if (e.message.includes('timeout')) errorPrefix = 'Request timeout';
-      else errorPrefix = 'Request exception';
+      errorMsg = e.message.includes('timeout')
+        ? `timed out after ${timeout / 1000}s`
+        : `failed with error ${e.message}`;
     }
 
-    if (errorPrefix) {
+    if (errorMsg) {
       throw new InternalServerErrorException({
-        message: `${errorPrefix}: ${rawParams.method} ${rawParams.url}`,
-        config: rawParams,
+        message: `${params.method} ${params.url} ${errorMsg}`,
+        config: params,
         status: res ? res.status : undefined,
         headers: res ? res.headers : undefined,
         data: res ? res.data : undefined,
       });
     }
 
-    const returnType = params.returnType || this.defaultReturnType;
-    return returnType === HttpsReturnType.DATA
+    return res && returnType === HttpsReturnType.DATA
       ? res.data
       : res;
-  }
-
-  /**
-   * Apply custom rules to inbound params for better usability
-   * @param param
-   */
-  private transformParams(params: HttpsRequestParams): void {
-    if (!params.headers) params.headers = { };
-
-    // Join url, data and headers with respective base
-    if (this.baseUrl) params.url = `${this.baseUrl}${params.url}`;
-    params.headers = { ...this.baseHeaders, ...params.headers };
-    if (this.baseData) {
-      if (params.data) params.data = { ...this.baseData, ...params.data };
-      if (params.form) params.form = { ...this.baseData, ...params.form };
-      if (params.params) params.params = { ...this.baseData, ...params.params };
-    }
-
-    // Automatically stringify forms and set its header
-    if (params.form) {
-      params.headers['content-type'] = 'application/x-www-form-urlencoded';
-      params.data = qs.stringify(params.form);
-    }
-
-    // Apply URL replacements
-    if (params.replacements) {
-      for (const key in params.replacements) {
-        const replaceRegex = new RegExp(`:${key}`, 'g');
-        const value = encodeURIComponent(params.replacements[key].toString());
-        params.url = params.url.replace(replaceRegex, value);
-      }
-    }
   }
 
   /** GET */
