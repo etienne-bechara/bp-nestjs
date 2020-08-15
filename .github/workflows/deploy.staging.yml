@@ -7,7 +7,7 @@
 # - STG_ENV_FILE: .env file to be injected on container
 #
 
-name: Google Cloud Run
+name: Staging Deploy
 on:
   push:
     branches: [stage]
@@ -29,7 +29,7 @@ env:
 
 jobs:
   compile-test-build-publish-deploy:
-    name: Staging Deploy
+    name: Google Cloud Run
     runs-on: ubuntu-latest
     strategy:
       matrix:

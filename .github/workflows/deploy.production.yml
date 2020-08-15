@@ -7,7 +7,7 @@
 # - PRD_ENV_FILE: .env file to be injected on container
 #
 
-name: Google Cloud Run
+name: Production Deploy
 on:
   release:
     types: [published]
@@ -31,7 +31,7 @@ env:
 
 jobs:
   compile-test-build-publish-deploy:
-    name: Production Deploy
+    name: Google Cloud Run
     runs-on: ubuntu-latest
     strategy:
       matrix:
