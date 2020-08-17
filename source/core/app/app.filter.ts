@@ -1,7 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
-import { ServerResponse } from 'http';
 
 import { AppEnvironment } from './app.enum';
+import { AppException, AppRequest, AppResponse } from './app.interface';
 import { AppProvider } from './app.provider';
 import { AppSettings } from './app.settings';
 
@@ -18,28 +18,32 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
    * @param host
    */
   public async catch(exception: HttpException | Error, host: ArgumentsHost): Promise<void> {
-    const res: ServerResponse = host.switchToHttp().getResponse();
-    const nodeEnv = this.settings.NODE_ENV;
+    const req: AppRequest = host.switchToHttp().getRequest();
+    const res: AppResponse = host.switchToHttp().getResponse();
 
-    const error = this.getErrorCode(exception);
-    let message = this.getMessage(exception);
-    let details = this.getDetails(exception);
+    const appException: AppException = {
+      exception,
+      errorCode: this.getErrorCode(exception),
+      message: this.getMessage(exception),
+      details: this.getDetails(exception),
+    };
 
-    // Logs the incident according to status type, remove error message on production
-    if (error === HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception, { message, details });
-      if (nodeEnv === AppEnvironment.PRODUCTION) {
-        message = 'unexpected error';
-        details = { };
-      }
-    }
-    else {
-      this.logger.info(exception, { message, details });
-    }
+    this.logException(appException, req);
+
+    const productionServerError = this.settings.NODE_ENV === AppEnvironment.PRODUCTION
+      && appException.errorCode === HttpStatus.INTERNAL_SERVER_ERROR;
 
     res.setHeader('Content-Type', 'application/json');
-    res.statusCode = error;
-    res.end(JSON.stringify({ error, message, details }));
+    res.statusCode = appException.errorCode;
+    res.end(JSON.stringify({
+      error: appException.errorCode,
+      message: !productionServerError
+        ? appException.message
+        : 'unexpected error',
+      details: !productionServerError
+        ? appException.details
+        : { },
+    }));
   }
 
   /**
@@ -106,6 +110,54 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
     }
 
     return details || { };
+  }
+
+  /**
+   * Logs the incident according to status:
+   * • Error level for INTERNAL_SERVER_ERROR
+   * • Info level for everything else
+   *
+   * Always add request data removing sensitive
+   * information
+   * @param appException
+   */
+  private logException(appException: AppException, req: AppRequest): void {
+
+    const logData = {
+      message: appException.message,
+      details: appException.details,
+    };
+
+    if (appException.errorCode === HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(appException.exception, {
+        ...logData,
+        request: {
+          url: req.url,
+          headers: this.removeSensitiveData(req.headers),
+          params: this.removeSensitiveData(req.params),
+          query: this.removeSensitiveData(req.query),
+          body: this.removeSensitiveData(req.body),
+          metadata: req.metadata,
+        },
+      });
+    }
+    else {
+      this.logger.info(appException.exception, logData);
+    }
+  }
+
+  /**
+   * Check if object has any keys and remove sensitive
+   * data form them
+   * If empty, return undefined to send less data
+   * @param object
+   */
+  private removeSensitiveData(object: any): any {
+    if (!object || typeof object !== 'object' || Object.keys(object).length === 0) {
+      return undefined;
+    }
+    delete object.authorization;
+    return object;
   }
 
 }
