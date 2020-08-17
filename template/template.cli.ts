@@ -7,18 +7,18 @@ import { argv } from 'yargs';
 
 /**
  * Creates a folder inside ./source that matches
- * desired draft and replace its naming variables
+ * desired template and replace its naming variables
  */
-function generateDraft(): void {
+function generateTemplate(): void {
   try {
     const type = argv.t ? argv.t.toString() : null;
     if (!type) {
       return printError(
-        'missing draft type',
-        'npm run draft:{draft_type} -- -n {domain_name}',
+        'missing template type',
+        'npm run template:{template_type} -- -n {domain_name}',
       );
     }
-    return generateDraftByType(type);
+    return generateTemplateByType(type);
   }
   catch (e) {
     return printError(e.message);
@@ -26,24 +26,24 @@ function generateDraft(): void {
 }
 
 /**
- * Copy all files inside draft folder to project ./source,
+ * Copy all files inside template folder to project ./source,
  * renaming according to provided domain name
  *
  * Then replace all placeholders according to desired case
  */
-function generateDraftByType(type: string): void {
+function generateTemplateByType(type: string): void {
   const name: string = argv.n ? argv.n.toString() : null;
 
   if (!name) {
     return printError(
       'missing domain name [-n]',
-      `npm run draft:${type} -- -n {domain_name}`,
+      `npm run template:${type} -- -n {domain_name}`,
     );
   }
 
   globby.sync(`./${type}/**/*`, { cwd: __dirname }).map((file) => {
 
-    const source = file.replace('./', './draft/');
+    const source = file.replace('./', './template/');
     const destination = file.replace('./', './source/')
       .replace(new RegExp(type, 'g'), dotCase(name));
 
@@ -69,7 +69,7 @@ function generateDraftByType(type: string): void {
 function printError(message: string, example?: string): void {
   console.error(`
   
-  Draft Generation Failed!
+  Template Generation Failed!
   Error: ${message}
 
   ${example ? `
@@ -79,4 +79,4 @@ function printError(message: string, example?: string): void {
   `);
 }
 
-void generateDraft();
+void generateTemplate();

@@ -1,6 +1,14 @@
-# NestJS & MikroORM Boilerplate
+# NestJS Boilerplate
 
-Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover iniciação rápida de projetos em Node.js.
+Um boilerplate opinado, baseado em NestJS com intuito de prover iniciação rápida de projetos em Node.js.
+
+**TL;DR**
+
+```
+git clone https://github.com/etienne-bechara/bp-nestjs.git meu-novo-projeto
+cd meu-novo-projeto
+npm run boilerplate:setup
+```
 
 - [Utilização](#utilização)
   * [Depuração](#depuraçãoo)
@@ -23,17 +31,19 @@ Um boilerplate opinado, baseado em NestJS e MikroORM com intuito de prover inici
 - [Filters](#filters)
 - [Testes](#testes)
 - [Migrations](#migrations)
-- [Drafts](#drafts)
+- [Templates](#templates)
   * [API](#api)
   * [CRUD](#crud)
 
 
 ## Utilização
 
+> Para executar estes passos de maneira automática execute `npm run boilerplate:setup`
+
 1\. Clone o repositório, e renomeie o `remote` de origem como `boilerplate`:
 
 ```shell
-git clone https://github.com/etienne-bechara/nestjs-boilerplate.git
+git clone https://github.com/etienne-bechara/bp-nestjs.git
 git remote rename origin boilerplate
 ```
 
@@ -72,7 +82,7 @@ Você pode criar os `breakpoint` diretamente no arquivo `.ts` que eles serão au
 Futuramente, para atualizar o boilerplate para a última versão, execute:
 
 ```shell
-npm run update:boilerplate
+npm run boilerplate:update
 ```
 
 Caso tenha alterado arquivos na raiz ou no diretório `/source/core` provavelmente será necessário resolver conflitos de merge antes que possa commitar as alterações.
@@ -653,7 +663,7 @@ Caso prefira apenas visualizar a migração e não executá-la, substitua o scri
 
 
 
-## Drafts
+## Templates
 
 Criar serviços, controllers e DTOs de algo repetitivo pode ser bastante tedioso, sendo assim foi desenvolvido uma maneira mais simples para realizar estas implementações.
 
@@ -664,7 +674,7 @@ Cria todos os arquivos recomendados para implementação de um serviço de API e
 Dado um domínio de sua escolha, por exemplo: `gmaps`, execute o script:
 
 ```
-npm run draft:api -- -n gmaps
+npm run template:api -- -n gmaps
 ```
 
 A seguinte estrutura de arquivos será criada dentro de `/source`:
@@ -692,7 +702,7 @@ Cria todos os arquivos recomendados para implementação de uma entidade com mé
 Dado um domínio de sua escolha, por exemplo: `user`, execute o script:
 
 ```
-npm run draft:crud -- -n user
+npm run template:crud -- -n user
 ```
 
 A seguinte estrutura de arquivos será criada dentro de `/source`:
