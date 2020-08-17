@@ -20,7 +20,7 @@
     "start:prd": "node ./source/core/main.js || node ./build/source/core/main.js",
     "==== Lint & Test ====": "",
     "lint": "eslint **/*.ts",
-    "test": "jest --verbose --forceExit",
+    "test": "jest --verbose --forceExit --passWithNoTests",
     "test:watch": "jest --verbose --watch",
     "test:coverage": "jest --coverage --passWithNoTests",
     "==== Package Update ====": "",
