@@ -28,7 +28,7 @@
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "==== Boilerplate Config ====": "",
-    "boilerplate:setup": "npm i && cp-cli .sample.env .env && npm run boilerplate:reset && npm run boilerplate:update",
+    "boilerplate:setup": "npm i && cp-cli .env.sample .env && npm run boilerplate:reset && npm run boilerplate:update",
     "boilerplate:reset": "rimraf .git && git init && git add . && git commit -m \"Clone boilerplate etienne-bechara/bp-nestjs\" && git remote add boilerplate https://github.com/etienne-bechara/bp-nestjs.git",
     "boilerplate:update": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories --squash",
     "==== Template Generation ====": "",

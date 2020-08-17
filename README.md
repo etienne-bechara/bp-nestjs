@@ -53,7 +53,7 @@ git remote rename origin boilerplate
 git remote add orign https://github.com/eu/meu-projeto.git
 ```
 
-3\. Crie uma cópia do arquivo `.sample.env` como `.env`.
+3\. Crie uma cópia do arquivo `.env.sample` como `.env`.
 
 4\. [Opcional] Customize o arquivo `.env` para sua aplicação.
 
