@@ -8,6 +8,7 @@ Um boilerplate opinado, baseado em NestJS com intuito de prover iniciação ráp
 git clone https://github.com/etienne-bechara/bp-nestjs.git meu-novo-projeto
 cd meu-novo-projeto
 npm run boilerplate:setup
+npm start
 ```
 
 - [Utilização](#utilização)
