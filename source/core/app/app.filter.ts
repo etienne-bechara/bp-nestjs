@@ -18,10 +18,8 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
    * @param host
    */
   public async catch(exception: HttpException | Error, host: ArgumentsHost): Promise<void> {
+    const res: ServerResponse = host.switchToHttp().getResponse();
     const nodeEnv = this.settings.NODE_ENV;
-
-    const ctx = host.switchToHttp();
-    const res: ServerResponse = ctx.getResponse();
 
     const error = this.getErrorCode(exception);
     let message = this.getMessage(exception);

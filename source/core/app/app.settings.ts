@@ -29,7 +29,7 @@ export class AppSettings {
 
   /* Provider Options */
 
-  public APP_TIMEOUT: number = 2 * 60 * 1000;
+  public APP_TIMEOUT: number = 90 * 1000;
 
   public APP_CORS_OPTIONS: CorsOptions | boolean = {
     origin: '*',

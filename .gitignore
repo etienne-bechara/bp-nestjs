@@ -11,3 +11,4 @@
 
 # Application Secrets
 .env*
+!.env.sample

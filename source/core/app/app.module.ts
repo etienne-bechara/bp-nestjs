@@ -3,7 +3,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 import { AppFilter } from './app.filter';
 import { AppGuard } from './app.guard';
-import { AppLoggerInterceptor } from './app.interceptor';
+import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
 import { AppMetadataMiddleware } from './app.middleware';
 import { AppSettings } from './app.settings';
 import { AppUtils } from './app.utils';
@@ -24,13 +24,16 @@ const validationRules = AppUtils.parseSettings<AppSettings>().APP_VALIDATION_RUL
     { provide: APP_PIPE, useFactory: (): ValidationPipe => new ValidationPipe(validationRules) },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AppLoggerInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: AppTimeoutInterceptor },
   ],
 })
 export class AppModule {
   /** */
   public configure(consumer: MiddlewareConsumer): void {
     consumer
-      .apply(AppMetadataMiddleware)
+      .apply(
+        AppMetadataMiddleware,
+      )
       .forRoutes('*');
   }
 }

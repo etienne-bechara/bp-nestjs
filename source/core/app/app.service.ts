@@ -11,6 +11,9 @@ export class AppService extends AppProvider {
 
   /**
    * Starts Express server through Nest JS framework
+   *
+   * Disables server timeout since it will be handled
+   * into a separate interceptor
    */
   public async bootServer(): Promise<void> {
 
@@ -19,9 +22,13 @@ export class AppService extends AppProvider {
       cors: this.settings.APP_CORS_OPTIONS,
     });
 
-    this.logger.debug(`Setting global request timeout to ${this.settings.APP_TIMEOUT / 1000}s...`);
     const httpServer = await this.server.listen(this.settings.PORT);
-    httpServer.setTimeout(this.settings.APP_TIMEOUT);
+    httpServer.setTimeout(0);
+
+    const timeoutStr = this.settings.APP_TIMEOUT
+      ? `set to ${(this.settings.APP_TIMEOUT / 1000).toString()}s`
+      : 'disabled';
+    this.logger.debug(`Server timeouts are ${timeoutStr}`);
     this.logger.success(`Server listening on port ${this.settings.PORT}`);
   }
 
