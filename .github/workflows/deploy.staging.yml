@@ -51,7 +51,7 @@ jobs:
       run: npm install
 
     - name: Build Deployable Artifact
-      run: npm run build
+      run: npm run build:cache
 
     - name: Execute Lint Check
       run: npm run lint
@@ -90,3 +90,7 @@ jobs:
           --concurrency $CLOUD_RUN_CONCURRENCY \
           --platform managed \
           --allow-unauthenticated
+
+    - name: Execute Migrations
+      run: |
+        npx mikro-orm migration:up
