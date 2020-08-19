@@ -1,6 +1,6 @@
 # NestJS Boilerplate
 
-Boilerplate opinado, baseado em NestJS com intuito de prover iniciação rápida de projetos em Node.js.
+Boilerplate baseado em NestJS com intuito de prover iniciação rápida de projetos em Node.js.
 
 **TL;DR**
 
