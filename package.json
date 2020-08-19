@@ -13,8 +13,7 @@
   "license": "MIT",
   "scripts": {
     "==== Build & Run ====": "",
-    "build": "nest build",
-    "build:cache": "npm run build && mikro-orm cache:generate",
+    "build": "npm run build && mikro-orm cache:generate",
     "dev": "npm start",
     "start": "nest start --debug --watch",
     "start:prd": "node ./source/core/main.js || node ./build/source/core/main.js",
@@ -47,9 +46,9 @@
     "migration:create:stg": "npm run migration:set:stg && mikro-orm migration:create",
     "migration:create:prd": "npm run migration:set:prd && mikro-orm migration:create",
     "==== Migration Helpers ====": "",
-    "migration:set:dev": "npm run build:cache && cp-cli .env build/.env",
-    "migration:set:stg": "npm run build:cache && cp-cli .env.staging build/.env",
-    "migration:set:prd": "npm run build:cache && cp-cli .env.production build/.env"
+    "migration:set:dev": "npm run build && cp-cli .env build/.env",
+    "migration:set:stg": "npm run build && cp-cli .env.staging build/.env",
+    "migration:set:prd": "npm run build && cp-cli .env.production build/.env"
   },
   "mikro-orm": {
     "useTsNode": true,
