@@ -18,7 +18,10 @@ AppUtils.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
 
   describe('setKey', () => {
     it('should persist a random number', async() => {
-      expect(await redisService.setKey(RedisKey.TEST_RANDOM_NUMBER, { rng }, 10 * 1000))
+      expect(await redisService.setKey({
+        key: RedisKey.TEST_RANDOM_NUMBER,
+        value: { rng },
+      }))
         .toBeUndefined();
     });
   });
@@ -27,6 +30,14 @@ AppUtils.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
     it('should read persisted random number', async() => {
       expect(await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER))
         .toMatchObject({ rng });
+    });
+  });
+
+  describe('delKey', () => {
+    it('should delete persisted random number', async() => {
+      await redisService.delKey(RedisKey.TEST_RANDOM_NUMBER);
+      const testKey = await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER);
+      expect(testKey).toBeNull();
     });
   });
 
