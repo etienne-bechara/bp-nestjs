@@ -29,6 +29,8 @@ export class AppSettings {
 
   /* Provider Options */
 
+  public APP_JSON_LIMIT: string = '10mb';
+
   public APP_TIMEOUT: number = 90 * 1000;
 
   public APP_CORS_OPTIONS: CorsOptions | boolean = {

@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { json } from 'express';
 
 import { AppModule } from './app.module';
 import { AppProvider } from './app.provider';
@@ -21,6 +22,8 @@ export class AppService extends AppProvider {
       logger: [ 'error', 'warn' ],
       cors: this.settings.APP_CORS_OPTIONS,
     });
+
+    this.server.use(json({ limit: this.settings.APP_JSON_LIMIT }));
 
     const httpServer = await this.server.listen(this.settings.PORT);
     httpServer.setTimeout(0);
