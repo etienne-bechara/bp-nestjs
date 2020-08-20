@@ -1,5 +1,7 @@
 import { AxiosResponse } from 'axios';
 
+import { HttpsCookie } from './https.cookie';
+
 export interface HttpsResponse extends AxiosResponse {
-  cookies: Record<string, string>
+  cookies: HttpsCookie[];
 }
