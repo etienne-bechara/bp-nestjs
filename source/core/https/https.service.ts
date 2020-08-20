@@ -1,11 +1,12 @@
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import https from 'https';
+import moment from 'moment';
 import qs from 'qs';
 
 import { AppProvider } from '../app/app.provider';
 import { HttpsReturnType } from './https.enum';
-import { HttpsRequestParams, HttpsServiceOptions } from './https.interface';
+import { HttpsCookie, HttpsRequestParams, HttpsServiceOptions } from './https.interface';
 import { HttpsSettings } from './https.settings';
 
 @Injectable({ scope: Scope.TRANSIENT })
@@ -146,6 +147,39 @@ export class HttpsService extends AppProvider {
   }
 
   /**
+   * Given a sucessful response, isolate its cookies in an
+   * easily accesible array of interfaces
+   * @param res
+   */
+  private parseResponseCookies(res: any): void {
+    const cookies: HttpsCookie[] = [ ];
+    if (!res?.headers || !res.headers['set-cookie']) {
+      res.headers['set-cookie'] = [ ];
+    }
+
+    for (const cookie of res.headers['set-cookie']) {
+      const name = /^(.+?)=/gi.exec(cookie);
+      const content = /^.+?=(.+?)(?:$|;)/gi.exec(cookie);
+      const path = /path=(.+?)(?:$|;)/gi.exec(cookie);
+      const domain = /domain=(.+?)(?:$|;)/gi.exec(cookie);
+      const expires = /expires=(.+?)(?:$|;)/gi.exec(cookie);
+      if (!name || !content) continue;
+
+      cookies.push({
+        name: name[1],
+        content: content[1],
+        path: path ? path[1] : null,
+        domain: domain ? domain[1] : null,
+        expires: expires
+          ? moment.utc(expires[1], 'ddd, DD-MMM-YYYY HH:mm:ss').toISOString()
+          : null,
+      });
+    }
+
+    res.cookies = cookies;
+  }
+
+  /**
    * Handles all requests, extending default axios functionality with:
    * • Better validation: Include returned data in case of validation failure
    * • Better timeout: Based on server timing instead of only after DNS resolve
@@ -196,6 +230,8 @@ export class HttpsService extends AppProvider {
         data: res ? res.data : undefined,
       });
     }
+
+    this.parseResponseCookies(res);
 
     return res && returnType === HttpsReturnType.DATA
       ? res.data
