@@ -74,7 +74,7 @@ export class RedisService extends AppProvider {
    * Reads given key and parse its value
    * @param key
    */
-  public async getKey(key: RedisKey): Promise<unknown> {
+  public async getKey<T>(key: RedisKey): Promise<T> {
     this.checkRedisClient();
     this.logger.debug(`Redis: Reading key ${key}...`);
 
