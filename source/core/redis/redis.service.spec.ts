@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 
 import { AppUtils } from '../app/app.utils';
+import { RedisKey } from './redis.enum';
 import { RedisService } from './redis.service';
 
 AppUtils.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
@@ -17,14 +18,14 @@ AppUtils.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
 
   describe('setKey', () => {
     it('should persist a random number', async() => {
-      expect(await redisService.setKey('TEST_KEY', { rng }, 10 * 1000))
+      expect(await redisService.setKey(RedisKey.TEST_RANDOM_NUMBER, { rng }, 10 * 1000))
         .toBeUndefined();
     });
   });
 
   describe('getKey', () => {
     it('should read persisted random number', async() => {
-      expect(await redisService.getKey('TEST_KEY'))
+      expect(await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER))
         .toMatchObject({ rng });
     });
   });

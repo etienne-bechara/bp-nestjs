@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import redis, { RedisClient } from 'redis';
 
 import { AppProvider } from '../app/app.provider';
+import { RedisKey } from './redis.enum';
 import { RedisSettings } from './redis.settings';
 
 @Injectable()
@@ -52,7 +53,7 @@ export class RedisService extends AppProvider {
    * @param key
    * @param value
    */
-  public async setKey(key: string, value: unknown, expiration?: number): Promise<void> {
+  public async setKey(key: RedisKey, value: unknown, expiration?: number): Promise<void> {
     this.checkRedisClient();
 
     const stringValue = JSON.stringify(value);
@@ -73,7 +74,7 @@ export class RedisService extends AppProvider {
    * Reads given key and parse its value
    * @param key
    */
-  public async getKey(key: string): Promise<unknown> {
+  public async getKey(key: RedisKey): Promise<unknown> {
     this.checkRedisClient();
     this.logger.debug(`Redis: Reading key ${key}...`);
 
