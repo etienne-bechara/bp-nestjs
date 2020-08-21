@@ -132,7 +132,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
       this.logger.error(appException.exception, {
         message: logData.message,
         ...logData.details,
-        inboundRequest: {
+        inbound_request: {
           url: req.url,
           headers: this.removeSensitiveData(req.headers),
           params: this.removeSensitiveData(req.params),
