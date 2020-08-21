@@ -224,10 +224,12 @@ export class HttpsService extends AppProvider {
     if (errorMsg) {
       throw new InternalServerErrorException({
         message: `${params.method} ${params.url} ${errorMsg}`,
-        config: params,
-        status: res ? res.status : undefined,
-        headers: res ? res.headers : undefined,
-        data: res ? res.data : undefined,
+        upstreamRequest: params,
+        upstreamResponse: {
+          status: res ? res.status : undefined,
+          headers: res ? res.headers : undefined,
+          data: res ? res.data : undefined,
+        },
       });
     }
 

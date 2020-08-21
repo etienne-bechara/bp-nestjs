@@ -130,8 +130,9 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
 
     if (appException.errorCode === HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(appException.exception, {
-        ...logData,
-        request: {
+        message: logData.message,
+        ...logData.details,
+        inboundRequest: {
           url: req.url,
           headers: this.removeSensitiveData(req.headers),
           params: this.removeSensitiveData(req.params),

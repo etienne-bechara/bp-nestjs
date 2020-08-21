@@ -4,16 +4,32 @@ Boilerplate baseado em NestJS com intuito de prover iniciação rápida de proje
 
 **TL;DR**
 
-```
+Clone este repositório renomeando-o de acordo com seu novo projeto:
+
+```shell
 git clone https://github.com/etienne-bechara/bp-nestjs.git meu-novo-projeto
 cd meu-novo-projeto
-npm run boilerplate:setup
-npm start
 ```
 
+Execute o script de setup que irá renomear o `origin` para um remote chamado `boilerplate`, bem como reduzir todos os commits a apenas 1:
+
+```shell
+npm run boilerplate:setup
+```
+
+Futuramente, caso deseje sincronizar as atualizações deste boilerplate, execute:
+
+```shell
+npm run boilerplate:udpate
+```
+
+---
+
+## Índice
+
 - [Utilização](#utilização)
-  * [Depuração](#depuraçãoo)
   * [Boilerplate](#boilerplate)
+  * [Depuração](#depuraçãoo)
   * [Dependências](#dependências)
 - [Componentes](#componentes)
   * [Frameworks](#frameworks)
@@ -39,13 +55,12 @@ npm start
 
 ## Utilização
 
-> Para executar estes passos de maneira automática execute `npm run boilerplate:setup`
-
-1\. Clone o repositório, e renomeie o `remote` de origem como `boilerplate`:
+1\. Clone este repositório, e execute o script de setup:
 
 ```shell
-git clone https://github.com/etienne-bechara/bp-nestjs.git
-git remote rename origin boilerplate
+git clone https://github.com/etienne-bechara/bp-nestjs.git meu-novo-projeto
+cd meu-novo-projeto
+npm run boilerplate:setup
 ```
 
 2\. [Opcional] Adicione o repositório do seu projeto como `origin`
@@ -54,11 +69,9 @@ git remote rename origin boilerplate
 git remote add orign https://github.com/eu/meu-projeto.git
 ```
 
-3\. Crie uma cópia do arquivo `.env.sample` como `.env`.
+3\. [Opcional] Customize o arquivo `.env` de acordo com sua aplicação.
 
-4\. [Opcional] Customize o arquivo `.env` para sua aplicação.
-
-5\. Execute `npm start` para subir a aplicação.
+4\. Execute `npm start` para executar a serviço.
 
 Envie uma requisição `GET` para `localhost:8080`, o retorno a seguir indica que a aplicação subiu com sucesso:
 
@@ -70,14 +83,6 @@ Envie uma requisição `GET` para `localhost:8080`, o retorno a seguir indica qu
 }
 ```
 
-### Depuração
-
-Por padrão, a aplicação irá expor um sessão de debug na porta `9229`.
-
-Ao utilizar a ferramenta `VSCode` como IDE de desevolvimento, basta executar `npm start` e pressionar `F5` para conectar o debugger.
-
-Você pode criar os `breakpoint` diretamente no arquivo `.ts` que eles serão automaticamente mapeados pelos `.js` em execução.
-
 ### Boilerplate
 
 Futuramente, para atualizar o boilerplate para a última versão, execute:
@@ -87,6 +92,15 @@ npm run boilerplate:update
 ```
 
 Caso tenha alterado arquivos na raiz ou no diretório `/source/core` provavelmente será necessário resolver conflitos de merge antes que possa commitar as alterações.
+
+### Depuração
+
+Por padrão, a aplicação irá expor um sessão de debug na porta `9229`.
+
+Ao utilizar a ferramenta `VSCode` como IDE de desevolvimento, basta executar `npm start` e pressionar `F5` para conectar o debugger.
+
+Você pode criar os `breakpoint` diretamente no arquivo `.ts` que eles serão automaticamente mapeados pelos `.js` em execução.
+
 
 ### Dependências
 
