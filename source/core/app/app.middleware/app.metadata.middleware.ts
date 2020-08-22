@@ -13,7 +13,7 @@ export class AppMetadataMiddleware implements NestMiddleware {
    * @param res
    * @param next
    */
-  public async use(req: AppRequest, res: AppResponse, next: any): Promise<void> {
+  public use(req: AppRequest, res: AppResponse, next: any): void {
 
     req.metadata = {
       ip: requestIp.getClientIp(req) || null,

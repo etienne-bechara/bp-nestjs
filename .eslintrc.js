@@ -25,68 +25,72 @@ module.exports =  {
   ],
 
   rules: {
-    
+
     /**
      * DISABLED RECOMMENDED RULES
+     * 
+     * Refer to individual explanations below
      */
-    '@typescript-eslint/no-inferrable-types': ['off'], // Conflicts with typedef
-    '@typescript-eslint/explicit-module-boundary-types': ['off'], // Sometimes we need to pass 'any' type argument
-    '@typescript-eslint/require-await': ['off'], // Allow async methods with no await keyword
-    '@typescript-eslint/no-unsafe-assignment': ['off'], // Allow bracket assignments
-    '@typescript-eslint/restrict-template-expressions': ['off'], // Allow any values inside template literals
-    '@typescript-eslint/no-unsafe-member-access': ['off'], // Allow member access of an any type (used at catch handlers)
-    '@typescript-eslint/no-unsafe-call': ['off'], // Allow call of an any type (used at catch handlers)
-    '@typescript-eslint/no-explicit-any': ['off'], // Allow usage of "any" type (use with moderation)
-    '@typescript-eslint/no-unsafe-return': ['off'], // Allow return of "any" typed values (use with moderation)
+    // Conflicts with typedef
+    '@typescript-eslint/no-inferrable-types': ['off'],
+    // Enables the `any` keywork (use only when extremely necessary)
+    '@typescript-eslint/explicit-module-boundary-types': ['off'],
+    '@typescript-eslint/no-explicit-any': ['off'],
+    '@typescript-eslint/no-unsafe-assignment': ['off'],
+    '@typescript-eslint/no-unsafe-call': ['off'],
+    '@typescript-eslint/no-unsafe-member-access': ['off'],
+    '@typescript-eslint/no-unsafe-return': ['off'],
+    '@typescript-eslint/restrict-template-expressions': ['off'],
 
     /**
-     * ADDITIONAL ERROR SEVERITY RULES
+     * CUSTOM ERROR SEVERITY RULES
+     * 
+     * Raise errors on the followind rules not in
+     * the recommended eslint configuration
      */
-    'no-throw-literal': ['error'], // No throwing non-error object
-    'complexity': ['error', 15 ], // Maximum cyclomatic complexity
-    'eqeqeq': ['error'], // Disables == and !=
-    'no-dupe-else-if': ['error'], // No duplicates on else if
-    'no-import-assign': ['error'], // No assign during imports
-    'no-setter-return': ['error'], // No returning on setters
-    'promise/prefer-await-to-then': ['error'],  // No old sintaxe for promises
+    // Restricts maximum cyclomatic complexity
+    'complexity': ['error', 15 ],
+    // Disallow == and !=
+    'eqeqeq': ['error'],
+    // Disallow duplicates on else if statements
+    'no-dupe-else-if': ['error'],
+    // Disallow assigning on imports
+    'no-import-assign': ['error'],
+    // Disallow return setters
+    'no-setter-return': ['error'],
+    // Disallow throwing types diffente than Error
+    'no-throw-literal': ['error'],
+    // Disallow .then() .catch() and .finally()
+    'promise/prefer-await-to-then': ['error'],
 
     /**
-     * ADDITIONAL WARNING SEVERITY RULES
+     * LOWERED SEVERITY RULES
+     * 
+     * Lowers default level from erro to warn in order to prevent
+     * undesired pipeline breaking due to no breaking rules
      */
-    '@typescript-eslint/explicit-member-accessibility': ['warn'], // Must assign properties as public or private
-    '@typescript-eslint/indent': ['warn', 2 ], // 2 spaces indent
-    '@typescript-eslint/semi': ['warn'], // Semicolons EOL
-    '@typescript-eslint/brace-style': ['warn', 'stroustrup', { allowSingleLine: true }], // Line break on logic blocks keywords
-    '@typescript-eslint/func-call-spacing': ['warn', 'never'], // No spaces on function calls
-    '@typescript-eslint/quotes': ['warn', 'single', { avoidEscape: true }], // Single quotes only
-    '@typescript-eslint/typedef': ['warn', { arrowParameter: false }], // Require type definitions except on arrow functions
-    '@typescript-eslint/type-annotation-spacing': ['warn', { before: false, after: true }], // Space on type annotations
-    '@typescript-eslint/explicit-function-return-type': ['warn'], // Require function return type
+    // Require functions return type
+    '@typescript-eslint/explicit-function-return-type': ['warn'],
+    // Must assign properties as public or private
+    '@typescript-eslint/explicit-member-accessibility': ['warn'],
+    // Require await on async functions
+    '@typescript-eslint/require-await': ['warn'],
+    // Require type definitions except on arrow functions
+    '@typescript-eslint/typedef': ['warn', { arrowParameter: false }],
+    // Column length
+    'max-len': ['warn', { 'code': 180, 'comments': 180 }],
+    // Disallow console.log
+    'no-console': ['warn'],
+    // Force import ordering
+    'simple-import-sort/sort': ['warn'], 
 
-    'simple-import-sort/sort': ['warn'], // Force import ordering
-    'no-console': ['warn'], // No console.log
-
-    'curly': ['warn', 'multi-line', 'consistent'], // Logic brackets must be consistent
-    'max-len': ['warn', { 'code': 180, 'comments': 180 }], // Maximum column length
-
-    'no-extra-parens': ['warn'], // No unnecessary parenthesis
-    'no-multiple-empty-lines': ['warn', { max: 1 }], // No double empty lines
-    'eol-last': ['warn', 'always'], // File must end with line break
-    'comma-dangle': ['warn', 'always-multiline'], // Multiline arrays and objects must end with comma
-
-    'no-trailing-spaces': ['warn'], // No unnecessary spaces
-    'no-multi-spaces': ['warn'], // No double spaces
-    'object-curly-spacing': ['warn', 'always'], // Require spaces on single line objects
-    'array-bracket-spacing': ['warn', 'always'], // Require spaces on single line arrays
-    'spaced-comment': ['warn', 'always'], // Require spaces on single line commments
-    'space-before-blocks': ['warn', 'always'], // Require block spaces
-    'space-before-function-paren': ['warn', 'never'], // Disallow function argument spaces
-    'comma-spacing': ['warn', { 'before': false, 'after': true }], // Require comma spacing
-    'keyword-spacing': ['warn', { before: true, after: true }], // Require keywords spaces
-    'key-spacing': ['warn', { 'beforeColon': false, 'afterColon': true, 'mode': 'strict' }], // Require key spaces
-    'space-infix-ops': ['warn'], // Require spaces between math symbols
- 
-    // Requires JSDoc
+    /**
+     * DOCUMENTATION
+     * 
+     * Requires JSDOC on everything except:
+     * • Class and interface declarations
+     * • Arrow functions inside methods
+     */
     'require-jsdoc': ['warn', {
       'require': {
         'FunctionDeclaration': true,
@@ -96,6 +100,39 @@ module.exports =  {
         'FunctionExpression': true,
       }
     }],
-    
+
+    /**
+     * OPINATED STYLING RULES
+     * 
+     * Theses represent personal preference and can be altered without
+     * any impact. They were designed in order to increase code
+     * readability for new contributors
+     */
+    // Spacing
+    '@typescript-eslint/func-call-spacing': ['warn', 'never'],
+    '@typescript-eslint/indent': ['warn', 2 ],
+    '@typescript-eslint/type-annotation-spacing': ['warn', { before: false, after: true }],
+    'array-bracket-spacing': ['warn', 'always'],
+    'comma-spacing': ['warn', { 'before': false, 'after': true }],
+    'key-spacing': ['warn', { 'beforeColon': false, 'afterColon': true, 'mode': 'strict' }],
+    'keyword-spacing': ['warn', { before: true, after: true }],
+    'no-multi-spaces': ['warn'],
+    'no-trailing-spaces': ['warn'],
+    'object-curly-spacing': ['warn', 'always'],
+    'space-before-blocks': ['warn', 'always'],
+    'space-before-function-paren': ['warn', 'never'],
+    'space-infix-ops': ['warn'],
+    'spaced-comment': ['warn', 'always'],
+    // Line breaking
+    '@typescript-eslint/brace-style': ['warn', 'stroustrup', { allowSingleLine: true }],
+    'eol-last': ['warn', 'always'],
+    'no-multiple-empty-lines': ['warn', { max: 1 }],
+    // Commas, semicolons, quotes, parenthesis and brackets
+    '@typescript-eslint/quotes': ['warn', 'single', { avoidEscape: true }],
+    '@typescript-eslint/semi': ['warn'],
+    'comma-dangle': ['warn', 'always-multiline'],
+    'curly': ['warn', 'multi-line', 'consistent'],
+    'no-extra-parens': ['warn'],
+
   },
 };

@@ -43,7 +43,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    */
   @Get()
   public async get(@Query() query: Entity & OrmFilterDto): Promise<Entity[] | OrmPartialResponse<Entity>> {
-    await this.validateImplementation(OrmControllerMethod.GET);
+    this.validateImplementation(OrmControllerMethod.GET);
 
     const parsedQuery = this.parseQueryOperators(query);
     const dto = await this.plainToDtoOffset(parsedQuery.stripped, this.options.dto.read);
@@ -58,7 +58,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    */
   @Get(':id')
   public async getById(@Param() params: OrmIdDto): Promise<Entity> {
-    await this.validateImplementation(OrmControllerMethod.GET_BY_ID);
+    this.validateImplementation(OrmControllerMethod.GET_BY_ID);
     return this.service.readById(params.id);
   }
 
@@ -69,7 +69,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    */
   @Post()
   public async post(@Body() body: Entity): Promise<Entity> {
-    await this.validateImplementation(OrmControllerMethod.POST);
+    this.validateImplementation(OrmControllerMethod.POST);
     if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.create);
@@ -83,7 +83,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    */
   @Put()
   public async put(@Body() body: Entity): Promise<Entity> {
-    await this.validateImplementation(OrmControllerMethod.PUT);
+    this.validateImplementation(OrmControllerMethod.PUT);
     if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.create);
@@ -97,7 +97,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    */
   @Put(':id')
   public async putById(@Param() params: OrmIdDto, @Body() body: Entity): Promise<Entity> {
-    await this.validateImplementation(OrmControllerMethod.PUT_BY_ID);
+    this.validateImplementation(OrmControllerMethod.PUT_BY_ID);
     if (!body) throw new BadRequestException(this.MISSING_BODY);
 
     const dto = await this.plainToDto(body, this.options.dto.update);
@@ -110,7 +110,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    */
   @Delete(':id')
   public async deleteById(@Param() params: OrmIdDto): Promise<Entity> {
-    await this.validateImplementation(OrmControllerMethod.DELETE_BY_ID);
+    this.validateImplementation(OrmControllerMethod.DELETE_BY_ID);
     return this.service.deleteById(params.id);
   }
 
@@ -118,7 +118,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    * Validates if a given method is allowed to procede
    * @param method
    */
-  public async validateImplementation(method: OrmControllerMethod): Promise<void> {
+  public validateImplementation(method: OrmControllerMethod): void {
 
     if (
       this.options.routes.exclude && this.options.routes.exclude.includes(method)

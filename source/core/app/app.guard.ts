@@ -16,7 +16,7 @@ export class AppGuard extends AppProvider implements CanActivate {
    * Refer to .env.sample for detailed information
    * @param context
    */
-  public async canActivate(context: ExecutionContext): Promise<boolean> {
+  public canActivate(context: ExecutionContext): boolean {
     const req: AppRequest = context.switchToHttp().getRequest();
     const authString = req.headers.authorization;
 
