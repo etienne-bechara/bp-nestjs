@@ -95,4 +95,4 @@ jobs:
 
     - name: Execute Migrations
       run: |
-        npx mikro-orm migration:up
+        npm run migration:up

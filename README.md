@@ -2,25 +2,38 @@
 
 Boilerplate baseado em NestJS com intuito de prover iniciação rápida de projetos em Node.js.
 
-**TL;DR**
+**Guia Rápido**
 
-Clone este repositório renomeando-o de acordo com seu novo projeto:
+1\. Clone este repositório renomeando-o de acordo com seu novo projeto:
 
 ```shell
 git clone https://github.com/etienne-bechara/bp-nestjs.git meu-novo-projeto
 cd meu-novo-projeto
 ```
 
-Execute o script de setup que irá renomear o `origin` para um remote chamado `boilerplate`, bem como reduzir todos os commits a apenas 1:
+2\. Execute o script de setup, que irá renomear o remote `origin` para `boilerplate`, bem como reduzir todos os commits a apenas 1:
 
 ```shell
 npm run boilerplate:setup
 ```
 
-Futuramente, caso deseje sincronizar as atualizações deste boilerplate, execute:
+2a. Futuramente, caso deseje sincronizar as atualizações deste boilerplate, execute:
 
 ```shell
 npm run boilerplate:udpate
+```
+
+2b. Caso não queira utilizar as bases de dados, remova o componente desejado através de:
+
+```shell
+npm run uninstall:orm
+npm run uninstall:redis
+```
+
+3\. Suba a aplicação localmente através de:
+
+```shell
+npm start
 ```
 
 ---
@@ -52,28 +65,13 @@ npm run boilerplate:udpate
   * [API](#api)
   * [CRUD](#crud)
 
+---
 
 ## Utilização
 
-1\. Clone este repositório, e execute o script de setup:
+Após seguir os passos do Guia Rápido acima, envie uma requisição `GET` para `localhost:8080`.
 
-```shell
-git clone https://github.com/etienne-bechara/bp-nestjs.git meu-novo-projeto
-cd meu-novo-projeto
-npm run boilerplate:setup
-```
-
-2\. [Opcional] Adicione o repositório do seu projeto como `origin`
-
-```shell
-git remote add orign https://github.com/eu/meu-projeto.git
-```
-
-3\. [Opcional] Customize o arquivo `.env` de acordo com sua aplicação.
-
-4\. Execute `npm start` para executar a serviço.
-
-Envie uma requisição `GET` para `localhost:8080`, o retorno a seguir indica que a aplicação subiu com sucesso:
+O retorno a seguir indica que a aplicação subiu com sucesso:
 
 ```json
 {
@@ -85,7 +83,7 @@ Envie uma requisição `GET` para `localhost:8080`, o retorno a seguir indica qu
 
 ### Boilerplate
 
-Futuramente, para atualizar o boilerplate para a última versão, execute:
+Sempre que quiser atualizar o boilerplate a última versão, execute:
 
 ```shell
 npm run boilerplate:update
@@ -129,9 +127,9 @@ Documentação | Reponsabilidades | Observação
 ---|---|---
 [NestJS](https://docs.nestjs.com/) | • Injeção de Dependências<br>• Inicialização do Servidor (Express)<br>• Middlewares e Fluxos de Validação<br>• Filtro Global de Exceções | Irá carregar automaticamente todos os arquivos nomeados como `*.module.ts`.
 [Jest](https://jestjs.io/docs/en/getting-started) | • Testes Unitários<br>• Testes E2E | Instalado apenas em ambiente de desenvolvimento.<br>Crie os arquivos de teste no padrão `*.spec.ts`.
-[Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.<br>Não é possível remover o logger (seu consumo em execução é insignificante).
-[MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.<br>Para excluir remova a pasta `/core/orm`.
-[Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.<br>Para excluir remova a pasta `/core/redis`.
+[Sentry](https://www.npmjs.com/package/@sentry/node) | • Monitoramento em Tempo Real<br>• Rastreio de Exceções | **Opcional**<br>Habilite configurando a variável `LOGGER_SENTRY_DSN` no `.env`.
+[MikroORM](https://mikro-orm.io/docs/installation) | • Abstração de Banco de Dados como Entidades<br>• Geração e Execução de Migrations | **Opcional**<br>Habilite configurando as variáveis `ORM_*` no `.env`.
+[Redis](https://www.npmjs.com/package/redis) | • Armazenamento de Dados do Tipo Chave/Valor<br>• Compartilhamento de Alta Performance em Serviços Distribuídos | **Opcional**<br>Habilite configurando as variáveis `REDIS_*` no `.env`.
 
 
 ### Utilitários
