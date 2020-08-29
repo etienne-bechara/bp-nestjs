@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /**
  * To install on a fresh repository:
  * npm i -D @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-plugin-more eslint-plugin-promise eslint-plugin-simple-import-sort

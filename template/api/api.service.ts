@@ -26,7 +26,7 @@ export class _Pascal_Service extends AppProvider {
 
   /* Implement you API methods here */
 
-  // public async getUsers(): Promise<_Pascal_User[]> {
+  // public async readUsers(): Promise<_Pascal_User[]> {
   //   return this.httpsService.get('/users');
   // }
 
