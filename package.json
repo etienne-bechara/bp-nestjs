@@ -49,7 +49,7 @@
     "migration:create:stg": "npm run migration:set:stg && mikro-orm migration:create",
     "migration:create:prd": "npm run migration:set:prd && mikro-orm migration:create",
     "==== Migration Up ====": "",
-    "migration:up": "(mikro-orm -v || (echo ORM not installed, skipping migrations... && exit 0)) && mikro-orm migration:up",
+    "migration:up": "(mikro-orm -v && mikro-orm migration:up) || (echo ORM not installed, skipping migrations... && exit 0)",
     "==== Helpers ====": "",
     "reset:branch": "rimraf .git && git init && git add . && git commit -m \"Clone boilerplate etienne-bechara/bp-nestjs\"",
     "reset:remote": "git remote add -f boilerplate https://github.com/etienne-bechara/bp-nestjs.git && git replace master boilerplate/master && git commit -m \"Sync boilerplate\"",
