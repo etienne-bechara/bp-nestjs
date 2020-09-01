@@ -13,7 +13,7 @@
   "license": "MIT",
   "scripts": {
     "==== Build & Run ====": "",
-    "build": "nest build && (mikro-orm cache:generate || (Echo \"ORM not installed, skipping metadata cache generation...\" && exit 0))",
+    "build": "nest build && (mikro-orm cache:generate || (echo ORM not installed, skipping metadata cache generation... && exit 0))",
     "dev": "npm start",
     "start": "nest start --debug --watch",
     "start:dist": "node ./source/core/main.js || node ./build/source/core/main.js",
@@ -49,7 +49,7 @@
     "migration:create:stg": "npm run migration:set:stg && mikro-orm migration:create",
     "migration:create:prd": "npm run migration:set:prd && mikro-orm migration:create",
     "==== Migration Up ====": "",
-    "migration:up": "(mikro-orm -v || (Echo \"ORM not installed, skipping migrations...\" && exit 0)) && mikro-orm migration:up",
+    "migration:up": "(mikro-orm -v || (echo ORM not installed, skipping migrations... && exit 0)) && mikro-orm migration:up",
     "==== Helpers ====": "",
     "reset:branch": "rimraf .git && git init && git add . && git commit -m \"Clone boilerplate etienne-bechara/bp-nestjs\"",
     "reset:remote": "git remote add -f boilerplate https://github.com/etienne-bechara/bp-nestjs.git && git replace master boilerplate/master && git commit -m \"Sync boilerplate\"",
