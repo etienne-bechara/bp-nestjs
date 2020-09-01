@@ -9,4 +9,4 @@ RUN npm install --only=production
 
 # Copy source code and execute application
 COPY . /app
-CMD ["npm", "start:dist"]
+CMD ["npm", "run", "start:dist"]
