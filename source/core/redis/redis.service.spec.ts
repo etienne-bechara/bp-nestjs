@@ -17,12 +17,32 @@ AppUtils.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
   });
 
   describe('setKey', () => {
-    it('should persist a random number', async() => {
+    it('should obey skip if not exist rule', async() => {
+      await redisService.setKey({
+        key: RedisKey.TEST_RANDOM_NUMBER,
+        value: { rng },
+        skip: 'IF_NOT_EXIST',
+      });
+      expect(await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER))
+        .toBeNull();
+    });
+
+    it('should persist a random number without errors', async() => {
       expect(await redisService.setKey({
         key: RedisKey.TEST_RANDOM_NUMBER,
         value: { rng },
       }))
         .toBeUndefined();
+    });
+
+    it('should obey skip if exist rule', async() => {
+      await redisService.setKey({
+        key: RedisKey.TEST_RANDOM_NUMBER,
+        value: Math.random(),
+        skip: 'IF_EXIST',
+      });
+      expect(await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER))
+        .toMatchObject({ rng });
     });
   });
 

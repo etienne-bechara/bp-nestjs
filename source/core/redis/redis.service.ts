@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import redis, { RedisClient } from 'redis';
+import Redis from 'ioredis';
 
 import { AppProvider } from '../app/app.provider';
 import { RedisKey } from './redis.enum';
@@ -9,7 +9,7 @@ import { RedisSettings } from './redis.settings';
 @Injectable()
 export class RedisService extends AppProvider {
   private settings: RedisSettings = this.getSettings();
-  private redisClient: RedisClient;
+  private redisClient: Redis.Redis;
 
   /** */
   public constructor() {
@@ -29,19 +29,14 @@ export class RedisService extends AppProvider {
       return undefined;
     }
 
-    this.redisClient = redis.createClient({
+    this.redisClient = new Redis({
       host: this.settings.REDIS_HOST,
       port: this.settings.REDIS_PORT,
       password: this.settings.REDIS_PASSWORD,
-      retry_strategy: (options) => {
-        if (
-          options.error
-          && options.error.code.includes('ECONNRESET')
-          && options.attempt < 5
-        ) {
-          return 100;
-        }
-        return undefined;
+      keyPrefix: this.settings.REDIS_KEY_PREFIX,
+      reconnectOnError: (err: Error): boolean | 1 | 2 => {
+        this.logger.error(err);
+        return 2;
       },
     });
 
@@ -68,12 +63,8 @@ export class RedisService extends AppProvider {
     this.checkRedisClient();
     this.logger.debug(`Redis: Reading key ${key}...`);
 
-    return new Promise((resolve, reject) => {
-      this.redisClient.get(key, (err, reply) => {
-        if (err) reject(err);
-        else resolve(JSON.parse(reply));
-      });
-    });
+    const stringValue = await this.redisClient.get(key);
+    return JSON.parse(stringValue);
   }
 
   /**
@@ -99,16 +90,11 @@ export class RedisService extends AppProvider {
 
     this.logger.debug(`Redis: Setting key ${params.key}...`);
 
-    return new Promise((resolve, reject) => {
-      this.redisClient.set(
-        params.key,
-        JSON.stringify(params.value),
-        ...extraParams,
-        (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-    });
+    await this.redisClient.set(
+      params.key,
+      JSON.stringify(params.value),
+      ...extraParams,
+    );
   }
 
   /**
@@ -116,12 +102,7 @@ export class RedisService extends AppProvider {
    * @param key
    */
   public async delKey(key: RedisKey): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.redisClient.del(key, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
+    await this.redisClient.del(key);
   }
 
 }
