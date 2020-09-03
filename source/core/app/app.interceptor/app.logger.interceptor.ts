@@ -12,7 +12,7 @@ export class AppLoggerInterceptor extends AppProvider implements NestInterceptor
   private settings: AppSettings = this.getSettings();
 
   /**
-   * Print request and response data at console for debugging purposes
+   * Print request and response data at console for debugging purposes.
    * @param context
    * @param next
    */

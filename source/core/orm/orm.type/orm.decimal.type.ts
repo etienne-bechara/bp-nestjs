@@ -4,9 +4,8 @@ export class OrmDecimalType extends Type {
 
   /**
    * Fixes decimal type incorrectly returning as string
-   * instead of number when reading from database
+   * instead of number when reading from database.
    * @param value
-   * @param platform
    */
   public convertToJSValue(value: string | number): number {
     if (value === '0' || value === 0) return 0;

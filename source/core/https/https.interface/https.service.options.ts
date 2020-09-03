@@ -3,7 +3,7 @@ import https from 'https';
 import { HttpsReturnType } from '../https.enum';
 
 /**
- * Sets up a custom HTTP instance based on Axios
+ * Sets up a custom HTTP instance based on Axios.
  */
 export interface HttpsServiceOptions {
 

@@ -7,7 +7,7 @@ export class OrmEntityInterceptor implements NestInterceptor {
 
   /**
    * If returning data contain entity classes, calls their stringify method
-   * to prevent sending private data or exceeding call stack size
+   * to prevent sending private data or exceeding call stack size.
    * @param context
    * @param next
    */
@@ -42,7 +42,8 @@ export class OrmEntityInterceptor implements NestInterceptor {
 
   /**
    * Given an object, eliminate properties that references
-   * defined parent id
+   * defined parent id.
+   * @param parentId
    * @param data
    */
   private eliminateRecursion(parentId: string, data: any): void {

@@ -20,9 +20,9 @@ export class AppUtils {
 
   /**
    * Given a glob path string, find all matching files
-   * and return an array of all required exports
+   * and return an array of all required exports.
    *
-   * Always use runtime root as entry point
+   * Always use runtime root as entry point.
    * @param globPath
    */
   public static globToRequire(globPath: string | string[]): any[] {
@@ -46,10 +46,10 @@ export class AppUtils {
 
   /**
    * Parses and validates environment variables then
-   * join them with settings and caches the result
+   * join them with settings and caches the result.
    *
    * At development environment enable reverse mapping
-   * of js files for easier stack debugging
+   * of js files for easier stack debugging.
    */
   public static parseSettings<T>(): T {
 
@@ -83,7 +83,7 @@ export class AppUtils {
 
   /**
    * Retuns the logger singleton instance, creates it
-   * if not available
+   * if not available.
    */
   public static getLogger(): LoggerService {
     if (!loggerService) {
@@ -95,7 +95,7 @@ export class AppUtils {
   }
 
   /**
-   * Asynchronously wait for desired amount of milliseconds
+   * Asynchronously wait for desired amount of milliseconds.
    * @param ms
    */
   public static async halt(ms: number): Promise<void> {
@@ -103,7 +103,7 @@ export class AppUtils {
   }
 
   /**
-   * Retry a method for configured times or until desired timeout
+   * Retry a method for configured times or until desired timeout.
    * @param params
    */
   public static async retryOnException<T>(params: AppRetryParams): Promise<T> {
@@ -138,7 +138,7 @@ export class AppUtils {
   }
 
   /**
-   * Runs a test group mocking console.log and console.info
+   * Runs a test group mocking console.log and console.info.
    * @param name
    * @param fn
    */
@@ -150,8 +150,11 @@ export class AppUtils {
 
   /**
    * Describes a test only if desired environment variable
-   * is present
+   * is present.
    * @param variable
+   * @param silent
+   * @param name
+   * @param fn
    */
   public static describeIfEnv(variable: string, silent: boolean, name: string, fn: jest.EmptyFunction): void {
     const variableExists = dotenv.config().parsed[variable];

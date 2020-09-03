@@ -11,7 +11,6 @@ export class RedisService extends AppProvider {
   private settings: RedisSettings = this.getSettings();
   private redisClient: Redis.Redis;
 
-  /** */
   public constructor() {
     super();
     this.setupRedis();
@@ -20,7 +19,7 @@ export class RedisService extends AppProvider {
   /**
    * Sets up the redis cloud client, in case of ECONNRESET
    * errors attempt to reconnect up to 5 times with a delay
-   * of 100ms. On failure throws regular exception
+   * of 100ms. On failure throws regular exception.
    */
   private setupRedis(): void {
 
@@ -45,7 +44,7 @@ export class RedisService extends AppProvider {
 
   /**
    * Throw if redis client is not enabled
-   * Used at the beggining of all methods
+   * Used at the beggining of all methods.
    */
   private checkRedisClient(): void {
     if (!this.redisClient) {
@@ -56,7 +55,7 @@ export class RedisService extends AppProvider {
   }
 
   /**
-   * Reads given key and parse its value
+   * Reads given key and parse its value.
    * @param key
    */
   public async getKey<T>(key: RedisKey): Promise<T> {
@@ -69,9 +68,8 @@ export class RedisService extends AppProvider {
 
   /**
    * When setting a key always stringify it to preserve
-   * type information
-   * @param key
-   * @param value
+   * type information.
+   * @param params
    */
   public async setKey(params: RedisSetParams): Promise<void> {
     this.checkRedisClient();
@@ -98,7 +96,7 @@ export class RedisService extends AppProvider {
   }
 
   /**
-   * Deletes desired key
+   * Deletes desired key.
    * @param key
    */
   public async delKey(key: RedisKey): Promise<void> {

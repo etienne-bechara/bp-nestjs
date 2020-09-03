@@ -8,7 +8,6 @@ import { _Pascal_Settings } from './_Dot_.settings';
 export class _Pascal_Controller extends AppProvider {
   private settings: _Pascal_Settings = this.getSettings();
 
-  /** */
   public constructor(private readonly _Camel_Service: _Pascal_Service) { super(); }
 
   /* If you with to expose any functionalities implement them here */

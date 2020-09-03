@@ -9,11 +9,10 @@ import { AppSettings } from './app.settings';
 export class AppFilter extends AppProvider implements ExceptionFilter {
   private settings: AppSettings = this.getSettings();
 
-  /** */
   public constructor() { super(); }
 
   /**
-   * Intercepts all erros and standardize the output
+   * Intercepts all erros and standardize the output.
    * @param exception
    * @param host
    */
@@ -47,7 +46,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
   }
 
   /**
-   * Given an exception, determines the correct status code
+   * Given an exception, determines the correct status code.
    * @param exception
    */
   private getErrorCode(exception: HttpException | Error): number {
@@ -57,7 +56,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
   }
 
   /**
-   * Given an exception, extracts a detailing message
+   * Given an exception, extracts a detailing message.
    * @param exception
    */
   private getMessage(exception: HttpException | Error): string {
@@ -86,7 +85,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
   }
 
   /**
-   * Given an exception, extracts its details
+   * Given an exception, extracts its details.
    * @param exception
    */
   private getDetails(exception: HttpException | Error): unknown {
@@ -115,11 +114,12 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
   /**
    * Logs the incident according to status:
    * • Error level for INTERNAL_SERVER_ERROR
-   * • Info level for everything else
+   * • Info level for everything else.
    *
    * Always add request data removing sensitive
-   * information
+   * information.
    * @param appException
+   * @param req
    */
   private logException(appException: AppException, req: AppRequest): void {
 
@@ -150,7 +150,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
   /**
    * Check if object has any keys and remove sensitive
    * data form them
-   * If empty, return undefined to send less data
+   * If empty, return undefined to send less data.
    * @param object
    */
   private removeSensitiveData(object: any): any {

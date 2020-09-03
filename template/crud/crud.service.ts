@@ -10,9 +10,9 @@ export class _Pascal_Service extends OrmService<_Pascal_Entity> {
 
   /**
    * Creates default methods and exception handling for
-   * _Pascal_ Entity manipulation
+   * _Pascal_ Entity manipulation.
    *
-   * We must inject the matching repository exported by ORM
+   * We must inject the matching repository exported by ORM.
    * @param _Camel_Repository
    */
   public constructor(

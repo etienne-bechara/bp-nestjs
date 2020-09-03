@@ -7,7 +7,7 @@ import { argv } from 'yargs';
 
 /**
  * Creates a folder inside ./source that matches
- * desired template and replace its naming variables
+ * desired template and replace its naming variables.
  */
 function generateTemplate(): void {
   try {
@@ -27,9 +27,10 @@ function generateTemplate(): void {
 
 /**
  * Copy all files inside template folder to project ./source,
- * renaming according to provided domain name
+ * renaming according to provided domain name.
  *
- * Then replace all placeholders according to desired case
+ * Then replace all placeholders according to desired case.
+ * @param type
  */
 function generateTemplateByType(type: string): void {
   const name: string = argv.n ? argv.n.toString() : null;
@@ -63,8 +64,9 @@ function generateTemplateByType(type: string): void {
 }
 
 /**
- * Prints an error message
+ * Prints an error message.
  * @param message
+ * @param example
  */
 function printError(message: string, example?: string): void {
   console.error(`

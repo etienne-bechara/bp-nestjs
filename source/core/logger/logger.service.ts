@@ -15,7 +15,6 @@ export class LoggerService {
   private sentryEnabled: boolean;
   private chalk: any;
 
-  /** */
   public constructor(private settings: LoggerSettings & { NODE_ENV: AppEnvironment}) {
     this.setupLogger();
   }
@@ -23,7 +22,7 @@ export class LoggerService {
   /**
    * Enable Sentry integration if the minum level configured
    * at settings matches the current environment
-   * Then add a process listener to catch any unhandled exception
+   * Then add a process listener to catch any unhandled exception.
    */
   private setupLogger(): void {
     this.chalk = this.settings.NODE_ENV === AppEnvironment.DEVELOPMENT
@@ -56,7 +55,7 @@ export class LoggerService {
   /**
    *
    * Normalizes incoming data object, and if stack is not present for errors
-   * crete it shifting the trace to ignore this file
+   * crete it shifting the trace to ignore this file.
    * @param params
    */
   private log(params: LoggerParams): void {
@@ -94,7 +93,7 @@ export class LoggerService {
   /**
    * Print messages in the console:
    * - STAGING & PRODUCTION: prints at stderr and only for WARNING+
-   * - DEVELOPMENT: prints as colored string for any level
+   * - DEVELOPMENT: prints as colored string for any level.
    * @param params
    */
   private printLog(params: LoggerParams): void {
@@ -121,7 +120,7 @@ export class LoggerService {
   }
 
   /**
-   * Publish events of Sentry according to minimun configured level
+   * Publish events of Sentry according to minimun configured level.
    * @param params
    */
   private publishLog(params: LoggerParams): void {
@@ -144,7 +143,11 @@ export class LoggerService {
     }
   }
 
-  /** CRITICAL - Display as red */
+  /**
+   * CRITICAL - Display as red.
+   * @param message
+   * @param data
+   */
   public critical(message: string | Error, data?: any): void {
     this.log({
       level: LoggerLevel.CRITICAL,
@@ -156,7 +159,11 @@ export class LoggerService {
     });
   }
 
-  /** ERROR - Display as red */
+  /**
+   * ERROR - Display as red.
+   * @param message
+   * @param data
+   */
   public error(message: string | Error, data?: any): void {
     this.log({
       level: LoggerLevel.ERROR,
@@ -168,7 +175,11 @@ export class LoggerService {
     });
   }
 
-  /** WARNING - Display as yellow */
+  /**
+   * WARNING - Display as yellow.
+   * @param message
+   * @param data
+   */
   public warning(message: string | Error, data?: any): void {
     this.log({
       level: LoggerLevel.WARNING,
@@ -180,7 +191,11 @@ export class LoggerService {
     });
   }
 
-  /** INFO (Generic) - Display as white */
+  /**
+   * INFO (Generic) - Display as white.
+   * @param message
+   * @param data
+   */
   public info(message: string | Error, data?: any): void {
     this.log({
       level: LoggerLevel.INFO,
@@ -192,7 +207,11 @@ export class LoggerService {
     });
   }
 
-  /** INFO (Success) - display as green */
+  /**
+   * INFO (Success) - display as green.
+   * @param message
+   * @param data
+   */
   public success(message: string | Error, data?: any): void {
     this.log({
       level: LoggerLevel.INFO,
@@ -204,7 +223,11 @@ export class LoggerService {
     });
   }
 
-  /** INFO (HTTP) - display as cyan */
+  /**
+   * INFO (HTTP) - display as cyan.
+   * @param message
+   * @param data
+   */
   public server(message: string | Error, data?: any): void {
     this.log({
       level: LoggerLevel.INFO,
@@ -216,7 +239,11 @@ export class LoggerService {
     });
   }
 
-  /** DEBUG - Display as grey */
+  /**
+   * DEBUG - Display as grey.
+   * @param message
+   * @param data
+   */
   public debug(message: string | Error, data?: any): void {
     this.log({
       level: LoggerLevel.DEBUG,

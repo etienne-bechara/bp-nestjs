@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios';
 import { HttpsReturnType } from '../https.enum';
 
 /**
- * Adds extra request options to Axios package
+ * Adds extra request options to Axios package.
  */
 export interface HttpsRequestParams extends AxiosRequestConfig {
 

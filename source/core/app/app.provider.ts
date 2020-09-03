@@ -8,14 +8,14 @@ export abstract class AppProvider {
   protected logger: LoggerService = AppUtils.getLogger();
 
   /**
-   * Reads desired settings and type them accordingly
+   * Reads desired settings and type them accordingly.
    */
   protected getSettings<T>(): T {
     return AppUtils.parseSettings<T>();
   }
 
   /**
-   * Returns an allowed set of utilities from application
+   * Returns an allowed set of utilities from application.
    */
   protected get utils(): AppSharedUtils {
     return {

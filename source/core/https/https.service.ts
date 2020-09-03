@@ -25,7 +25,7 @@ export class HttpsService extends AppProvider {
   /**
    * Creates new HTTP instance based on Axios, validator is
    * set to always true since we are customizing the response
-   * handler to standardize exception reporting
+   * handler to standardize exception reporting.
    * @param params
    */
   public setupInstance(params: HttpsServiceOptions): void {
@@ -43,7 +43,7 @@ export class HttpsService extends AppProvider {
    * Defines and stores instance defaults, if not available set them to:
    * • Return type to DATA (Axios response data)
    * • Timeout to global default configured at https.setting
-   * • Validator to pass on status lower than 400 (< bad request)
+   * • Validator to pass on status lower than 400 (< bad request).
    * @param params
    */
   private setDefaultParams(params: HttpsServiceOptions): void {
@@ -55,7 +55,7 @@ export class HttpsService extends AppProvider {
   }
 
   /**
-   * Store base URL, body and headers if configured at setup
+   * Store base URL, body and headers if configured at setup.
    * @param params
    */
   private setBaseParams(params: HttpsServiceOptions): void {
@@ -69,7 +69,7 @@ export class HttpsService extends AppProvider {
    * Configures the https agent according to priority:
    * • If httpsAgent property is set, use it
    * • If ssl property is set, decode certificate and use it
-   * • If ignoreHttpsErrors, customize it with a simple rejectUnauthorized
+   * • If ignoreHttpsErrors, customize it with a simple rejectUnauthorized.
    * @param params
    */
   private setHttpsAgent(params: HttpsServiceOptions): void {
@@ -94,8 +94,8 @@ export class HttpsService extends AppProvider {
   /**
    * Given configured params for an http request, join previously configured
    * base URL, headers, query and data, returning a clone.
-   * In case of conflicts the defaults are overwritten
-   * @param param
+   * In case of conflicts the defaults are overwritten.
+   * @param params
    */
   private mergeBaseParams(params: HttpsRequestParams): HttpsRequestParams {
     const mergedParams = Object.assign({ }, params);
@@ -124,7 +124,7 @@ export class HttpsService extends AppProvider {
   /**
    * Apply the following request params replacements:
    * • URLs with :param_name to its equivalent at replacements property
-   * • Request data as stringified form if property is present
+   * • Request data as stringified form if property is present.
    * @param params
    */
   private replaceVariantParams(params: HttpsRequestParams): HttpsRequestParams {
@@ -148,7 +148,7 @@ export class HttpsService extends AppProvider {
 
   /**
    * Given a sucessful response, isolate its cookies in an
-   * easily accesible array of interfaces
+   * easily accesible array of interfaces.
    * @param res
    */
   private parseResponseCookies(res: any): void {
@@ -183,7 +183,7 @@ export class HttpsService extends AppProvider {
    * Handles all requests, extending default axios functionality with:
    * • Better validation: Include returned data in case of validation failure
    * • Better timeout: Based on server timing instead of only after DNS resolve
-   * • Error standardization: Add several data for easier debugging
+   * • Error standardization: Add several data for easier debugging.
    * @param params
    */
   public async request<T>(params: HttpsRequestParams): Promise<T> {
@@ -240,28 +240,44 @@ export class HttpsService extends AppProvider {
       : res;
   }
 
-  /** GET */
+  /**
+   * GET.
+   * @param url
+   * @param params
+   */
   public async get<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'GET';
     params.url = url;
     return this.request<T>(params);
   }
 
-  /** POST */
+  /**
+   * POST.
+   * @param url
+   * @param params
+   */
   public async post<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'POST';
     params.url = url;
     return this.request<T>(params);
   }
 
-  /** PUT */
+  /**
+   * PUT.
+   * @param url
+   * @param params
+   */
   public async put<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'PUT';
     params.url = url;
     return this.request<T>(params);
   }
 
-  /** DELETE */
+  /**
+   * DELETE.
+   * @param url
+   * @param params
+   */
   public async delete<T>(url: string, params: HttpsRequestParams = { }): Promise<T> {
     params.method = 'DELETE';
     params.url = url;

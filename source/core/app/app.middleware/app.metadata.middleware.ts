@@ -8,7 +8,7 @@ export class AppMetadataMiddleware implements NestMiddleware {
 
   /**
    * This middleware is globally bound so it shall be executed first
-   * Its purpose is to extract desired request metadata
+   * Its purpose is to extract desired request metadata.
    * @param req
    * @param res
    * @param next

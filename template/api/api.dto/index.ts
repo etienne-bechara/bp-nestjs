@@ -1,9 +1,9 @@
 /**
  * Implement into this folder the Data Transfer Objects
- * when requesting something to _Pascal_ API
+ * when requesting something to _Pascal_ API.
  *
  * Then, re-export everything from here to keep the
- * file structure organized
+ * file structure organized.
  */
 
 // export * from './_Dot_.user.create.dto';

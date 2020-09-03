@@ -11,10 +11,10 @@ export class AppTimeoutInterceptor extends AppProvider implements NestIntercepto
 
   /**
    * Creates a true server side timer that ends any requests
-   * if exceding configured timeout
+   * if exceding configured timeout.
    *
    * If using serverless, remember to configure service timeout
-   * over the one configure here at the application
+   * over the one configure here at the application.
    * @param context
    * @param next
    */

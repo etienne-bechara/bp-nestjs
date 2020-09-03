@@ -13,7 +13,7 @@ export class AppGuard extends AppProvider implements CanActivate {
   /**
    * Implements very basic global authentication according to
    * configured environment variables
-   * Refer to .env.sample for detailed information
+   * Refer to .env.sample for detailed information.
    * @param context
    */
   public canActivate(context: ExecutionContext): boolean {

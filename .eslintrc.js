@@ -18,6 +18,7 @@ module.exports =  {
   ],
 
   plugins: [
+    'jsdoc', // https://github.com/gajus/eslint-plugin-jsdoc
     'promise', // https://github.com/xjamundx/eslint-plugin-promise
     'simple-import-sort', // https://github.com/lydell/eslint-plugin-simple-import-sort
   ],
@@ -89,16 +90,24 @@ module.exports =  {
      * • Class and interface declarations
      * • Arrow functions inside methods
      */
-    'require-jsdoc': ['warn', {
-      'require': {
-        'FunctionDeclaration': true,
-        'MethodDefinition': true,
-        'ClassDeclaration': false,
-        'ArrowFunctionExpression': true,
-        'FunctionExpression': true,
+    'jsdoc/require-jsdoc': ['warn', {
+      checkConstructors: false,
+      require: {
+        FunctionDeclaration: true,
+        MethodDefinition: true,
       }
     }],
-
+    'jsdoc/check-alignment': ['warn'],
+    'jsdoc/check-indentation': ['warn'],
+    'jsdoc/check-param-names': ['warn'],
+    'jsdoc/check-tag-names': ['warn'],
+    'jsdoc/implements-on-classes': ['warn'],
+    'jsdoc/no-types': ['warn'],
+    'jsdoc/require-description': ['warn'],
+    'jsdoc/require-description-complete-sentence': ['warn'],
+    'jsdoc/require-param': ['warn'],
+    'jsdoc/require-param-name': ['warn'],
+    
     /**
      * OPINATED STYLING RULES
      * 

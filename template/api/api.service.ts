@@ -10,7 +10,7 @@ export class _Pascal_Service extends AppProvider {
   private settings: _Pascal_Settings = this.getSettings();
 
   /**
-   * Instantiate an exclusive http service for _Pascal_ API
+   * Instantiate an exclusive http service for _Pascal_ API.
    * @param httpsService
    */
   public constructor(private readonly httpsService: HttpsService) {

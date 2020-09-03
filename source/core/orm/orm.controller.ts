@@ -15,7 +15,7 @@ import { OrmSettings } from './orm.settings';
 
 /**
  * Implements a very simples CRUD controller that
- * can be extended to prevent duplicate code
+ * can be extended to prevent duplicate code.
  */
 @UseInterceptors(OrmEntityInterceptor)
 export abstract class OrmController<Entity> extends AppProvider {
@@ -25,7 +25,6 @@ export abstract class OrmController<Entity> extends AppProvider {
   protected OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';
   protected OPERATOR_TOO_MANY: string = 'has too many filter operators';
 
-  /** */
   public constructor(
     public readonly service: OrmService<Entity>,
     protected options: OrmControllerOptions = { },
@@ -38,7 +37,7 @@ export abstract class OrmController<Entity> extends AppProvider {
   /**
    * Read all entitties that matches desired criterias
    * If pagination properties are present (limit & offset),
-   * returns withing an encapsulated object containing total
+   * returns withing an encapsulated object containing total.
    * @param query
    */
   @Get()
@@ -53,7 +52,7 @@ export abstract class OrmController<Entity> extends AppProvider {
   }
 
   /**
-   * Read a single entity by its id
+   * Read a single entity by its id.
    * @param params
    */
   @Get(':id')
@@ -64,7 +63,7 @@ export abstract class OrmController<Entity> extends AppProvider {
 
   /**
    * Creates a single entity validating its data
-   * across provided create DTO
+   * across provided create DTO.
    * @param body
    */
   @Post()
@@ -78,7 +77,7 @@ export abstract class OrmController<Entity> extends AppProvider {
 
   /**
    * Creates or updates a single entity validating its data
-   * across provided create DTO
+   * across provided create DTO.
    * @param body
    */
   @Put()
@@ -92,7 +91,8 @@ export abstract class OrmController<Entity> extends AppProvider {
 
   /**
    * Updates a single entity validating its data
-   * across provided create DTO
+   * across provided create DTO.
+   * @param params
    * @param body
    */
   @Put(':id')
@@ -105,8 +105,8 @@ export abstract class OrmController<Entity> extends AppProvider {
   }
 
   /**
-   * Deletes a single entity by its id
-   * @param body
+   * Deletes a single entity by its id.
+   * @param params
    */
   @Delete(':id')
   public async deleteById(@Param() params: OrmIdDto): Promise<Entity> {
@@ -115,7 +115,7 @@ export abstract class OrmController<Entity> extends AppProvider {
   }
 
   /**
-   * Validates if a given method is allowed to procede
+   * Validates if a given method is allowed to procede.
    * @param method
    */
   public validateImplementation(method: OrmControllerMethod): void {
@@ -139,7 +139,7 @@ export abstract class OrmController<Entity> extends AppProvider {
 
   /**
    * Transforms an object into desired type, returns the typed
-   * object or throws an exception with array of constraints
+   * object or throws an exception with array of constraints.
    * @param object
    * @param type
    */
@@ -174,7 +174,7 @@ export abstract class OrmController<Entity> extends AppProvider {
 
   /**
    * Transforms an object merged with pagination interface, into two separate
-   * types, if validation fails, throws an exception with array of constraints
+   * types, if validation fails, throws an exception with array of constraints.
    * @param object
    * @param type
    */
@@ -190,7 +190,7 @@ export abstract class OrmController<Entity> extends AppProvider {
 
   /**
    * Given any object, remove properties related
-   * to query find options
+   * to query find options.
    * @param object
    */
   protected splitDataOptions(object: any = { }): { data: any, options: any} {
@@ -215,7 +215,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    * Parses inbound query string that may include operators:
    * $gt, $gte, $lt, $lte, $like, etc..
    * And returns several versions of it for dto validation
-   * and ORM find execution
+   * and ORM find execution.
    * @param query
    */
   protected parseQueryOperators(query: any = { }): { source: any, stripped: any, unflatted: any } {

@@ -12,7 +12,7 @@ const modules = AppUtils.globToRequire([ './**/*.module.js', '!./**/app.module.j
 const validationRules = AppUtils.parseSettings<AppSettings>().APP_VALIDATION_RULES;
 
 /**
- * Globally loads all files matching the module.ts pattern
+ * Globally loads all files matching the module.ts pattern.
  */
 @Global()
 @Module({
@@ -28,7 +28,11 @@ const validationRules = AppUtils.parseSettings<AppSettings>().APP_VALIDATION_RUL
   ],
 })
 export class AppModule {
-  /** */
+
+  /**
+   * Applies desired middlewares.
+   * @param consumer
+   */
   public configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(

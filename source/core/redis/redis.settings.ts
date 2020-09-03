@@ -18,7 +18,8 @@ export class RedisSettings {
   @IsString()
   public REDIS_PASSWORD: string;
 
-  /** Provider Options */
+  /* Provider Options */
+
   public REDIS_KEY_PREFIX: string = '';
 
 }

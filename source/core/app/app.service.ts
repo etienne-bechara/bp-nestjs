@@ -11,10 +11,10 @@ export class AppService extends AppProvider {
   private server: NestExpressApplication;
 
   /**
-   * Starts Express server through Nest JS framework
+   * Starts Express server through Nest JS framework.
    *
    * Disables server timeout since it will be handled
-   * into a separate interceptor
+   * into a separate interceptor.
    */
   public async bootServer(): Promise<void> {
 

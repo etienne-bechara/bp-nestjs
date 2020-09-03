@@ -5,7 +5,7 @@ import { AppProvider } from '../app/app.provider';
 import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.interface';
 
 /**
- * Creates an abstract service tied with a repository
+ * Creates an abstract service tied with a repository.
  */
 export abstract class OrmService<Entity> extends AppProvider {
   protected DUPLICATE_ENTRY: string = 'unique constraint violation';
@@ -18,7 +18,6 @@ export abstract class OrmService<Entity> extends AppProvider {
   protected UK_REFERENCE_FAIL: string = 'unique constraint references more than one entity';
   protected UK_MISSING: string = 'missing default unique key implementation';
 
-  /** */
   public constructor(
     private readonly repository: EntityRepository<Entity>,
     protected readonly options: OrmServiceOptions = { },
@@ -28,9 +27,10 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Wrapper responsible for all SELECT operations
+   * Wrapper responsible for all SELECT operations.
    * @param params
-   * @param populate
+   * @param options
+   * @param partial
    */
   private async find(
     params: FilterQuery<Entity> | Partial<Entity> | string, options: OrmFindOptions = { }, partial?: boolean,
@@ -68,7 +68,7 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Wrapper responsible for all INSERT and UPDATE operations
+   * Wrapper responsible for all INSERT and UPDATE operations.
    * @param entity
    */
   private async save(entity: Entity): Promise<void> {
@@ -84,7 +84,7 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Wrapper responsible for all DELETE operations
+   * Wrapper responsible for all DELETE operations.
    * @param entity
    */
   private async remove(entity: Entity): Promise<Entity> {
@@ -99,7 +99,7 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Validate provided unique key or the optionally configured
-   * default one. If none, throw an exception
+   * default one. If none, throw an exception.
    * @param uniqueKey
    */
   private validateUniqueKey(uniqueKey: string[]): string[] {
@@ -116,8 +116,9 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Read all entities that matches given criteria
-   * @param id
+   * Read all entities that matches given criteria.
+   * @param params
+   * @param options
    */
   public async read(params: FilterQuery<Entity> | Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity[]> {
     const entities = await this.find(params, options);
@@ -126,8 +127,9 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Read a supposedly unique entity, if the constraint
-   * fails throw a conflict exception
-   * @param id
+   * fails throw a conflict exception.
+   * @param params
+   * @param options
    */
   public async readUnique(params: FilterQuery<Entity> | Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity> {
     const entities = await this.find(params, options);
@@ -145,8 +147,9 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Read, populate and count all entities that matches given criteria
-   * Returns an object contining limit, offset, total and results
-   * @param id
+   * Returns an object contining limit, offset, total and results.
+   * @param params
+   * @param options
    */
   public async readAndCount(params: FilterQuery<Entity> | Entity, options: OrmFindOptions = { }): Promise<OrmPartialResponse<Entity>> {
     if (!options.limit) options.limit = 1000;
@@ -157,8 +160,9 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Reads a single entity by its ID and populate
-   * its configured collections
+   * its configured collections.
    * @param id
+   * @param options
    */
   public async readById(id: string, options: OrmFindOptions = { }): Promise<Entity> {
     const entity = await this.find(id, options);
@@ -167,7 +171,7 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Creates a new entity from raw data or from an already
-   * initialized entity
+   * initialized entity.
    * @param data
    */
   public async create(data: Partial<Entity>): Promise<Entity> {
@@ -177,7 +181,7 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Updates an already instatiated entity from raw data
+   * Updates an already instatiated entity from raw data.
    * @param entity
    * @param data
    */
@@ -200,7 +204,7 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Updates a singles entity by its id with plain data
-   * and return the updated object
+   * and return the updated object.
    * @param id
    * @param data
    */
@@ -211,10 +215,11 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Read, update or insert according to provided
-   * data, unique key and where or not to update
+   * data, unique key and where or not to update.
    * @param data
    * @param uniqueKey
    * @param allowUpdate
+   * @param failOnDuplicate
    */
   public async readCreateOrUpdate(
     data: Partial<Entity>, uniqueKey?: string[], allowUpdate?: boolean, failOnDuplicate?: boolean,
@@ -253,9 +258,9 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Based on incoming data and a unique key,
-   * create a new entity or update matching one
-   * @param uniqueKey
+   * create a new entity or update matching one.
    * @param data
+   * @param uniqueKey
    */
   public async upsert(data: Partial<Entity>, uniqueKey?: string[]): Promise<Entity> {
     return this.readCreateOrUpdate(data, uniqueKey, true);
@@ -263,16 +268,16 @@ export abstract class OrmService<Entity> extends AppProvider {
 
   /**
    * Based on incoming data and a unique key,
-   * create a new entity or returns matching one
-   * @param uniqueKey
+   * create a new entity or returns matching one.
    * @param data
+   * @param uniqueKey
    */
   public async resert(data: Partial<Entity>, uniqueKey?: string[]): Promise<Entity> {
     return this.readCreateOrUpdate(data, uniqueKey, false);
   }
 
   /**
-   * Deletes a single entity by its id
+   * Deletes a single entity by its id.
    * @param id
    */
   public async deleteById(id: string): Promise<Entity> {
@@ -281,8 +286,9 @@ export abstract class OrmService<Entity> extends AppProvider {
   }
 
   /**
-   * Handles all query exceptions
+   * Handles all query exceptions.
    * @param e
+   * @param data
    */
   protected queryExceptionHandler(e: Error, data: Partial<Entity> | any): void {
 
