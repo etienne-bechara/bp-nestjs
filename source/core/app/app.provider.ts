@@ -1,27 +1,16 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 
 import { LoggerService } from '../logger/logger.service';
-import { AppSharedUtils } from './app.interface';
-import { AppUtils } from './app.utils';
+import { UtilService } from '../util/util.service';
 
 export abstract class AppProvider {
-  protected logger: LoggerService = AppUtils.getLogger();
+  protected logger: LoggerService = UtilService.getLoggerService();
 
   /**
    * Reads desired settings and type them accordingly.
    */
   protected getSettings<T>(): T {
-    return AppUtils.parseSettings<T>();
-  }
-
-  /**
-   * Returns an allowed set of utilities from application.
-   */
-  protected get utils(): AppSharedUtils {
-    return {
-      halt: AppUtils.halt,
-      retryOnException: AppUtils.retryOnException,
-    };
+    return UtilService.parseSettings<T>();
   }
 
 }

@@ -5,6 +5,7 @@ import moment from 'moment';
 import qs from 'qs';
 
 import { AppProvider } from '../app/app.provider';
+import { UtilService } from '../util/util.service';
 import { HttpsReturnType } from './https.enum';
 import { HttpsCookie, HttpsRequestParams, HttpsServiceOptions } from './https.interface';
 import { HttpsSettings } from './https.settings';
@@ -21,6 +22,8 @@ export class HttpsService extends AppProvider {
   private baseData: Record<string, unknown>;
   private httpsAgent: https.Agent;
   private instance: AxiosInstance;
+
+  public constructor(private readonly utilService: UtilService) { super(); }
 
   /**
    * Creates new HTTP instance based on Axios, validator is
@@ -204,7 +207,7 @@ export class HttpsService extends AppProvider {
     try {
       res = await Promise.race([
         this.instance(finalParams),
-        this.utils.halt(timeout),
+        this.utilService.halt(timeout),
       ]);
 
       if (!res) {

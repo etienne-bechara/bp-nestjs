@@ -2,21 +2,27 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
 
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 import globby from 'globby';
+import os from 'os';
 
+import { AppEnvironment } from '../app/app.enum';
+import { AppRetryParams } from '../app/app.interface';
+import { AppProvider } from '../app/app.provider';
+import { AppSettings } from '../app/app.settings';
 import { LoggerService } from '../logger/logger.service';
 import { LoggerSettings } from '../logger/logger.settings';
-import { AppEnvironment } from './app.enum';
-import { AppRetryParams } from './app.interface';
-import { AppSettings } from './app.settings';
+import { UtilAppStatus } from './util.interface';
 
 let cachedSettings: any;
 let loggerService: LoggerService;
 
-export class AppUtils {
+@Injectable()
+export class UtilService extends AppProvider {
 
   /**
    * Given a glob path string, find all matching files
@@ -55,7 +61,7 @@ export class AppUtils {
 
     if (!cachedSettings) {
       const rawEnv = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
-      const settingsConstructors = AppUtils.globToRequire('./**/*.settings.{js,ts}');
+      const settingsConstructors = UtilService.globToRequire('./**/*.settings.{js,ts}');
       const settings: any = { };
 
       for (const constructor of settingsConstructors) {
@@ -79,62 +85,6 @@ export class AppUtils {
       }
     }
     return cachedSettings;
-  }
-
-  /**
-   * Retuns the logger singleton instance, creates it
-   * if not available.
-   */
-  public static getLogger(): LoggerService {
-    if (!loggerService) {
-      loggerService = new LoggerService(
-        AppUtils.parseSettings<AppSettings & LoggerSettings>(),
-      );
-    }
-    return loggerService;
-  }
-
-  /**
-   * Asynchronously wait for desired amount of milliseconds.
-   * @param ms
-   */
-  public static async halt(ms: number): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
-   * Retry a method for configured times or until desired timeout.
-   * @param params
-   */
-  public static async retryOnException<T>(params: AppRetryParams): Promise<T> {
-    const logger = AppUtils.getLogger();
-    const p = params;
-    logger.debug(`${p.method}(): running with ${p.retries || '∞'} retries and ${p.timeout / 1000 || '∞ '}s timeout...`);
-
-    const startTime = new Date().getTime();
-    let tentatives = 1;
-    let result: T;
-
-    while (true) {
-      try {
-        result = await p.instance[p.method](...p.args);
-        break;
-      }
-      catch (e) {
-        const elapsed = new Date().getTime() - startTime;
-
-        if (p.retries && tentatives > p.retries) throw e;
-        else if (p.timeout && elapsed > p.timeout) throw e;
-        else if (p.breakIf && p.breakIf(e)) throw e;
-        tentatives++;
-
-        logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || '∞'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`);
-        await AppUtils.halt(p.delay || 0);
-      }
-    }
-
-    logger.debug(`${p.method}() finished successfully!`);
-    return result;
   }
 
   /**
@@ -162,11 +112,110 @@ export class AppUtils {
       describe.skip(name, fn);
     }
     else if (silent) {
-      AppUtils.describeSilent(name, fn);
+      UtilService.describeSilent(name, fn);
     }
     else {
       describe(name, fn);
     }
+  }
+
+  /**
+   * Retuns the logger singleton instance, creates it
+   * if not available.
+   */
+  public static getLoggerService(): LoggerService {
+    if (!loggerService) {
+      loggerService = new LoggerService(
+        UtilService.parseSettings<AppSettings & LoggerSettings>(),
+      );
+    }
+    return loggerService;
+  }
+
+  /**
+   * Asynchronously wait for desired amount of milliseconds.
+   * @param ms
+   */
+  public async halt(ms: number): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Retry a method for configured times or until desired timeout.
+   * @param params
+   */
+  public async retryOnException<T>(params: AppRetryParams): Promise<T> {
+    const p = params;
+    this.logger.debug(`${p.method}(): running with ${p.retries || '∞'} retries and ${p.timeout / 1000 || '∞ '}s timeout...`);
+
+    const startTime = new Date().getTime();
+    let tentatives = 1;
+    let result: T;
+
+    while (true) {
+      try {
+        result = await p.instance[p.method](...p.args);
+        break;
+      }
+      catch (e) {
+        const elapsed = new Date().getTime() - startTime;
+
+        if (p.retries && tentatives > p.retries) throw e;
+        else if (p.timeout && elapsed > p.timeout) throw e;
+        else if (p.breakIf && p.breakIf(e)) throw e;
+        tentatives++;
+
+        this.logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || '∞'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`);
+        await this.halt(p.delay || 0);
+      }
+    }
+
+    this.logger.debug(`${p.method}() finished successfully!`);
+    return result;
+  }
+
+  /**
+   * Reads data regarding current runtime and networ.
+   */
+  public async readAppStatus(): Promise<UtilAppStatus> {
+    const publicIp = { v4: null, v6: null };
+
+    try {
+      const { data } = await axios.get('https://api.ipify.org');
+      publicIp.v4 = data;
+    }
+    catch (e) {
+      this.logger.error(e);
+    }
+
+    try {
+      const { data } = await axios.get('https://api6.ipify.org');
+      publicIp.v6 = data;
+    }
+    catch (e) {
+      this.logger.error(e);
+    }
+
+    return {
+      system: {
+        version: os.version(),
+        type: os.type(),
+        release: os.release(),
+        architecture: os.arch(),
+        endianness: os.endianness(),
+        uptime: os.uptime(),
+      },
+      memory: {
+        total: os.totalmem(),
+        free: os.freemem(),
+      },
+      cpus: os.cpus(),
+      network: {
+        public_ipv4: publicIp.v4,
+        public_ipv6: publicIp.v6,
+        interfaces: os.networkInterfaces(),
+      },
+    };
   }
 
 }

@@ -1,15 +1,19 @@
 import { ClassSerializerInterceptor, Global, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
+import { UtilService } from '../util/util.service';
 import { AppFilter } from './app.filter';
 import { AppGuard } from './app.guard';
 import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
 import { AppMetadataMiddleware } from './app.middleware';
 import { AppSettings } from './app.settings';
-import { AppUtils } from './app.utils';
 
-const modules = AppUtils.globToRequire([ './**/*.module.js', '!./**/app.module.js' ]).reverse();
-const validationRules = AppUtils.parseSettings<AppSettings>().APP_VALIDATION_RULES;
+const appSettings: AppSettings = UtilService.parseSettings();
+const validationRules = appSettings.APP_VALIDATION_RULES;
+const modules = UtilService.globToRequire([
+  './**/*.module.js',
+  '!./**/app.module.js',
+]).reverse();
 
 /**
  * Globally loads all files matching the module.ts pattern.

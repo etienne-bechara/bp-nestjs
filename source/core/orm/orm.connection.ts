@@ -3,11 +3,11 @@ import { MySqlDriver } from 'mikro-orm/dist/drivers/MySqlDriver';
 
 import { AppEnvironment } from '../app/app.enum';
 import { AppSettings } from '../app/app.settings';
-import { AppUtils } from '../app/app.utils';
+import { UtilService } from '../util/util.service';
 import { OrmSettings } from './orm.settings';
 
-const settings = AppUtils.parseSettings<AppSettings & OrmSettings>();
-const entities = AppUtils.globToRequire('./**/*.entity.{ts,js}');
+const settings = UtilService.parseSettings<AppSettings & OrmSettings>();
+const entities = UtilService.globToRequire('./**/*.entity.{ts,js}');
 
 const isDevelopment = settings.NODE_ENV === AppEnvironment.DEVELOPMENT;
 
@@ -41,7 +41,7 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
   baseDir: __dirname,
   entities,
 
-  logger: (msg): void => AppUtils.getLogger().debug(`ORM ${msg}`),
+  logger: (msg): void => UtilService.getLoggerService().debug(`ORM ${msg}`),
   namingStrategy: UnderscoreNamingStrategy,
   debug: isDevelopment,
 
