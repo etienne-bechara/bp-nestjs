@@ -13,6 +13,8 @@
   "license": "MIT",
   "scripts": {
     "==== Build & Run ====": "",
+    "preinstall": "nvm install 14.8 || (echo NVM not installed, skipping Node.js installation... && exit 1)",
+    "prestart": "nvm use 14.8 || (echo NVM not installed, skipping Node.js switching... && exit 1)",
     "build": "nest build && (mikro-orm cache:generate || (echo ORM not installed, skipping metadata cache generation... && exit 0))",
     "dev": "npm start",
     "start": "nest start --debug --watch",
