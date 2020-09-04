@@ -23,8 +23,8 @@ UtilService.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
         value: { rng },
         skip: 'IF_NOT_EXIST',
       });
-      expect(await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER))
-        .toBeNull();
+      const storedNumber = await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER);
+      expect(storedNumber).toBeNull();
     });
 
     it('should persist a random number without errors', async() => {
@@ -41,15 +41,15 @@ UtilService.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
         value: Math.random(),
         skip: 'IF_EXIST',
       });
-      expect(await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER))
-        .toMatchObject({ rng });
+      const storedNumber = await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER);
+      expect(storedNumber).toMatchObject({ rng });
     });
   });
 
   describe('getKey', () => {
     it('should read persisted random number', async() => {
-      expect(await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER))
-        .toMatchObject({ rng });
+      const storedNumber = await redisService.getKey(RedisKey.TEST_RANDOM_NUMBER);
+      expect(storedNumber).toMatchObject({ rng });
     });
   });
 
