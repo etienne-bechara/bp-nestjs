@@ -38,6 +38,7 @@
     "uninstall:redis": "npm un ioredis @types/ioredis && rimraf source/core/redis",
     "==== Template Generation ====": "",
     "template:api": "ts-node ./template/template.cli -t api",
+    "template:bare": "ts-node ./template/template.cli -t bare",
     "template:crud": "ts-node ./template/template.cli -t crud",
     "==== Migration Dump ====": "",
     "migration:dump:dev": "npm run migration:set:dev && mikro-orm schema:update --dump",
