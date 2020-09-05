@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-process-exit */
 /* eslint-disable no-constant-condition */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
@@ -146,7 +147,10 @@ export class UtilService extends AppProvider {
    */
   public async retryOnException<T>(params: AppRetryParams): Promise<T> {
     const p = params;
-    this.logger.debug(`${p.method}(): running with ${p.retries || '∞'} retries and ${p.timeout / 1000 || '∞ '}s timeout...`);
+
+    let msg = `${p.method}(): running with ${p.retries || '∞'} `;
+    msg += `retries and ${p.timeout / 1000 || '∞ '}s timeout...`;
+    this.logger.debug(msg);
 
     const startTime = new Date().getTime();
     let tentatives = 1;
@@ -165,7 +169,10 @@ export class UtilService extends AppProvider {
         else if (p.breakIf && p.breakIf(e)) throw e;
         tentatives++;
 
-        this.logger.debug(`${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || '∞'}, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`);
+        msg = `${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || '∞'}`;
+        msg += `, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`;
+        this.logger.debug(msg);
+
         await this.halt(p.delay || 0);
       }
     }

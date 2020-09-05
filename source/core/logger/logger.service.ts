@@ -107,7 +107,10 @@ export class LoggerService {
           ).join('\n  at ')}`
         : undefined;
 
-      console.log(this.chalk`{grey ${nowStr}} {${params.labelColor}  ${params.label} } {${params.messageColor} ${params.message}}`);
+      console.log(this.chalk`
+        {grey ${nowStr}} {${params.labelColor}  ${params.label} } {${params.messageColor} ${params.message}}
+      `.trim());
+
       if (stackStr && params.level <= LoggerLevel.ERROR) console.log(this.chalk`{grey ${stackStr}}`);
       if (params.data && !params.data.private) console.log(params.data);
     }
@@ -124,7 +127,7 @@ export class LoggerService {
    * @param params
    */
   private publishLog(params: LoggerParams): void {
-    if (params.data && params.data.private) return undefined;
+    if (params.data && params.data.private) return;
 
     if (this.sentryEnabled && params.level <= this.settings.LOGGER_SENTRY_MINIMUM_LEVEL) {
       let sentryLevel;

@@ -1,7 +1,16 @@
-/**
- * To install on a fresh repository:
- * npm i -D @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-plugin-more eslint-plugin-promise eslint-plugin-simple-import-sort
- */
+/*
+DEPENDENCIES
+npm i -D `
+  @typescript-eslint/eslint-plugin `
+  @typescript-eslint/parser `
+  eslint `
+  eslint-plugin-jsdoc `
+  eslint-plugin-more `
+  eslint-plugin-promise `
+  eslint-plugin-simple-import-sort `
+  eslint-plugin-unicorn
+*/
+
 module.exports =  {
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -11,84 +20,80 @@ module.exports =  {
     tsconfigRootDir: __dirname,
   },
 
+  /**
+   * BASE RULES
+   * These extensions defines the full set of starting rules
+   * Additions and exclusions are in 'rules' property
+   */
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'eslint:recommended', // https://eslint.org/docs/rules/
+    'plugin:@typescript-eslint/recommended', // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin
+    'plugin:@typescript-eslint/recommended-requiring-type-checking', // ^ ditto
+    'plugin:unicorn/recommended', // https://github.com/sindresorhus/eslint-plugin-unicorn/blob/master/index.js
   ],
 
   plugins: [
     'jsdoc', // https://github.com/gajus/eslint-plugin-jsdoc
     'promise', // https://github.com/xjamundx/eslint-plugin-promise
     'simple-import-sort', // https://github.com/lydell/eslint-plugin-simple-import-sort
+    'unicorn', // https://github.com/sindresorhus/eslint-plugin-unicorn
   ],
 
   rules: {
 
     /**
-     * DISABLED RECOMMENDED RULES
-     * 
-     * Refer to individual explanations below
+     * DISABLED RULES
+     * These were included in byt the 'extends' property.
      */
-    // Conflicts with typedef
-    '@typescript-eslint/no-inferrable-types': [ 'off' ],
-    // Enables the `any` keywork (use only when extremely necessary)
-    '@typescript-eslint/explicit-module-boundary-types': [ 'off' ],
-    '@typescript-eslint/no-explicit-any': [ 'off' ],
-    '@typescript-eslint/no-unsafe-assignment': [ 'off' ],
-    '@typescript-eslint/no-unsafe-call': [ 'off' ],
-    '@typescript-eslint/no-unsafe-member-access': [ 'off' ],
-    '@typescript-eslint/no-unsafe-return': [ 'off' ],
-    '@typescript-eslint/restrict-template-expressions': [ 'off' ],
+    '@typescript-eslint/no-inferrable-types': [ 'off' ], // Collides with typedef
+    '@typescript-eslint/explicit-module-boundary-types': [ 'off' ], // Enables the 'any' keyword on arguments
+    '@typescript-eslint/no-explicit-any': [ 'off' ], // Enables the 'any' keyword on declarations
+    '@typescript-eslint/no-unsafe-assignment': [ 'off' ], // Enables 'any' typed variables on assignments
+    '@typescript-eslint/no-unsafe-call': [ 'off' ], // Enables the 'any' typed variables as parameters
+    '@typescript-eslint/no-unsafe-member-access': [ 'off' ], // Enables nesting properties on 'any' type
+    '@typescript-eslint/no-unsafe-return': [ 'off' ], // Enables 'any' typed variables on returns
+    '@typescript-eslint/restrict-template-expressions': [ 'off' ], // Complicates handling Error objects
+    'unicorn/catch-error-name': [ 'off' ], // Allow using 'e' on catch instead of forced 'error'
+    'unicorn/no-null': [ 'off' ], // Allow using 'null', useful for returning strict DTOs
+    'unicorn/no-reduce': [ 'off' ], // Allow using .reduce() method of Arrays
+    'unicorn/prevent-abbreviations': [ 'off' ], // Allow common abbreviations (param, err, etc)
 
     /**
-     * CUSTOM ERROR SEVERITY RULES
-     * 
-     * Raise errors on the followind rules not in
-     * the recommended eslint configuration
+     * ADDED ERROR SEVERITY RULES
+     * New rules that should raise an 'error'.
      */
-    // Restricts maximum cyclomatic complexity
-    'complexity': [ 'error', 15 ],
-    // Disallow == and !=
-    'eqeqeq': [ 'error' ],
-    // Disallow duplicates on else if statements
-    'no-dupe-else-if': [ 'error' ],
-    // Disallow assigning on imports
-    'no-import-assign': [ 'error' ],
-    // Disallow return setters
-    'no-setter-return': [ 'error' ],
-    // Disallow throwing types diffente than Error
-    'no-throw-literal': [ 'error' ],
-    // Disallow .then() .catch() and .finally()
-    'promise/prefer-await-to-then': [ 'error' ],
+    'complexity': [ 'error', 15 ], // Restricts maximum cyclomatic complexity
+    'eqeqeq': [ 'error' ], // Disallow == and !=
+    'no-dupe-else-if': [ 'error' ], // Disallow duplicates on else if statements
+    'no-import-assign': [ 'error' ], // Disallow assigning on imports
+    'no-setter-return': [ 'error' ], // Disallow returning on setters
+    'no-throw-literal': [ 'error' ], // Disallow throwing types different than Error
+    'promise/prefer-await-to-then': [ 'error' ], // Disallow .then()
+    'unicorn/no-unsafe-regex': [ 'error' ], // Prevent regex that may lead to catasthrophic backtracking
 
     /**
      * LOWERED SEVERITY RULES
-     * 
-     * Lowers default level from erro to warn in order to prevent
-     * undesired pipeline breaking due to no breaking rules
+     * These were included as 'error' and have been lowered to 'warn'.
      */
-    // Require functions return type
-    '@typescript-eslint/explicit-function-return-type': [ 'warn' ],
-    // Must assign properties as public or private
-    '@typescript-eslint/explicit-member-accessibility': [ 'warn' ],
-    // Require await on async functions
-    '@typescript-eslint/require-await': [ 'warn' ],
-    // Require type definitions except on arrow functions
-    '@typescript-eslint/typedef': [ 'warn', { arrowParameter: false }],
-    // Column length
-    'max-len': [ 'warn', { code: 180, comments: 180 }],
-    // Disallow console.log
-    'no-console': [ 'warn' ],
-    // Force import ordering
-    'simple-import-sort/sort': [ 'warn' ], 
+    '@typescript-eslint/explicit-function-return-type': [ 'warn' ], // Require functions return type
+    '@typescript-eslint/explicit-member-accessibility': [ 'warn' ], // Must assign properties as public or private
+    '@typescript-eslint/require-await': [ 'warn' ], // Require await on async functions
+    '@typescript-eslint/typedef': [ 'warn', { arrowParameter: false } ], // Require type definitions except on arrow functions
+
+    /**
+     * ADDED WARNING SEVERITY RULES
+     * New rules that should raise a 'warn'.
+     */
+    'max-len': [ 'warn', { code: 120, comments: 120 } ], // Maximum column length
+    'no-console': [ 'warn' ], // Disallow console.log
+    'simple-import-sort/sort': [ 'warn' ], // Force import ordering
 
     /**
      * DOCUMENTATION
-     * 
-     * Requires JSDOC on everything except:
-     * • Class and interface declarations
-     * • Arrow functions inside methods
+     * Failure to comply should raise a 'warn'
+     * • Must be present at all methods except top level classes
+     * • Must obey correct identation
+     * • Must start with capital letter and end with a dot
      */
     'jsdoc/require-jsdoc': [ 'warn', {
       checkConstructors: false,
@@ -109,11 +114,9 @@ module.exports =  {
     'jsdoc/require-param-name': [ 'warn' ],
     
     /**
-     * OPINATED STYLING RULES
-     * 
-     * Theses represent personal preference and can be altered without
-     * any impact. They were designed in order to increase code
-     * readability for new contributors
+     * STYLING RULES
+     * Theses represent personal preference and should not pose any impact.
+     * Nevertheless they should raise a 'warn' if not obeyed.
      */
 
     // Spacing
@@ -149,6 +152,6 @@ module.exports =  {
     '@typescript-eslint/semi': [ 'warn' ],
     'comma-dangle': [ 'warn', 'always-multiline' ],
     'curly': [ 'warn', 'multi-line', 'consistent' ],
-    'no-extra-parens': [ 'warn' ],
+    'no-extra-parens': [ 'warn' ],    
   },
 };

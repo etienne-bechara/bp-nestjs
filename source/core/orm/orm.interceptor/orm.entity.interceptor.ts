@@ -47,7 +47,7 @@ export class OrmEntityInterceptor implements NestInterceptor {
    * @param data
    */
   private eliminateRecursion(parentId: string, data: any): void {
-    if (!data || !parentId) return undefined;
+    if (!data || !parentId) return;
 
     if (Array.isArray(data)) {
       for (const d of data) {

@@ -155,7 +155,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
    */
   private removeSensitiveData(object: any): any {
     if (!object || typeof object !== 'object' || Object.keys(object).length === 0) {
-      return undefined;
+      return;
     }
     delete object.authorization;
     return object;

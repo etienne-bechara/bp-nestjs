@@ -10,7 +10,7 @@ export class RedisSettings {
   public REDIS_HOST: string;
 
   @ValidateIf((o) => !!o.REDIS_HOST)
-  @Transform((v) => parseInt(v))
+  @Transform((v) => Number.parseInt(v))
   @IsNumber()
   public REDIS_PORT: number;
 

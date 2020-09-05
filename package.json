@@ -61,6 +61,11 @@
     "migration:set:stg": "npm run build && cp-cli .env.staging build/.env",
     "migration:set:prd": "npm run build && cp-cli .env.production build/.env"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint:fix && git add ."
+    }
+  },
   "mikro-orm": {
     "useTsNode": true,
     "configPaths": [
@@ -125,7 +130,9 @@
     "eslint-plugin-more": "1.0.0",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-simple-import-sort": "5.0.3",
+    "eslint-plugin-unicorn": "21.0.0",
     "fs-extra": "9.0.1",
+    "husky": "4.2.5",
     "jest": "26.4.2",
     "npm-check-updates": "8.0.5",
     "rimraf": "3.0.2",

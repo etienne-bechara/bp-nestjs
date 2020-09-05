@@ -36,7 +36,7 @@ export class AppGuard extends AppProvider implements CanActivate {
           this.settings.AUTH_JWT_HS256_CLIENT_SECRET,
         );
       }
-      catch (e) {
+      catch {
         throw new UnauthorizedException('invalid authorization header');
       }
     }

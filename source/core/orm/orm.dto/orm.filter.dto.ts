@@ -4,17 +4,17 @@ import { IsNumber, IsOptional, Matches, Max, Min } from 'class-validator';
 export class OrmFilterDto {
 
   @IsOptional()
-  @Transform((v) => parseInt(v))
+  @Transform((v) => Number.parseInt(v))
   @IsNumber() @Min(1) @Max(1000)
   public limit?: number;
 
   @IsOptional()
-  @Transform((v) => parseInt(v))
+  @Transform((v) => Number.parseInt(v))
   @IsNumber() @Min(0)
   public offset?: number;
 
   @IsOptional()
-  @Matches(/^[a-zA-Z0-9_]+:(asc|desc)$/)
+  @Matches(/^\w+:(asc|desc)$/)
   public order?: string;
 
 }

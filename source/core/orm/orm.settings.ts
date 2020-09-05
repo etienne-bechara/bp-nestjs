@@ -14,7 +14,7 @@ export class OrmSettings {
   public ORM_HOST: string;
 
   @ValidateIf((o) => !!o.ORM_TYPE)
-  @Transform((v) => parseInt(v))
+  @Transform((v) => Number.parseInt(v))
   @IsNumber()
   public ORM_PORT: number;
 

@@ -25,7 +25,7 @@ export class RedisService extends AppProvider {
 
     if (!this.settings.REDIS_HOST) {
       this.logger.warning('[DISABLED] Redis client', { private: true });
-      return undefined;
+      return;
     }
 
     this.redisClient = new Redis({

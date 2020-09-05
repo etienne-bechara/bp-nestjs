@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Delete, Get, NotFoundException, NotImplementedException, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Delete, Get, NotFoundException,
+  NotImplementedException, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { validate } from 'class-validator';
@@ -219,7 +220,7 @@ export abstract class OrmController<Entity> extends AppProvider {
    * @param query
    */
   protected parseQueryOperators(query: any = { }): { source: any, stripped: any, unflatted: any } {
-    const allowedOperators = [ 'eq', 'gt', 'gte', 'lt', 'lte', 'ne', 'like', 're' ];
+    const allowedOperators = new Set([ 'eq', 'gt', 'gte', 'lt', 'lte', 'ne', 'like', 're' ]);
 
     const source = { ...query };
     const stripped = { ...query };
@@ -234,7 +235,7 @@ export abstract class OrmController<Entity> extends AppProvider {
       else if (operatorValidation.length > 2) {
         throw new BadRequestException(`${key} ${this.OPERATOR_TOO_MANY}`);
       }
-      else if (!allowedOperators.includes(operatorValidation[1])) {
+      else if (!allowedOperators.has(operatorValidation[1])) {
         throw new BadRequestException(`${operatorValidation[1]} ${this.OPERATOR_NOT_ALLOWED}`);
       }
 

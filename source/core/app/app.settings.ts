@@ -12,7 +12,7 @@ export class AppSettings {
   @IsIn(Object.keys(AppEnvironment))
   public NODE_ENV: AppEnvironment;
 
-  @Transform((v) => parseInt(v))
+  @Transform((v) => Number.parseInt(v))
   @IsNumber()
   public PORT: number;
 

@@ -11,7 +11,7 @@ export class OrmDecimalType extends Type {
     if (value === '0' || value === 0) return 0;
     if (!value) return null;
 
-    const number = parseFloat(value.toString());
+    const number = Number.parseFloat(value.toString());
     return number;
   }
 

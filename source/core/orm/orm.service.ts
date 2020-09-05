@@ -1,4 +1,7 @@
-import { BadRequestException, ConflictException, InternalServerErrorException, NotFoundException, NotImplementedException } from '@nestjs/common';
+/* eslint-disable unicorn/no-fn-reference-in-iterator */
+
+import { BadRequestException, ConflictException, InternalServerErrorException,
+  NotFoundException, NotImplementedException } from '@nestjs/common';
 import { AnyEntity, EntityRepository, FilterQuery, QueryOrder } from 'mikro-orm';
 
 import { AppProvider } from '../app/app.provider';
@@ -105,12 +108,10 @@ export abstract class OrmService<Entity> extends AppProvider {
    */
   private validateUniqueKey(uniqueKey: string[]): string[] {
     const defaultKey = this.options.defaults.uniqueKey;
+    let validKey: string[];
 
-    const validKey = Array.isArray(uniqueKey) && uniqueKey.length > 0
-      ? uniqueKey
-      : Array.isArray(defaultKey) && defaultKey.length > 0
-        ? defaultKey
-        : undefined;
+    if (Array.isArray(uniqueKey) && uniqueKey.length > 0) validKey = uniqueKey;
+    else if (Array.isArray(defaultKey) && defaultKey.length > 0) validKey = defaultKey;
 
     if (!validKey) throw new NotImplementedException(this.UK_MISSING);
     return validKey;
@@ -132,7 +133,10 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param params
    * @param options
    */
-  public async readUnique(params: FilterQuery<Entity> | Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity> {
+  public async readUnique(
+    params: FilterQuery<Entity> | Partial<Entity>,
+    options: OrmFindOptions = { },
+  ): Promise<Entity> {
     const entities = await this.find(params, options);
 
     if (Array.isArray(entities) && entities.length > 1) {
@@ -152,7 +156,10 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param params
    * @param options
    */
-  public async readAndCount(params: FilterQuery<Entity> | Entity, options: OrmFindOptions = { }): Promise<OrmPartialResponse<Entity>> {
+  public async readAndCount(
+    params: FilterQuery<Entity> | Entity,
+    options: OrmFindOptions = { },
+  ): Promise<OrmPartialResponse<Entity>> {
     if (!options.limit) options.limit = 1000;
     if (!options.offset) options.offset = 0;
     const result = await this.find(params, options, true);
