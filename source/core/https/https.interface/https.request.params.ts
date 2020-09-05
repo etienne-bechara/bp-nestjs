@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { HttpsReturnType } from '../https.enum';
 
@@ -11,5 +11,11 @@ export interface HttpsRequestParams extends AxiosRequestConfig {
   replacements?: Record<string, unknown>;
 
   returnType?: HttpsReturnType;
+
+  exceptionHandler?: (
+    requestParams: HttpsRequestParams,
+    upstreamResponse: AxiosResponse | any,
+    errorMessage: string
+  )=> Promise<void>;
 
 }

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/require-await */
+
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import https from 'https';
@@ -13,15 +15,23 @@ import { HttpsSettings } from './https.settings';
 @Injectable({ scope: Scope.TRANSIENT })
 export class HttpsService extends AppProvider {
   private settings: HttpsSettings = this.getSettings();
-  private defaultReturnType: HttpsReturnType;
-  private defaultTimeout: number;
-  private defaultValidator: (status: number)=> boolean;
+
+  private httpsAgent: https.Agent;
+  private instance: AxiosInstance;
+
   private baseUrl: string;
   private baseHeaders: Record<string, string>;
   private baseQuery: Record<string, string>;
   private baseData: Record<string, unknown>;
-  private httpsAgent: https.Agent;
-  private instance: AxiosInstance;
+
+  private defaultReturnType: HttpsReturnType;
+  private defaultTimeout: number;
+  private defaultValidator: (status: number)=> boolean;
+  private defaultExceptionHandler?: (
+    requestParams: HttpsRequestParams,
+    upstreamResponse: AxiosResponse | any,
+    errorMessage: string
+  )=> Promise<void>;
 
   public constructor(private readonly utilService: UtilService) { super(); }
 
@@ -52,9 +62,24 @@ export class HttpsService extends AppProvider {
   private setDefaultParams(params: HttpsServiceOptions): void {
     this.defaultReturnType = params.defaultReturnType || HttpsReturnType.DATA;
     this.defaultTimeout = params.defaultTimeout || this.settings.HTTPS_DEFAULT_TIMEOUT;
+
     this.defaultValidator = params.defaultValidator
       ? params.defaultValidator
       : (s): boolean => s < 400;
+
+    this.defaultExceptionHandler = params.defaultExceptionHandler
+      ? params.defaultExceptionHandler
+      : async(params, res, msg): Promise<void> => {
+        throw new InternalServerErrorException({
+          message: `${params.method} ${params.url} ${msg}`,
+          upstream_request: params,
+          upstream_response: {
+            status: res ? res.status : undefined,
+            headers: res ? res.headers : undefined,
+            data: res ? res.data : undefined,
+          },
+        });
+      };
   }
 
   /**
@@ -154,7 +179,7 @@ export class HttpsService extends AppProvider {
    * easily accesible array of interfaces.
    * @param res
    */
-  private parseResponseCookies(res: any): void {
+  private parseResponseCookies(res: any): any {
     const cookies: HttpsCookie[] = [ ];
     if (!res?.headers || !res.headers['set-cookie']) {
       res.headers['set-cookie'] = [ ];
@@ -180,6 +205,7 @@ export class HttpsService extends AppProvider {
     }
 
     res.cookies = cookies;
+    return res;
   }
 
   /**
@@ -197,6 +223,7 @@ export class HttpsService extends AppProvider {
     const finalParams = this.replaceVariantParams(this.mergeBaseParams(params));
     const returnType = finalParams.returnType || this.defaultReturnType;
     const validator = finalParams.validateStatus || this.defaultValidator;
+    const exceptionHandler = finalParams.exceptionHandler || this.defaultExceptionHandler;
     const timeout = finalParams.timeout || this.defaultTimeout;
     const cancelSource = axios.CancelToken.source();
 
@@ -224,23 +251,11 @@ export class HttpsService extends AppProvider {
         : `failed due to ${e.message}`;
     }
 
-    if (errorMsg) {
-      throw new InternalServerErrorException({
-        message: `${params.method} ${params.url} ${errorMsg}`,
-        upstream_request: params,
-        upstream_response: {
-          status: res ? res.status : undefined,
-          headers: res ? res.headers : undefined,
-          data: res ? res.data : undefined,
-        },
-      });
-    }
-
-    this.parseResponseCookies(res);
+    if (errorMsg) await exceptionHandler(params, res, errorMsg);
 
     return res && returnType === HttpsReturnType.DATA
       ? res.data
-      : res;
+      : this.parseResponseCookies(res);
   }
 
   /**

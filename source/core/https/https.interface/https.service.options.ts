@@ -1,23 +1,30 @@
+import { AxiosResponse } from 'axios';
 import https from 'https';
 
 import { HttpsReturnType } from '../https.enum';
+import { HttpsRequestParams } from './https.request.params';
 
 /**
  * Sets up a custom HTTP instance based on Axios.
  */
 export interface HttpsServiceOptions {
 
-  defaultValidator?: (status: number)=> boolean;
-  defaultReturnType?: HttpsReturnType;
-  defaultTimeout?: number;
+  httpsAgent?: https.Agent;
+  ignoreHttpsErrors?: boolean;
 
   baseUrl?: string;
   baseQuery?: Record<string, string>;
   baseData?: Record<string, unknown>;
   baseHeaders?: Record<string, string>;
 
-  httpsAgent?: https.Agent;
-  ignoreHttpsErrors?: boolean;
+  defaultReturnType?: HttpsReturnType;
+  defaultTimeout?: number;
+  defaultValidator?: (status: number)=> boolean;
+  defaultExceptionHandler?: (
+    requestParams: HttpsRequestParams,
+    upstreamResponse: AxiosResponse | any,
+    errorMessage: string
+  )=> Promise<void>;
 
   ssl?: {
     cert: string;
