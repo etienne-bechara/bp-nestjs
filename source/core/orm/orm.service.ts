@@ -59,7 +59,8 @@ export abstract class OrmService<Entity> extends AppProvider {
         order: options.order,
         limit: options.limit,
         offset: options.offset,
-        count, records,
+        count,
+        records,
       };
     }
 

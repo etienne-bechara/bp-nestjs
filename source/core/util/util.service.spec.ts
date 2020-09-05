@@ -5,7 +5,7 @@ import { UtilService } from './util.service';
 UtilService.describeSilent('UtilService', () => {
   let utilService: UtilService;
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     const testModule = await Test.createTestingModule({
       providers: [ UtilService ],
     }).compile();
@@ -14,7 +14,7 @@ UtilService.describeSilent('UtilService', () => {
   });
 
   describe('halt', () => {
-    it('it should halt code execution for 1000ms', async() => {
+    it('it should halt code execution for 1000ms', async () => {
       const haltTime = 1000;
       const start = new Date().getTime();
       await utilService.halt(haltTime);

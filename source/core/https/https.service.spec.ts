@@ -8,7 +8,7 @@ import { HttpsService } from './https.service';
 UtilService.describeSilent('UtilService', () => {
   let httpsService: HttpsService;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     const testModule = await Test.createTestingModule({
       imports: [ AppModule ],
       providers: [ HttpsService, UtilService ],
@@ -19,7 +19,7 @@ UtilService.describeSilent('UtilService', () => {
 
   describe('request', () => {
 
-    it('it should GET Google homepage', async() => {
+    it('it should GET Google homepage', async () => {
       httpsService.setupInstance({
         baseUrl: 'https://www.google.com',
       });
@@ -27,7 +27,7 @@ UtilService.describeSilent('UtilService', () => {
       expect(data).toMatch(/google/gi);
     });
 
-    it('it should throw a timeout exception', async() => {
+    it('it should throw a timeout exception', async () => {
       let errorMessage: string;
       httpsService.setupInstance({
         baseUrl: 'https://www.google.com',
@@ -42,7 +42,7 @@ UtilService.describeSilent('UtilService', () => {
       expect(errorMessage).toMatch(/timed out/gi);
     });
 
-    it('it should throw an internal server error exception', async() => {
+    it('it should throw an internal server error exception', async () => {
       let errorStatus: number;
       httpsService.setupInstance({
         baseUrl: 'https://www.google.com',

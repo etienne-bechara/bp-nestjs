@@ -69,7 +69,7 @@ export class HttpsService extends AppProvider {
 
     this.defaultExceptionHandler = params.defaultExceptionHandler
       ? params.defaultExceptionHandler
-      : async(params, res, msg): Promise<void> => {
+      : async (params, res, msg): Promise<void> => {
         throw new InternalServerErrorException({
           message: `${params.method} ${params.url} ${msg}`,
           upstream_request: params,
