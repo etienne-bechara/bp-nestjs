@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { AppProvider } from '../core/app/app.provider';
-import { HttpsReturnType } from '../core/https/https.enum';
 import { HttpsService } from '../core/https/https.service';
 import { _Pascal_Settings } from './_Dot_.settings';
 
@@ -16,10 +15,9 @@ export class _Pascal_Service extends AppProvider {
   public constructor(private readonly httpsService: HttpsService) {
     super();
     this.httpsService.setupInstance({
-      defaultReturnType: HttpsReturnType.DATA,
-      baseUrl: this.settings._Constant__HOST,
-      baseHeaders: {
-        'Authorization': this.settings._Constant__API_KEY,
+      bases: {
+        url: this.settings._Constant__HOST,
+        headers: { 'Authorization': this.settings._Constant__API_KEY },
       },
     });
   }

@@ -21,7 +21,7 @@ UtilService.describeSilent('UtilService', () => {
 
     it('it should GET Google homepage', async () => {
       httpsService.setupInstance({
-        baseUrl: 'https://www.google.com',
+        bases: { url: 'https://www.google.com' },
       });
       const data = await httpsService.get('/');
       expect(data).toMatch(/google/gi);
@@ -30,8 +30,8 @@ UtilService.describeSilent('UtilService', () => {
     it('it should throw a timeout exception', async () => {
       let errorMessage: string;
       httpsService.setupInstance({
-        baseUrl: 'https://www.google.com',
-        defaultTimeout: 1,
+        bases: { url: 'https://www.google.com' },
+        defaults: { timeout: 1 },
       });
       try {
         await httpsService.get('/');
@@ -45,7 +45,7 @@ UtilService.describeSilent('UtilService', () => {
     it('it should throw an internal server error exception', async () => {
       let errorStatus: number;
       httpsService.setupInstance({
-        baseUrl: 'https://www.google.com',
+        bases: { url: 'https://www.google.com' },
       });
       try {
         await httpsService.get('/path-that-certainly-does-not-exist');

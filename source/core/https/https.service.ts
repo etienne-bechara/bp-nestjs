@@ -9,29 +9,18 @@ import qs from 'qs';
 import { AppProvider } from '../app/app.provider';
 import { UtilService } from '../util/util.service';
 import { HttpsReturnType } from './https.enum';
-import { HttpsCookie, HttpsRequestParams, HttpsServiceOptions } from './https.interface';
+import { HttpsCookie, HttpsRequestParams, HttpsServiceBases,
+  HttpsServiceDefaults, HttpsServiceOptions } from './https.interface';
 import { HttpsSettings } from './https.settings';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class HttpsService extends AppProvider {
   private settings: HttpsSettings = this.getSettings();
 
+  private bases: HttpsServiceBases = { };
+  private defaults: HttpsServiceDefaults= { };
   private httpsAgent: https.Agent;
   private instance: AxiosInstance;
-
-  private baseUrl: string;
-  private baseHeaders: Record<string, string>;
-  private baseQuery: Record<string, string>;
-  private baseData: Record<string, unknown>;
-
-  private defaultReturnType: HttpsReturnType;
-  private defaultTimeout: number;
-  private defaultValidator: (status: number)=> boolean;
-  private defaultExceptionHandler?: (
-    requestParams: HttpsRequestParams,
-    upstreamResponse: AxiosResponse | any,
-    errorMessage: string
-  )=> Promise<void>;
 
   public constructor(private readonly utilService: UtilService) { super(); }
 
@@ -46,7 +35,7 @@ export class HttpsService extends AppProvider {
     this.setBaseParams(params);
     this.setHttpsAgent(params);
     this.instance = axios.create({
-      timeout: this.defaultTimeout,
+      timeout: this.defaults.timeout,
       validateStatus: () => true,
       httpsAgent: this.httpsAgent,
     });
@@ -60,15 +49,17 @@ export class HttpsService extends AppProvider {
    * @param params
    */
   private setDefaultParams(params: HttpsServiceOptions): void {
-    this.defaultReturnType = params.defaultReturnType || HttpsReturnType.DATA;
-    this.defaultTimeout = params.defaultTimeout || this.settings.HTTPS_DEFAULT_TIMEOUT;
+    if (!params.defaults) params.defaults = { };
 
-    this.defaultValidator = params.defaultValidator
-      ? params.defaultValidator
+    this.defaults.returnType = params.defaults.returnType || HttpsReturnType.DATA;
+    this.defaults.timeout = params.defaults.timeout || this.settings.HTTPS_DEFAULT_TIMEOUT;
+
+    this.defaults.validator = params.defaults.validator
+      ? params.defaults.validator
       : (s): boolean => s < 400;
 
-    this.defaultExceptionHandler = params.defaultExceptionHandler
-      ? params.defaultExceptionHandler
+    this.defaults.exceptionHandler = params.defaults.exceptionHandler
+      ? params.defaults.exceptionHandler
       : async (params, res, msg): Promise<void> => {
         throw new InternalServerErrorException({
           message: `${params.method} ${params.url} ${msg}`,
@@ -87,10 +78,11 @@ export class HttpsService extends AppProvider {
    * @param params
    */
   private setBaseParams(params: HttpsServiceOptions): void {
-    this.baseUrl = params.baseUrl,
-    this.baseHeaders = params.baseHeaders || { };
-    this.baseQuery = params.baseQuery;
-    this.baseData = params.baseData;
+    if (!params.bases) params.bases = { };
+    this.bases.url = params.bases.url,
+    this.bases.headers = params.bases.headers || { };
+    this.bases.query = params.bases.query;
+    this.bases.data = params.bases.data;
   }
 
   /**
@@ -101,18 +93,21 @@ export class HttpsService extends AppProvider {
    * @param params
    */
   private setHttpsAgent(params: HttpsServiceOptions): void {
-    if (params.httpsAgent) {
-      this.httpsAgent = params.httpsAgent;
+    if (!params.agent) {
+      return;
     }
-    else if (params.ssl) {
+    else if (params.agent.custom) {
+      this.httpsAgent = params.agent.custom;
+    }
+    else if (params.agent.ssl) {
       this.httpsAgent = new https.Agent({
-        cert: Buffer.from(params.ssl.cert, 'base64').toString('ascii'),
-        key: Buffer.from(params.ssl.key, 'base64').toString('ascii'),
-        passphrase: params.ssl.passphrase,
-        rejectUnauthorized: !params.ignoreHttpsErrors,
+        cert: Buffer.from(params.agent.ssl.cert, 'base64').toString('ascii'),
+        key: Buffer.from(params.agent.ssl.key, 'base64').toString('ascii'),
+        passphrase: params.agent.ssl.passphrase,
+        rejectUnauthorized: !params.agent.ignoreHttpsErrors,
       });
     }
-    else if (params.ignoreHttpsErrors) {
+    else if (params.agent.ignoreHttpsErrors) {
       this.httpsAgent = new https.Agent({
         rejectUnauthorized: false,
       });
@@ -128,22 +123,22 @@ export class HttpsService extends AppProvider {
   private mergeBaseParams(params: HttpsRequestParams): HttpsRequestParams {
     const mergedParams = Object.assign({ }, params);
 
-    if (this.baseUrl) {
-      mergedParams.url = `${this.baseUrl}${params.url}`;
+    if (this.bases.url) {
+      mergedParams.url = `${this.bases.url}${params.url}`;
     }
 
-    if (this.baseHeaders || params.headers) {
+    if (this.bases.headers || params.headers) {
       if (!params.headers) params.headers = { };
-      mergedParams.headers = { ...this.baseHeaders, ...params.headers };
+      mergedParams.headers = { ...this.bases.headers, ...params.headers };
     }
 
-    if (this.baseQuery) {
-      mergedParams.params = { ...this.baseQuery, ...params.params };
+    if (this.bases.query) {
+      mergedParams.params = { ...this.bases.query, ...params.params };
     }
 
-    if (this.baseData) {
-      if (params.data) mergedParams.data = { ...this.baseData, ...params.data };
-      if (params.form) mergedParams.form = { ...this.baseData, ...params.form };
+    if (this.bases.data) {
+      if (params.data) mergedParams.data = { ...this.bases.data, ...params.data };
+      if (params.form) mergedParams.form = { ...this.bases.data, ...params.form };
     }
 
     return mergedParams;
@@ -221,10 +216,10 @@ export class HttpsService extends AppProvider {
     }
 
     const finalParams = this.replaceVariantParams(this.mergeBaseParams(params));
-    const returnType = finalParams.returnType || this.defaultReturnType;
-    const validator = finalParams.validateStatus || this.defaultValidator;
-    const exceptionHandler = finalParams.exceptionHandler || this.defaultExceptionHandler;
-    const timeout = finalParams.timeout || this.defaultTimeout;
+    const returnType = finalParams.returnType || this.defaults.returnType;
+    const validator = finalParams.validateStatus || this.defaults.validator;
+    const exceptionHandler = finalParams.exceptionHandler || this.defaults.exceptionHandler;
+    const timeout = finalParams.timeout || this.defaults.timeout;
     const cancelSource = axios.CancelToken.source();
 
     let errorMsg: string;
