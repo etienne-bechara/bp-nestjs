@@ -1,5 +1,5 @@
-import { FindOptions } from 'mikro-orm';
+import { FindOptions } from '@mikro-orm/core';
 
-export interface OrmFindOptions extends FindOptions {
+export interface OrmFindOptions<Entity> extends FindOptions<Entity> {
   order?: string;
 }

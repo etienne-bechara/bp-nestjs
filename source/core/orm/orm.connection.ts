@@ -1,5 +1,4 @@
-import { Connection, IDatabaseDriver, Options, UnderscoreNamingStrategy } from 'mikro-orm';
-import { MySqlDriver } from 'mikro-orm/dist/drivers/MySqlDriver';
+import { Connection, IDatabaseDriver, Options, UnderscoreNamingStrategy } from '@mikro-orm/core';
 
 import { AppEnvironment } from '../app/app.enum';
 import { AppSettings } from '../app/app.settings';
@@ -25,7 +24,6 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
     max: settings.ORM_POOL_MAX,
   },
 
-  driver: MySqlDriver,
   driverOptions: {
     connection: {
       enableKeepAlive: true,
@@ -36,21 +34,12 @@ const OrmConnection: Options<IDatabaseDriver<Connection>> = {
     },
   },
 
-  autoFlush: false,
-
   baseDir: __dirname,
   entities,
 
   logger: (msg): void => UtilService.getLoggerService().debug(`ORM ${msg}`),
   namingStrategy: UnderscoreNamingStrategy,
   debug: isDevelopment,
-
-  cache: {
-    pretty: true,
-    options: {
-      cacheDir: `${__dirname}/cache`,
-    },
-  },
 
   migrations: {
     tableName: '_migration',

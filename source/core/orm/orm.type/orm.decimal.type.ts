@@ -1,4 +1,5 @@
-import { Type } from 'mikro-orm';
+import { Type } from '@mikro-orm/core';
+import { InternalServerErrorException } from '@nestjs/common';
 
 export class OrmDecimalType extends Type {
 
@@ -7,12 +8,22 @@ export class OrmDecimalType extends Type {
    * instead of number when reading from database.
    * @param value
    */
-  public convertToJSValue(value: string | number): number {
-    if (value === '0' || value === 0) return 0;
-    if (!value) return null;
+  public convertToJSValue(value: any): any {
 
-    const number = Number.parseFloat(value.toString());
-    return number;
+    if (!value) {
+      return null;
+    }
+    else if (
+      ![ 'string', 'number' ].includes(typeof value)
+      || !value.toString().match(/^[\d.]+$/g)
+    ) {
+      throw new InternalServerErrorException({
+        message: 'invalid decimal type',
+        value,
+      });
+    }
+
+    return Number.parseFloat(value.toString());
   }
 
 }

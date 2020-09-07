@@ -1,4 +1,4 @@
-import { Index, Property } from 'mikro-orm';
+import { Index, Property } from '@mikro-orm/core';
 
 import { OrmIdEntity } from '.';
 
@@ -9,7 +9,7 @@ export abstract class OrmTimestampEntity extends OrmIdEntity {
   public updated: Date = new Date();
 
   @Index()
-  @Property({ columnType: 'timestamp', default: 'CURRENT_TIMESTAMP' })
+  @Property({ columnType: 'timestamp' })
   public created: Date = new Date();
 
 }

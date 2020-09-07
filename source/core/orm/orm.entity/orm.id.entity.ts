@@ -1,4 +1,4 @@
-import { PrimaryKey } from 'mikro-orm';
+import { PrimaryKey } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 
 export abstract class OrmIdEntity {

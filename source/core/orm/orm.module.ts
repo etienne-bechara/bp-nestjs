@@ -1,5 +1,5 @@
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
-import { MikroOrmModule } from 'nestjs-mikro-orm';
 
 import { UtilService } from '../util/util.service';
 import OrmConnection from './orm.connection';

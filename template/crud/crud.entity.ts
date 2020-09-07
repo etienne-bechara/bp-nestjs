@@ -1,4 +1,4 @@
-import { Entity } from 'mikro-orm';
+import { Entity } from '@mikro-orm/core';
 
 import { OrmTimestampEntity } from '../core/orm/orm.entity';
 

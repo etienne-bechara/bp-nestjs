@@ -1,6 +1,6 @@
+import { EntityRepository } from '@mikro-orm/core';
+import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
-import { EntityRepository } from 'mikro-orm';
-import { InjectRepository } from 'nestjs-mikro-orm';
 
 import { OrmService } from '../core/orm/orm.service';
 import { _Pascal_Entity } from './_Dot_.entity';

@@ -1,8 +1,8 @@
 /* eslint-disable unicorn/no-fn-reference-in-iterator */
 
+import { EntityData, EntityRepository, FilterQuery, QueryOrder } from '@mikro-orm/core';
 import { BadRequestException, ConflictException, InternalServerErrorException,
   NotFoundException, NotImplementedException } from '@nestjs/common';
-import { AnyEntity, EntityRepository, FilterQuery, QueryOrder } from 'mikro-orm';
 
 import { AppProvider } from '../app/app.provider';
 import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.interface';
@@ -36,7 +36,9 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param partial
    */
   private async find(
-    params: FilterQuery<Entity> | Partial<Entity> | string, options: OrmFindOptions = { }, partial?: boolean,
+    params: FilterQuery<Entity> | EntityData<Entity> | string,
+    options: OrmFindOptions<Entity> = { },
+    partial?: boolean,
   ): Promise<Entity | Entity[] | OrmPartialResponse<Entity>> {
 
     // Assign defaults
@@ -49,7 +51,7 @@ export abstract class OrmService<Entity> extends AppProvider {
 
     // One by ID
     if (typeof params === 'string') {
-      const idParam: AnyEntity = { id: params };
+      const idParam: any = { id: params };
       const [ entity ] = await this.repository.find(idParam, options);
       if (!entity) throw new NotFoundException(this.NOT_FOUND);
       return entity;
@@ -122,7 +124,10 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param params
    * @param options
    */
-  public async read(params: FilterQuery<Entity> | Partial<Entity>, options: OrmFindOptions = { }): Promise<Entity[]> {
+  public async read(
+    params: FilterQuery<Entity> | EntityData<Entity>,
+    options: OrmFindOptions<Entity> = { },
+  ): Promise<Entity[]> {
     const entities = await this.find(params, options);
     return Array.isArray(entities) ? entities : undefined;
   }
@@ -134,8 +139,8 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param options
    */
   public async readUnique(
-    params: FilterQuery<Entity> | Partial<Entity>,
-    options: OrmFindOptions = { },
+    params: FilterQuery<Entity> | EntityData<Entity>,
+    options: OrmFindOptions<Entity> = { },
   ): Promise<Entity> {
     const entities = await this.find(params, options);
 
@@ -158,7 +163,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    */
   public async readAndCount(
     params: FilterQuery<Entity> | Entity,
-    options: OrmFindOptions = { },
+    options: OrmFindOptions<Entity> = { },
   ): Promise<OrmPartialResponse<Entity>> {
     if (!options.limit) options.limit = 1000;
     if (!options.offset) options.offset = 0;
@@ -172,7 +177,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param id
    * @param options
    */
-  public async readById(id: string, options: OrmFindOptions = { }): Promise<Entity> {
+  public async readById(id: string, options: OrmFindOptions<Entity> = { }): Promise<Entity> {
     const entity = await this.find(id, options);
     return 'id' in entity ? entity : undefined;
   }
@@ -182,7 +187,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * initialized entity.
    * @param data
    */
-  public async create(data: Partial<Entity>): Promise<Entity> {
+  public async create(data: EntityData<Entity>): Promise<Entity> {
     const newEntity = this.repository.create(data);
     await this.save(newEntity);
     return this.readById(newEntity['id']);
@@ -193,11 +198,12 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param entity
    * @param data
    */
-  public async update(entity: Entity, data: Partial<Entity>): Promise<Entity> {
+  public async update(entity: Entity, data: EntityData<Entity>): Promise<Entity> {
     const dummyEntity = this.repository.create(data);
+    const dummyData = Object.assign({ }, data);
     let updateRequired = false;
 
-    for (const key in data) {
+    for (const key in dummyData) {
       if (entity[key] !== dummyEntity[key]) {
         entity[key] = data[key];
         updateRequired = true;
@@ -216,21 +222,21 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param id
    * @param data
    */
-  public async updateById(id: string, data: Partial<Entity>): Promise<Entity> {
+  public async updateById(id: string, data: EntityData<Entity>): Promise<Entity> {
     const target = await this.readById(id);
     return this.update(target, data);
   }
 
   /**
    * Read, update or insert according to provided
-   * data, unique key and where or not to update.
+   * data, unique key and whether or not to update.
    * @param data
    * @param uniqueKey
    * @param allowUpdate
    * @param failOnDuplicate
    */
   public async readCreateOrUpdate(
-    data: Partial<Entity>, uniqueKey?: string[], allowUpdate?: boolean, failOnDuplicate?: boolean,
+    data: EntityData<Entity>, uniqueKey?: string[], allowUpdate?: boolean, failOnDuplicate?: boolean,
   ): Promise<Entity> {
 
     uniqueKey = this.validateUniqueKey(uniqueKey);
@@ -270,7 +276,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param data
    * @param uniqueKey
    */
-  public async upsert(data: Partial<Entity>, uniqueKey?: string[]): Promise<Entity> {
+  public async upsert(data: EntityData<Entity>, uniqueKey?: string[]): Promise<Entity> {
     return this.readCreateOrUpdate(data, uniqueKey, true);
   }
 
@@ -280,7 +286,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param data
    * @param uniqueKey
    */
-  public async resert(data: Partial<Entity>, uniqueKey?: string[]): Promise<Entity> {
+  public async resert(data: EntityData<Entity>, uniqueKey?: string[]): Promise<Entity> {
     return this.readCreateOrUpdate(data, uniqueKey, false);
   }
 
@@ -298,7 +304,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * @param e
    * @param data
    */
-  protected queryExceptionHandler(e: Error, data: Partial<Entity> | any): void {
+  protected queryExceptionHandler(e: Error, data: EntityData<Entity> | any): void {
 
     if (e.message.match(/duplicate entry/gi)) {
       const violation = /entry '(.+?)' for/gi.exec(e.message);
