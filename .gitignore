@@ -1,4 +1,5 @@
 # Packages, Cache and Build
+.eslintcache
 /node_modules
 /build
 /source/core/orm/cache
