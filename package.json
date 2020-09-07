@@ -63,8 +63,11 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint:fix && git add ."
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix"
   },
   "mikro-orm": {
     "useTsNode": true,
@@ -135,6 +138,7 @@
     "fs-extra": "9.0.1",
     "husky": "4.3.0",
     "jest": "26.4.2",
+    "lint-staged": "10.3.0",
     "npm-check-updates": "8.1.1",
     "rimraf": "3.0.2",
     "source-map-support": "0.5.19",
