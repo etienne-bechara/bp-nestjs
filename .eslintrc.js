@@ -132,6 +132,7 @@ module.exports =  {
     'object-curly-spacing': [ 'warn', 'always' ],
     'space-before-blocks': [ 'warn', 'always' ],
     'space-before-function-paren': [ 'warn', { anonymous: 'always', named: 'never', asyncArrow: 'always' }],
+    'space-in-parens': ['warn', 'never' ],
     'space-infix-ops': [ 'warn' ],
     'spaced-comment': [ 'warn', 'always' ],
 
