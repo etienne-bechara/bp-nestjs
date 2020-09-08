@@ -90,9 +90,9 @@
     }
   },
   "dependencies": {
-    "@mikro-orm/core": "4.0.0-rc.8",
-    "@mikro-orm/mysql": "4.0.0-rc.8",
-    "@mikro-orm/nestjs": "4.0.0-alpha.4",
+    "@mikro-orm/core": "4.0.0",
+    "@mikro-orm/mysql": "4.0.0",
+    "@mikro-orm/nestjs": "4.0.0",
     "@nestjs/common": "7.4.4",
     "@nestjs/core": "7.4.4",
     "@nestjs/platform-express": "7.4.4",
@@ -113,9 +113,9 @@
     "uuid": "8.3.0"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "4.0.0-rc.8",
+    "@mikro-orm/cli": "4.0.0",
     "@nestjs/cli": "7.5.1",
-    "@nestjs/schematics": "7.1.1",
+    "@nestjs/schematics": "7.1.2",
     "@nestjs/testing": "7.4.4",
     "@types/express": "4.17.8",
     "@types/fs-extra": "9.0.1",
@@ -123,8 +123,8 @@
     "@types/jest": "26.0.13",
     "@types/node": "14.6.4",
     "@types/supertest": "2.0.10",
-    "@typescript-eslint/eslint-plugin": "4.0.1",
-    "@typescript-eslint/parser": "4.0.1",
+    "@typescript-eslint/eslint-plugin": "4.1.0",
+    "@typescript-eslint/parser": "4.1.0",
     "chalk": "4.1.0",
     "change-case": "4.1.1",
     "clean-stack": "3.0.0",
