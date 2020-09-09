@@ -1,8 +1,8 @@
-import { IsUUID } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class OrmIdDto {
 
-  @IsUUID()
+  @IsNotEmpty()
   public id: string;
 
 }

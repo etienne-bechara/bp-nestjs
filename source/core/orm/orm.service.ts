@@ -77,7 +77,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * Wrapper responsible for all INSERT and UPDATE operations.
    * @param entity
    */
-  private async save(entity: Entity): Promise<void> {
+  public async save(entity: Entity): Promise<void> {
     if (!entity) {
       throw new InternalServerErrorException(this.ENTITY_UNDEFINED);
     }
@@ -93,7 +93,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * Wrapper responsible for all DELETE operations.
    * @param entity
    */
-  private async remove(entity: Entity): Promise<Entity> {
+  public async remove(entity: Entity): Promise<Entity> {
     try {
       await this.repository.removeAndFlush(entity);
     }
