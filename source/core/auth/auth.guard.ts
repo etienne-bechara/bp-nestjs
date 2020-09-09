@@ -17,6 +17,7 @@ export class AuthGuard extends AppProvider implements CanActivate {
    * @param context
    */
   public canActivate(context: ExecutionContext): boolean {
+    if (!this.settings.AUTH_STRATEGY) return true;
     const req: AppRequest = context.switchToHttp().getRequest();
 
     const authString = req.headers.authorization
@@ -30,9 +31,6 @@ export class AuthGuard extends AppProvider implements CanActivate {
     if (!authString) {
       throw new UnauthorizedException('missing authorization header');
     }
-
-    // None
-    if (!this.settings.AUTH_STRATEGY) return true;
 
     // Static Token
     if (this.settings.AUTH_STRATEGY === AuthStrategy.STATIC_TOKEN) {
