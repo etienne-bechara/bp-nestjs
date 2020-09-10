@@ -13,7 +13,7 @@
   "license": "MIT",
   "scripts": {
     "==== Build & Run ====": "",
-    "preinstall": "nvm install 14.8 || (echo NVM not installed, skipping Node.js installation... && exit 1)",
+    "preinstall": "(nvm install 14.8 && nvm use 14.8) || (echo NVM not installed, skipping Node.js installation... && exit 1)",
     "prestart": "nvm use 14.8 || (echo NVM not installed, skipping Node.js switching... && exit 1)",
     "build": "nest build",
     "dev": "npm start",
