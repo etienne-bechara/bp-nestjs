@@ -8,7 +8,8 @@ npm i -D `
   eslint-plugin-more `
   eslint-plugin-promise `
   eslint-plugin-simple-import-sort `
-  eslint-plugin-unicorn
+  eslint-plugin-unicorn `
+  eslint-plugin-unused-imports
 */
 
 module.exports =  {
@@ -37,6 +38,7 @@ module.exports =  {
     'promise', // https://github.com/xjamundx/eslint-plugin-promise
     'simple-import-sort', // https://github.com/lydell/eslint-plugin-simple-import-sort
     'unicorn', // https://github.com/sindresorhus/eslint-plugin-unicorn
+    'unused-imports', // https://github.com/sweepline/eslint-plugin-unused-imports
   ],
 
   rules: {
@@ -87,6 +89,7 @@ module.exports =  {
     'max-len': [ 'warn', { code: 120, comments: 120 } ], // Maximum column length
     'no-console': [ 'warn' ], // Disallow console.log
     'simple-import-sort/sort': [ 'warn' ], // Force import ordering
+    'unused-imports/no-unused-imports-ts': [ 'warn' ], // Disallow unused imported modules
 
     /**
      * DOCUMENTATION
