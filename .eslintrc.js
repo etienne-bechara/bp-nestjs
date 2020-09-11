@@ -86,13 +86,15 @@ module.exports =  {
      * ADDED WARNING SEVERITY RULES
      * New rules that should raise a 'warn'.
      */
+    '@typescript-eslint/array-type': [ 'warn' ], // Enforces consistent array declaration
+    '@typescript-eslint/prefer-optional-chain': [ 'warn' ], // Enforces consistent array declaration
     'max-len': [ 'warn', { code: 120, comments: 120 } ], // Maximum column length
     'no-console': [ 'warn' ], // Disallow console.log
     'simple-import-sort/sort': [ 'warn' ], // Force import ordering
     'unused-imports/no-unused-imports-ts': [ 'warn' ], // Disallow unused imported modules
 
     /**
-     * DOCUMENTATION
+     * DOCUMENTATION RULES
      * Failure to comply should raise a 'warn'
      * • Must be present at all methods except top level classes
      * • Must obey correct identation
@@ -115,7 +117,28 @@ module.exports =  {
     'jsdoc/require-description-complete-sentence': [ 'warn' ],
     'jsdoc/require-param': [ 'warn' ],
     'jsdoc/require-param-name': [ 'warn' ],
-    
+
+    /**
+     * NAMING CONVENTION RULES
+     * Enforces consistent casing according to declaration type
+     */
+    '@typescript-eslint/naming-convention': [ 'warn',
+      { selector: 'variable', format: ['strictCamelCase'] },
+      { selector: 'function', format: ['strictCamelCase'] },
+      { selector: 'parameter', format: ['strictCamelCase'] },
+      { selector: 'property', format: ['strictCamelCase', 'snake_case'] },
+      { selector: 'property', modifiers: [ 'readonly' ], format: [ 'UPPER_CASE' ] },
+      { selector: 'parameterProperty', format: ['strictCamelCase', 'snake_case'] },
+      { selector: 'method', format: ['strictCamelCase'] },
+      { selector: 'accessor', format: ['strictCamelCase'] },
+      { selector: 'enumMember', format: ['UPPER_CASE'] },
+      { selector: 'class', format: ['StrictPascalCase'] },
+      { selector: 'interface', format: ['StrictPascalCase'] },
+      { selector: 'typeAlias', format: ['StrictPascalCase'] },
+      { selector: 'enum', format: ['StrictPascalCase'] },
+      { selector: 'typeParameter', format: ['StrictPascalCase'] },
+    ],
+
     /**
      * STYLING RULES
      * Theses represent personal preference and should not pose any impact.
@@ -158,4 +181,5 @@ module.exports =  {
     'curly': [ 'warn', 'multi-line', 'consistent' ],
     'no-extra-parens': [ 'warn' ],    
   },
+
 };

@@ -19,13 +19,13 @@ export class OrmEntityInterceptor implements NestInterceptor {
         map((data) => {
           if (data) {
             if (Array.isArray(data)) {
-              data = data.map((d) => d && d.toJSON ? d.toJSON() : d);
+              data = data.map((d) => d?.toJSON ? d.toJSON() : d);
               for (const d of data) {
                 this.eliminateRecursion(d.id, d);
               }
             }
             else if (data.results && Array.isArray(data.results)) {
-              data.results = data.results.map((d) => d && d.toJSON ? d.toJSON() : d);
+              data.results = data.results.map((d) => d?.toJSON ? d.toJSON() : d);
               for (const d of data.results) {
                 this.eliminateRecursion(d.id, d);
               }

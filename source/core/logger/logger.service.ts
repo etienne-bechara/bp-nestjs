@@ -127,7 +127,7 @@ export class LoggerService {
    * @param params
    */
   private publishLog(params: LoggerParams): void {
-    if (params.data && params.data.private) return;
+    if (params.data?.private) return;
 
     if (this.sentryEnabled && params.level <= this.settings.LOGGER_SENTRY_MINIMUM_LEVEL) {
       let sentryLevel;
@@ -139,7 +139,7 @@ export class LoggerService {
 
       Sentry.withScope((scope) => {
         scope.setLevel(sentryLevel);
-        if (params.data && params.data.unexpected) scope.setTag('unexpected', 'true');
+        if (params.data?.unexpected) scope.setTag('unexpected', 'true');
         scope.setExtras(params.data);
         Sentry.captureException(params.error);
       });

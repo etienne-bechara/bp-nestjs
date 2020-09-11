@@ -166,7 +166,7 @@ export class UtilService extends AppProvider {
 
         if (p.retries && tentatives > p.retries) throw e;
         else if (p.timeout && elapsed > p.timeout) throw e;
-        else if (p.breakIf && p.breakIf(e)) throw e;
+        else if (p.breakIf?.(e)) throw e;
         tentatives++;
 
         msg = `${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || '∞'}`;

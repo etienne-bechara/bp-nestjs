@@ -122,7 +122,7 @@ export abstract class OrmController<Entity> extends AppProvider {
   public validateImplementation(method: OrmControllerMethod): void {
 
     if (
-      this.options.routes.exclude && this.options.routes.exclude.includes(method)
+      this.options.routes.exclude?.includes(method)
       || this.options.routes.only && !this.options.routes.only.includes(method)
     ) {
       throw new NotFoundException(`Cannot ${method.split('By')[0].toUpperCase()} to path`);
