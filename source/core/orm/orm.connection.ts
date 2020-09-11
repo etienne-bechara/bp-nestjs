@@ -10,6 +10,7 @@ const entities = UtilService.globToRequire('./**/*.entity.{ts,js}');
 
 const isDevelopment = settings.NODE_ENV === AppEnvironment.DEVELOPMENT;
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const OrmConnection: Options<IDatabaseDriver<Connection>> = {
 
   type: settings.ORM_TYPE,

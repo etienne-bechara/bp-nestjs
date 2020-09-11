@@ -7,19 +7,19 @@ export class RedisSettings {
 
   @IsOptional()
   @IsUrl()
-  public REDIS_HOST: string;
+  public readonly REDIS_HOST: string;
 
   @ValidateIf((o) => !!o.REDIS_HOST)
   @Transform((v) => Number.parseInt(v))
   @IsNumber()
-  public REDIS_PORT: number;
+  public readonly REDIS_PORT: number;
 
   @ValidateIf((o) => !!o.REDIS_HOST)
   @IsString()
-  public REDIS_PASSWORD: string;
+  public readonly REDIS_PASSWORD: string;
 
   /* Provider Options */
 
-  public REDIS_KEY_PREFIX: string = '';
+  public readonly REDIS_KEY_PREFIX: string = '';
 
 }

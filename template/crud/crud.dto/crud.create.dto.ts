@@ -1,3 +1,3 @@
-export class _Pascal_CreateDto {
+export class PascalCaseCreateDto {
 
 }

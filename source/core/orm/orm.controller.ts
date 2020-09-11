@@ -21,10 +21,10 @@ import { OrmSettings } from './orm.settings';
 @UseInterceptors(OrmEntityInterceptor)
 export abstract class OrmController<Entity> extends AppProvider {
   protected settings: AppSettings & OrmSettings = this.getSettings();
-  protected MISSING_DTO: string = 'missing dto implementation';
-  protected MISSING_BODY: string = 'missing request body';
-  protected OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';
-  protected OPERATOR_TOO_MANY: string = 'has too many filter operators';
+  protected readonly MISSING_DTO: string = 'missing dto implementation';
+  protected readonly MISSING_BODY: string = 'missing request body';
+  protected readonly OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';
+  protected readonly OPERATOR_TOO_MANY: string = 'has too many filter operators';
 
   public constructor(
     public readonly service: OrmService<Entity>,

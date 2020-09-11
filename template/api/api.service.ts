@@ -2,29 +2,29 @@ import { Injectable } from '@nestjs/common';
 
 import { AppProvider } from '../core/app/app.provider';
 import { HttpsService } from '../core/https/https.service';
-import { _Pascal_Settings } from './_Dot_.settings';
+import { PascalCaseSettings } from './dot.case.settings';
 
 @Injectable()
-export class _Pascal_Service extends AppProvider {
-  private settings: _Pascal_Settings = this.getSettings();
+export class PascalCaseService extends AppProvider {
+  private settings: PascalCaseSettings = this.getSettings();
 
   /**
-   * Instantiate an exclusive http service for _Pascal_ API.
+   * Instantiate an exclusive http service for PascalCase API.
    * @param httpsService
    */
   public constructor(private readonly httpsService: HttpsService) {
     super();
     this.httpsService.setupInstance({
       bases: {
-        url: this.settings._Constant__HOST,
-        headers: { 'Authorization': this.settings._Constant__API_KEY },
+        url: this.settings.UPPER_CASE_HOST,
+        headers: { 'authorization': this.settings.UPPER_CASE_API_KEY },
       },
     });
   }
 
   /* Implement you API methods here */
 
-  // public async readUsers(): Promise<_Pascal_User[]> {
+  // public async readUsers(): Promise<PascalCaseUser[]> {
   //   return this.httpsService.get('/users');
   // }
 

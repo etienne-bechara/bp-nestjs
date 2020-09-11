@@ -8,6 +8,7 @@ export class OrmDecimalType extends Type {
    * instead of number when reading from database.
    * @param value
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   public convertToJSValue(value: any): any {
 
     if (!value) {

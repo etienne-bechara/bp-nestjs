@@ -3,23 +3,23 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 
 import { OrmService } from '../core/orm/orm.service';
-import { _Pascal_Entity } from './_Dot_.entity';
+import { PascalCaseEntity } from './dot.case.entity';
 
 @Injectable()
-export class _Pascal_Service extends OrmService<_Pascal_Entity> {
+export class PascalCaseService extends OrmService<PascalCaseEntity> {
 
   /**
    * Creates default methods and exception handling for
-   * _Pascal_ Entity manipulation.
+   * PascalCase Entity manipulation.
    *
    * We must inject the matching repository exported by ORM.
-   * @param _Camel_Repository
+   * @param camelCaseRepository
    */
   public constructor(
-    @InjectRepository(_Pascal_Entity)
-    private readonly _Camel_Repository: EntityRepository<_Pascal_Entity>,
+    @InjectRepository(PascalCaseEntity)
+    private readonly camelCaseRepository: EntityRepository<PascalCaseEntity>,
   ) {
-    super(_Camel_Repository, {
+    super(camelCaseRepository, {
       defaults: {
         uniqueKey: [ ], // Default key to match when upserting (can be overriden in method)
         populate: [ ], // Default properties to cascade read (can be overriden in method)

@@ -50,12 +50,12 @@ function generateTemplateByType(type: string): void {
 
     const content = fs.readFileSync(source, 'utf8');
     const replaced = content
-      .replace(/_Pascal_/g, pascalCase(name))
-      .replace(/_Snake_/g, snakeCase(name))
-      .replace(/_Camel_/g, camelCase(name))
-      .replace(/_Dot_/g, dotCase(name))
-      .replace(/_Path_/g, pathCase(name))
-      .replace(/_Constant_/g, constantCase(name));
+      .replace(/PascalCase/g, pascalCase(name))
+      .replace(/snake_case/g, snakeCase(name))
+      .replace(/camelCase/g, camelCase(name))
+      .replace(/dot\.case/g, dotCase(name))
+      .replace(/path\/case/g, pathCase(name))
+      .replace(/UPPER_CASE/g, constantCase(name));
 
     fs.ensureFileSync(destination);
     fs.writeFileSync(destination, replaced, 'utf8');

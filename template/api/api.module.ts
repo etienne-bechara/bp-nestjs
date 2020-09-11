@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { _Pascal_Controller } from './_Dot_.controller';
-import { _Pascal_Service } from './_Dot_.service';
+import { PascalCaseController } from './dot.case.controller';
+import { PascalCaseService } from './dot.case.service';
 
 @Module({
-  controllers: [ _Pascal_Controller ],
-  providers: [ _Pascal_Service ],
-  exports: [ _Pascal_Service ],
+  controllers: [ PascalCaseController ],
+  providers: [ PascalCaseService ],
+  exports: [ PascalCaseService ],
 })
-export class _Pascal_Module { }
+export class PascalCaseModule { }

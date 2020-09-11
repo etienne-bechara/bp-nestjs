@@ -1,26 +1,26 @@
 import { Controller } from '@nestjs/common';
 
 import { OrmController } from '../core/orm/orm.controller';
-import { _Pascal_CreateDto, _Pascal_ReadDto, _Pascal_UpdateDto } from './_Dot_.dto';
-import { _Pascal_Entity } from './_Dot_.entity';
-import { _Pascal_Service } from './_Dot_.service';
+import { PascalCaseCreateDto, PascalCaseReadDto, PascalCaseUpdateDto } from './dot.case.dto';
+import { PascalCaseEntity } from './dot.case.entity';
+import { PascalCaseService } from './dot.case.service';
 
-@Controller('_Path_')
-export class _Pascal_Controller extends OrmController<_Pascal_Entity> {
+@Controller('path/case')
+export class PascalCaseController extends OrmController<PascalCaseEntity> {
 
   /**
-   * Create default routes for  _Pascal_ Entity manipulation
+   * Create default routes for  PascalCase Entity manipulation
    * Includes GET, GET_BY_ID, POST, PUT, PUT_BY_ID and DELETE_BY_ID.
    *
    * We must inject the service containing default handling methods.
-   * @param _Camel_Service
+   * @param camelCaseService
    */
-  public constructor(private readonly _Camel_Service: _Pascal_Service) {
-    super(_Camel_Service, {
+  public constructor(private readonly camelCaseService: PascalCaseService) {
+    super(camelCaseService, {
       dto: {
-        read: _Pascal_ReadDto, // Validation rules when reading [GET]
-        create: _Pascal_CreateDto, // Validation rules when creating [POST, PUT]
-        update: _Pascal_UpdateDto, // Validation rules when updating [PUT_BY_ID]
+        read: PascalCaseReadDto, // Validation rules when reading [GET]
+        create: PascalCaseCreateDto, // Validation rules when creating [POST, PUT]
+        update: PascalCaseUpdateDto, // Validation rules when updating [PUT_BY_ID]
       },
       // routes: {
       //   exclude: [ ], // Array of default routes to exclude

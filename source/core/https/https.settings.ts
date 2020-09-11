@@ -4,6 +4,6 @@ export class HttpsSettings {
 
   /* Provider Options */
 
-  public HTTPS_DEFAULT_TIMEOUT: number = 60 * 1000;
+  public readonly HTTPS_DEFAULT_TIMEOUT: number = 60 * 1000;
 
 }

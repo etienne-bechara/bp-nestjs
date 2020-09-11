@@ -1,5 +1,5 @@
-import { _Pascal_CreateDto } from './_Dot_.create.dto';
+import { PascalCaseCreateDto } from './dot.case.create.dto';
 
-export class _Pascal_UpdateDto extends _Pascal_CreateDto {
+export class PascalCaseUpdateDto extends PascalCaseCreateDto {
 
 }

@@ -1,14 +1,14 @@
 import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
-export class _Pascal_Settings {
+export class PascalCaseSettings {
 
   /* Environment Variables */
 
   @IsUrl()
-  public _Constant__HOST: string;
+  public readonly UPPER_CASE_HOST: string;
 
   @IsString() @IsNotEmpty()
-  public _Constant__API_KEY: string;
+  public readonly UPPER_CASE_API_KEY: string;
 
   /* Provider Options */
 

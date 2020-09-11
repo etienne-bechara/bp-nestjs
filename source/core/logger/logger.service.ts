@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/node';
 import moment from 'moment';
 
 import { AppEnvironment } from '../app/app.enum';
+import { AppSettings } from '../app/app.settings';
 import { LoggerLevel } from './logger.enum';
 import { LoggerParams } from './logger.interface';
 import { LoggerSettings } from './logger.settings';
@@ -15,7 +16,7 @@ export class LoggerService {
   private sentryEnabled: boolean;
   private chalk: any;
 
-  public constructor(private settings: LoggerSettings & { NODE_ENV: AppEnvironment}) {
+  public constructor(private settings: LoggerSettings & AppSettings) {
     this.setupLogger();
   }
 

@@ -1,20 +1,20 @@
 import { Controller } from '@nestjs/common';
 
 import { AppProvider } from '../core/app/app.provider';
-import { _Pascal_Service } from './_Dot_.service';
-import { _Pascal_Settings } from './_Dot_.settings';
+import { PascalCaseService } from './dot.case.service';
+import { PascalCaseSettings } from './dot.case.settings';
 
-@Controller('_Path_')
-export class _Pascal_Controller extends AppProvider {
-  private settings: _Pascal_Settings = this.getSettings();
+@Controller('path/case')
+export class PascalCaseController extends AppProvider {
+  private settings: PascalCaseSettings = this.getSettings();
 
-  public constructor(private readonly _Camel_Service: _Pascal_Service) { super(); }
+  public constructor(private readonly camelCaseService: PascalCaseService) { super(); }
 
   /* If you with to expose any functionalities implement them here */
 
   // @Get('user')
-  // public async getUsers(): Promise<_Pascal_User[]> {
-  //   return this._Camel_Service.readUsers();
+  // public async getUsers(): Promise<PascalCaseUser[]> {
+  //   return this.camelCaseService.readUsers();
   // }
 
 }

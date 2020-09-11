@@ -8,10 +8,10 @@ export class AuthSettings {
 
   @IsOptional()
   @IsIn(Object.keys(AuthStrategy))
-  public AUTH_STRATEGY: string;
+  public readonly AUTH_STRATEGY: string;
 
   @ValidateIf((o) => o.AUTH_STRATEGY)
   @IsString() @IsNotEmpty()
-  public AUTH_KEY: string;
+  public readonly AUTH_KEY: string;
 
 }

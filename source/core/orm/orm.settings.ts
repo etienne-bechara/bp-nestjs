@@ -7,33 +7,33 @@ export class OrmSettings {
 
   @IsOptional()
   @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])
-  public ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
+  public readonly ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
 
   @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString() @IsNotEmpty()
-  public ORM_HOST: string;
+  public readonly ORM_HOST: string;
 
   @ValidateIf((o) => !!o.ORM_TYPE)
   @Transform((v) => Number.parseInt(v))
   @IsNumber()
-  public ORM_PORT: number;
+  public readonly ORM_PORT: number;
 
   @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString() @IsNotEmpty()
-  public ORM_USERNAME: string;
+  public readonly ORM_USERNAME: string;
 
   @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString()
-  public ORM_PASSWORD: string;
+  public readonly ORM_PASSWORD: string;
 
   @ValidateIf((o) => !!o.ORM_TYPE)
   @IsString() @IsNotEmpty()
-  public ORM_DATABASE: string;
+  public readonly ORM_DATABASE: string;
 
   /* Provider Options */
 
-  public ORM_POOL_MIN: number = 5;
+  public readonly ORM_POOL_MIN: number = 5;
 
-  public ORM_POOL_MAX: number = 25;
+  public readonly ORM_POOL_MAX: number = 25;
 
 }

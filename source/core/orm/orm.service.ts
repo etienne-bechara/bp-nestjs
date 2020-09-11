@@ -11,15 +11,15 @@ import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.int
  * Creates an abstract service tied with a repository.
  */
 export abstract class OrmService<Entity> extends AppProvider {
-  protected DUPLICATE_ENTRY: string = 'unique constraint violation';
-  protected ENTITY_UNDEFINED: string = 'cannot persist undefined entity';
-  protected FK_FAIL_CREATE: string = 'must reference an existing entity';
-  protected FK_FAIL_DELETE: string = 'constraint prevents cascade deletion';
-  protected NOT_FOUND: string = 'entity with given id does not exist';
-  protected PROPERTY_NON_EXISTANT: string = 'property does not exist on entity';
-  protected QUERY_FAIL: string = 'failed to execute query statement';
-  protected UK_REFERENCE_FAIL: string = 'unique constraint references more than one entity';
-  protected UK_MISSING: string = 'missing default unique key implementation';
+  protected readonly DUPLICATE_ENTRY: string = 'unique constraint violation';
+  protected readonly ENTITY_UNDEFINED: string = 'cannot persist undefined entity';
+  protected readonly FK_FAIL_CREATE: string = 'must reference an existing entity';
+  protected readonly FK_FAIL_DELETE: string = 'constraint prevents cascade deletion';
+  protected readonly NOT_FOUND: string = 'entity with given id does not exist';
+  protected readonly PROPERTY_NON_EXISTANT: string = 'property does not exist on entity';
+  protected readonly QUERY_FAIL: string = 'failed to execute query statement';
+  protected readonly UK_REFERENCE_FAIL: string = 'unique constraint references more than one entity';
+  protected readonly UK_MISSING: string = 'missing default unique key implementation';
 
   public constructor(
     private readonly repository: EntityRepository<Entity>,
