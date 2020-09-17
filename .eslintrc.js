@@ -156,6 +156,7 @@ module.exports =  {
     'no-multi-spaces': [ 'warn' ],
     'no-trailing-spaces': [ 'warn' ],
     'object-curly-spacing': [ 'warn', 'always' ],
+    'semi-spacing': [ 'warn' ],
     'space-before-blocks': [ 'warn', 'always' ],
     'space-before-function-paren': [ 'warn', { anonymous: 'always', named: 'never', asyncArrow: 'always' }],
     'space-in-parens': ['warn', 'never' ],
