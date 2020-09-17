@@ -16,7 +16,7 @@ export class OrmDecimalType extends Type {
     }
     else if (
       ![ 'string', 'number' ].includes(typeof value)
-      || !value.toString().match(/^[\d.]+$/g)
+      || !value.toString().match(/^[\d.-]+$/g)
     ) {
       throw new InternalServerErrorException({
         message: 'invalid decimal type',
