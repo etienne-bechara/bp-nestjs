@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/no-fn-reference-in-iterator */
 
-import { EntityData, EntityRepository, FilterQuery, QueryOrder } from '@mikro-orm/core';
+import { EntityData, FilterQuery, QueryOrder } from '@mikro-orm/core';
+import { EntityRepository } from '@mikro-orm/mysql';
 import { BadRequestException, ConflictException, InternalServerErrorException,
   NotFoundException, NotImplementedException } from '@nestjs/common';
 
@@ -77,7 +78,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * Wrapper responsible for all INSERT and UPDATE operations.
    * @param entity
    */
-  public async save(entity: Entity): Promise<void> {
+  private async save(entity: Entity): Promise<void> {
     if (!entity) {
       throw new InternalServerErrorException(this.ENTITY_UNDEFINED);
     }
@@ -93,7 +94,7 @@ export abstract class OrmService<Entity> extends AppProvider {
    * Wrapper responsible for all DELETE operations.
    * @param entity
    */
-  public async remove(entity: Entity): Promise<Entity> {
+  private async remove(entity: Entity): Promise<Entity> {
     try {
       await this.repository.removeAndFlush(entity);
     }
