@@ -121,7 +121,7 @@ export class UtilService extends AppProvider {
   }
 
   /**
-   * Retuns the logger singleton instance, creates it
+   * Returns the logger singleton instance, creates it
    * if not available.
    */
   public static getLoggerService(): LoggerService {
@@ -153,7 +153,7 @@ export class UtilService extends AppProvider {
     this.logger.debug(msg);
 
     const startTime = new Date().getTime();
-    let tentatives = 1;
+    let tentative = 1;
     let result: T;
 
     while (true) {
@@ -164,12 +164,12 @@ export class UtilService extends AppProvider {
       catch (e) {
         const elapsed = new Date().getTime() - startTime;
 
-        if (p.retries && tentatives > p.retries) throw e;
+        if (p.retries && tentative > p.retries) throw e;
         else if (p.timeout && elapsed > p.timeout) throw e;
         else if (p.breakIf?.(e)) throw e;
-        tentatives++;
+        tentative++;
 
-        msg = `${p.method}(): ${e.message} | Retry #${tentatives}/${p.retries || '∞'}`;
+        msg = `${p.method}(): ${e.message} | Retry #${tentative}/${p.retries || '∞'}`;
         msg += `, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`;
         this.logger.debug(msg);
 
@@ -182,7 +182,7 @@ export class UtilService extends AppProvider {
   }
 
   /**
-   * Reads data regarding current runtime and networ.
+   * Reads data regarding current runtime and network.
    */
   public async readAppStatus(): Promise<UtilAppStatus> {
     const publicIp = { v4: null, v6: null };
