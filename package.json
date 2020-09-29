@@ -11,10 +11,12 @@
     "url": "https://github.com/etienne-bechara/bp-nestjs"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
   "scripts": {
     "==== Build & Run ====": "",
-    "preinstall": "(nvm install 14.8 && nvm use 14.8) || (echo NVM not installed, skipping Node.js installation... && exit 1)",
-    "prestart": "nvm use 14.8 || (echo NVM not installed, skipping Node.js switching... && exit 1)",
     "build": "nest build",
     "dev": "npm start",
     "start": "nest start --debug --watch",
