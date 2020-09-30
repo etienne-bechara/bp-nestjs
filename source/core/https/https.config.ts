@@ -1,4 +1,4 @@
-export class HttpsSettings {
+export class HttpsConfig {
 
   /* Environment Variables */
 

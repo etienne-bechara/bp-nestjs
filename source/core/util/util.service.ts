@@ -1,29 +1,21 @@
-/* eslint-disable unicorn/no-process-exit */
-/* eslint-disable no-constant-condition */
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
-
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { plainToClass } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 import globby from 'globby';
 import os from 'os';
 
-import { AppEnvironment } from '../app/app.enum';
 import { AppRetryParams } from '../app/app.interface';
-import { AppProvider } from '../app/app.provider';
-import { AppSettings } from '../app/app.settings';
 import { LoggerService } from '../logger/logger.service';
-import { LoggerSettings } from '../logger/logger.settings';
 import { UtilAppStatus } from './util.interface';
 
-let cachedSettings: any;
-let loggerService: LoggerService;
-
 @Injectable()
-export class UtilService extends AppProvider {
+export class UtilService {
+
+  public constructor(
+    private readonly loggerService: LoggerService,
+  ) { }
 
   /**
    * Given a glob path string, find all matching files
@@ -49,43 +41,6 @@ export class UtilService extends AppProvider {
     });
 
     return [].concat(...exportsArrays);
-  }
-
-  /**
-   * Parses and validates environment variables then
-   * join them with settings and caches the result.
-   *
-   * At development environment enable reverse mapping
-   * of js files for easier stack debugging.
-   */
-  public static parseSettings<T>(): T {
-
-    if (!cachedSettings) {
-      const rawEnv = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
-      const settingsConstructors = UtilService.globToRequire('./**/*.settings.{js,ts}');
-      const settings: any = { };
-
-      for (const constructor of settingsConstructors) {
-        const partialSettings: Record<string, unknown> = plainToClass(constructor, rawEnv);
-
-        validateOrReject(partialSettings, { validationError: { target: false } })
-          .catch((e) => {
-            console.error(e);
-            process.exit(1);
-          });
-
-        for (const key in partialSettings) {
-          settings[key] = partialSettings[key];
-        }
-      }
-
-      cachedSettings = settings;
-
-      if (cachedSettings.NODE_ENV === AppEnvironment.DEVELOPMENT) {
-        require('source-map-support').install();
-      }
-    }
-    return cachedSettings;
   }
 
   /**
@@ -121,19 +76,6 @@ export class UtilService extends AppProvider {
   }
 
   /**
-   * Returns the logger singleton instance, creates it
-   * if not available.
-   */
-  public static getLoggerService(): LoggerService {
-    if (!loggerService) {
-      loggerService = new LoggerService(
-        UtilService.parseSettings<AppSettings & LoggerSettings>(),
-      );
-    }
-    return loggerService;
-  }
-
-  /**
    * Asynchronously wait for desired amount of milliseconds.
    * @param ms
    */
@@ -150,7 +92,7 @@ export class UtilService extends AppProvider {
 
     let msg = `${p.method}(): running with ${p.retries || '∞'} `;
     msg += `retries and ${p.timeout / 1000 || '∞ '}s timeout...`;
-    this.logger.debug(msg);
+    // this.loggerService.debug(msg);
 
     const startTime = new Date().getTime();
     let tentative = 1;
@@ -171,13 +113,13 @@ export class UtilService extends AppProvider {
 
         msg = `${p.method}(): ${e.message} | Retry #${tentative}/${p.retries || '∞'}`;
         msg += `, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`;
-        this.logger.debug(msg);
+        // this.loggerService.debug(msg);
 
         await this.halt(p.delay || 0);
       }
     }
 
-    this.logger.debug(`${p.method}() finished successfully!`);
+    // this.loggerService.debug(`${p.method}() finished successfully!`);
     return result;
   }
 
@@ -191,16 +133,16 @@ export class UtilService extends AppProvider {
       const { data } = await axios.get('https://api.ipify.org');
       publicIp.v4 = data;
     }
-    catch (e) {
-      this.logger.error(e);
+    catch {
+      // this.loggerService.error(e);
     }
 
     try {
       const { data } = await axios.get('https://api6.ipify.org');
       publicIp.v6 = data;
     }
-    catch (e) {
-      this.logger.error(e);
+    catch {
+      // this.loggerService.error(e);
     }
 
     return {

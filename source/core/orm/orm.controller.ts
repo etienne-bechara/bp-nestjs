@@ -5,22 +5,18 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { validate } from 'class-validator';
 import { unflatten } from 'flat';
 
-import { AppProvider } from '../app/app.provider';
-import { AppSettings } from '../app/app.settings';
 import { OrmFilterDto, OrmIdDto } from './orm.dto';
 import { OrmControllerMethod } from './orm.enum';
 import { OrmEntityInterceptor } from './orm.interceptor';
 import { OrmControllerOptions, OrmPartialResponse } from './orm.interface';
 import { OrmService } from './orm.service';
-import { OrmSettings } from './orm.settings';
 
 /**
  * Implements a very simples CRUD controller that
  * can be extended to prevent duplicate code.
  */
 @UseInterceptors(OrmEntityInterceptor)
-export abstract class OrmController<Entity> extends AppProvider {
-  protected settings: AppSettings & OrmSettings = this.getSettings();
+export abstract class OrmController<Entity> {
   protected readonly MISSING_DTO: string = 'missing dto implementation';
   protected readonly MISSING_BODY: string = 'missing request body';
   protected readonly OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';
@@ -30,13 +26,12 @@ export abstract class OrmController<Entity> extends AppProvider {
     public readonly service: OrmService<Entity>,
     protected options: OrmControllerOptions = { },
   ) {
-    super();
     if (!this.options.dto) this.options.dto = { };
     if (!this.options.routes) this.options.routes = { };
   }
 
   /**
-   * Read all entitties that matches desired criterias
+   * Read all entities that matches desired criteria
    * If pagination properties are present (limit & offset),
    * returns withing an encapsulated object containing total.
    * @param query
@@ -116,7 +111,7 @@ export abstract class OrmController<Entity> extends AppProvider {
   }
 
   /**
-   * Validates if a given method is allowed to procede.
+   * Validates if a given method is allowed to proceed.
    * @param method
    */
   public validateImplementation(method: OrmControllerMethod): void {
@@ -147,7 +142,10 @@ export abstract class OrmController<Entity> extends AppProvider {
   protected async plainToDto(object: unknown, type: ClassType<unknown>): Promise<any> {
 
     const typedObject = plainToClass(type, object);
-    const failedConstraints = await validate(typedObject, this.settings.APP_VALIDATION_RULES);
+    const failedConstraints = await validate(typedObject, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
     const errors: string[] = [ ];
 
     for (const failure of failedConstraints) {

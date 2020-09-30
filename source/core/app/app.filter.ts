@@ -1,18 +1,21 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
+import { ConfigService } from '../config/config.service';
+import { LoggerService } from '../logger/logger.service';
+import { AppConfig } from './app.config';
 import { AppEnvironment } from './app.enum';
 import { AppException, AppRequest, AppResponse } from './app.interface';
-import { AppProvider } from './app.provider';
-import { AppSettings } from './app.settings';
 
 @Catch()
-export class AppFilter extends AppProvider implements ExceptionFilter {
-  private settings: AppSettings = this.getSettings();
+export class AppFilter implements ExceptionFilter {
 
-  public constructor() { super(); }
+  public constructor(
+    private readonly configService: ConfigService<AppConfig>,
+    private readonly loggerService: LoggerService,
+  ) { }
 
   /**
-   * Intercepts all erros and standardize the output.
+   * Intercepts all errors and standardize the output.
    * @param exception
    * @param host
    */
@@ -29,7 +32,8 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
 
     this.logException(appException, req);
 
-    const productionServerError = this.settings.NODE_ENV === AppEnvironment.PRODUCTION
+    const productionServerError =
+      this.configService.get('NODE_ENV') === AppEnvironment.PRODUCTION
       && appException.errorCode === HttpStatus.INTERNAL_SERVER_ERROR;
 
     res.setHeader('Content-Type', 'application/json');
@@ -129,7 +133,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
     };
 
     if (appException.errorCode === HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(appException.exception, {
+      this.loggerService.error(appException.exception, {
         message: logData.message,
         ...logData.details,
         inbound_request: {
@@ -143,7 +147,7 @@ export class AppFilter extends AppProvider implements ExceptionFilter {
       });
     }
     else {
-      this.logger.info(appException.exception, logData);
+      this.loggerService.info(appException.exception, logData);
     }
   }
 

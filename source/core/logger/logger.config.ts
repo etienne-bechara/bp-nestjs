@@ -3,7 +3,7 @@ import { IsOptional, IsUrl } from 'class-validator';
 import { AppEnvironment } from '../app/app.enum';
 import { LoggerLevel } from './logger.enum';
 
-export class LoggerSettings {
+export class LoggerConfig {
 
   /* Environment Variables */
 

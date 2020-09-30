@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
-export class PascalCaseSettings {
+export class PascalCaseConfig {
 
   /* Environment Variables */
 

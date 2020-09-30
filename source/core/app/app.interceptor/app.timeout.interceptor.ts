@@ -2,16 +2,19 @@ import { CallHandler, ExecutionContext, GatewayTimeoutException, Injectable, Nes
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 
-import { AppProvider } from '../app.provider';
-import { AppSettings } from '../app.settings';
+import { ConfigService } from '../../config/config.service';
+import { AppConfig } from '../app.config';
 
 @Injectable()
-export class AppTimeoutInterceptor extends AppProvider implements NestInterceptor {
-  private settings: AppSettings = this.getSettings();
+export class AppTimeoutInterceptor implements NestInterceptor {
+
+  public constructor(
+    private readonly configService: ConfigService<AppConfig>,
+  ) { }
 
   /**
    * Creates a true server side timer that ends any requests
-   * if exceding configured timeout.
+   * if exceeding configured timeout.
    *
    * If using serverless, remember to configure service timeout
    * over the one configure here at the application.
@@ -19,7 +22,7 @@ export class AppTimeoutInterceptor extends AppProvider implements NestIntercepto
    * @param next
    */
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const msTimeout = this.settings.APP_TIMEOUT;
+    const msTimeout = this.configService.get('APP_TIMEOUT');
 
     if (!msTimeout) return next.handle();
     return next

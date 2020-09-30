@@ -48,7 +48,7 @@ npm start
   * [Frameworks](#frameworks)
   * [Utilitários](#utilitários)
 - [Domain](#domain)
-- [Settings](#settings)
+- [Config](#config)
   * [Variáveis de Ambiente](#variáveis-de-ambiente)
   * [Opções do Serviço](#opções-do-serviço)
 - [Entity](#entity)
@@ -155,17 +155,17 @@ Os inclusos no boilerplate estão dentro de `/source/core` para melhor organiza�
 
 
 
-## Settings
+## Config
 
-Cada domínio, pode ter uma grupo de configurações definidas em um arquivo `*.settings.ts`.
+Cada domínio, pode ter uma grupo de configurações definidas em um arquivo `*.config.ts`.
 
-Ao criar um serviço que extenda a class `AppProvider` (detalhes adiante), é possível obter as recém criadas configurações através do método `this.getSettings()`.
+Ao criar um serviço que extenda a class `AppProvider` (detalhes adiante), é possível obter as recém criadas configurações através do método `this.getConfig()`.
 
 Exemplo:
 
 ```ts
-export class MailerService extends AppProvider {
-  private settings: MailerSettings = this.getSettings();
+export class MailerService {
+  private config: MailerConfig = this.getConfig();
 }
 ```
 
@@ -182,7 +182,7 @@ As configurações são divididas em duas categorias:
 Exemplo:
 
 ```ts
-export class AppSettings {
+export class AppConfig {
 
   @IsIn(['DEVELOPMENT', 'STAGING', 'PRODUCTION'])
   public NODE_ENV: 'DEVELOPMENT' | 'STAGING' | 'PRODUCTION';
@@ -201,13 +201,13 @@ export class AppSettings {
 ### Opções do Serviço
 
 - Não possuem informações sensíveis e são idênticas em qualquer ambiente.
-- São declaradas dentro do próprio arquivo `*.settings.ts`.
+- São declaradas dentro do próprio arquivo `*.config.ts`.
 - Devem ser inicializadas com valor padrão.
 
 Exemplo:
 
 ```ts
-export class AppSettings {
+export class AppConfig {
 
   public APP_TIMEOUT: number = 2 * 60 * 1000;
 
@@ -448,7 +448,7 @@ Customizado:
 
 ```ts
 @Injectable()
-export class UserService extends AppProvider {
+export class UserService {
 
   /** Implemente seus métodos */
 
@@ -559,7 +559,7 @@ Implementação:
 
 ```ts
 @Injectable()
-export class AppLoggerInterceptor extends AppProvider implements NestInterceptor {
+export class AppLoggerInterceptor implements NestInterceptor {
 
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req: AppRequest = context.switchToHttp().getRequest();
@@ -699,10 +699,10 @@ gmaps
 |- gmaps.interface
    | - index.ts
 |- gmaps.service.ts
-|- gmaps.settings.ts
+|- gmaps.config.ts
 ```
 
-Agora, por padrão, as variáveis de ambiente `GMAPS_HOST` e `GMAPS_AUTH` serão mandatórias. Você pode configurar a validação no arquivo `gmaps.settings.ts`.
+Agora, por padrão, as variáveis de ambiente `GMAPS_HOST` e `GMAPS_AUTH` serão mandatórias. Você pode configurar a validação no arquivo `gmaps.config.ts`.
 
 A estratégia de autenticação do modelo é colocar o `*_AUTH` no header `Authorization`. Dependendo do serviço será necessário modificar.
 

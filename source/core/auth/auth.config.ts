@@ -2,12 +2,12 @@ import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-valida
 
 import { AuthStrategy } from './auth.enum';
 
-export class AuthSettings {
+export class AuthConfig {
 
   /* Environment Variables */
 
   @IsOptional()
-  @IsIn(Object.keys(AuthStrategy))
+  @IsIn(Object.values(AuthStrategy))
   public readonly AUTH_STRATEGY: string;
 
   @ValidateIf((o) => o.AUTH_STRATEGY)

@@ -6,10 +6,7 @@ import { UtilService } from '../util/util.service';
 import { AppFilter } from './app.filter';
 import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
 import { AppMetadataMiddleware } from './app.middleware';
-import { AppSettings } from './app.settings';
 
-const appSettings: AppSettings = UtilService.parseSettings();
-const validationRules = appSettings.APP_VALIDATION_RULES;
 const modules = UtilService.globToRequire([
   './**/*.module.js',
   '!./**/app.module.js',
@@ -24,10 +21,16 @@ const modules = UtilService.globToRequire([
   exports: modules,
   providers: [
     { provide: APP_FILTER, useClass: AppFilter },
-    { provide: APP_PIPE, useFactory: (): ValidationPipe => new ValidationPipe(validationRules) },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AppLoggerInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AppTimeoutInterceptor },
+    {
+      provide: APP_PIPE,
+      useFactory: (): ValidationPipe => new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    },
   ],
 })
 export class AppModule {

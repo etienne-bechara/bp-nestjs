@@ -1,7 +1,8 @@
+import { Dictionary, PoolConfig } from '@mikro-orm/core';
 import { Transform } from 'class-transformer';
 import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf } from 'class-validator';
 
-export class OrmSettings {
+export class OrmConfig {
 
   /* Environment Variables */
 
@@ -32,8 +33,19 @@ export class OrmSettings {
 
   /* Provider Options */
 
-  public readonly ORM_POOL_MIN: number = 5;
+  public readonly ORM_POOL_CONFIG: PoolConfig = {
+    min: 5,
+    max: 25,
+  };
 
-  public readonly ORM_POOL_MAX: number = 25;
+  public readonly ORM_DRIVER_OPTIONS: Dictionary<any> = {
+    connection: {
+      enableKeepAlive: true,
+      dateStrings: [
+        'DATE',
+        'DATETIME',
+      ],
+    },
+  };
 
 }

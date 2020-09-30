@@ -1,18 +1,20 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import Redis from 'ioredis';
 
-import { AppProvider } from '../app/app.provider';
+import { ConfigService } from '../config/config.service';
+import { LoggerService } from '../logger/logger.service';
+import { RedisConfig } from './redis.config';
 import { RedisKey } from './redis.enum';
 import { RedisSetParams } from './redis.interface';
-import { RedisSettings } from './redis.settings';
 
 @Injectable()
-export class RedisService extends AppProvider {
-  private settings: RedisSettings = this.getSettings();
+export class RedisService {
   private redisClient: Redis.Redis;
 
-  public constructor() {
-    super();
+  public constructor(
+    private readonly configService: ConfigService<RedisConfig>,
+    private readonly loggerService: LoggerService,
+  ) {
     this.setupRedis();
   }
 
@@ -23,23 +25,23 @@ export class RedisService extends AppProvider {
    */
   private setupRedis(): void {
 
-    if (!this.settings.REDIS_HOST) {
-      this.logger.warning('[DISABLED] Redis client', { private: true });
+    if (!this.configService.get('REDIS_HOST')) {
+      this.loggerService.warning('[DISABLED] Redis client', { private: true });
       return;
     }
 
     this.redisClient = new Redis({
-      host: this.settings.REDIS_HOST,
-      port: this.settings.REDIS_PORT,
-      password: this.settings.REDIS_PASSWORD,
-      keyPrefix: this.settings.REDIS_KEY_PREFIX,
+      host: this.configService.get('REDIS_HOST'),
+      port: this.configService.get('REDIS_PORT'),
+      password: this.configService.get('REDIS_PASSWORD'),
+      keyPrefix: this.configService.get('REDIS_KEY_PREFIX'),
       reconnectOnError: (err: Error): boolean | 1 | 2 => {
-        this.logger.error(err);
+        this.loggerService.error(err);
         return 2;
       },
     });
 
-    this.logger.success('[ENABLED] Redis client', { private: true });
+    this.loggerService.success('[ENABLED] Redis client', { private: true });
   }
 
   /**
@@ -60,7 +62,7 @@ export class RedisService extends AppProvider {
    */
   public async getKey<T>(key: RedisKey): Promise<T> {
     this.checkRedisClient();
-    this.logger.debug(`Redis: Reading key ${key}...`);
+    this.loggerService.debug(`Redis: Reading key ${key}...`);
 
     const stringValue = await this.redisClient.get(key);
     return JSON.parse(stringValue);
@@ -86,7 +88,7 @@ export class RedisService extends AppProvider {
       extraParams.push(params.duration);
     }
 
-    this.logger.debug(`Redis: Setting key ${params.key}...`);
+    this.loggerService.debug(`Redis: Setting key ${params.key}...`);
 
     await this.redisClient.set(
       params.key,

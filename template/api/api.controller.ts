@@ -1,14 +1,13 @@
 import { Controller } from '@nestjs/common';
 
-import { AppProvider } from '../core/app/app.provider';
+import { PascalCaseConfig } from './dot.case.config';
 import { PascalCaseService } from './dot.case.service';
-import { PascalCaseSettings } from './dot.case.settings';
 
 @Controller('path/case')
-export class PascalCaseController extends AppProvider {
-  private settings: PascalCaseSettings = this.getSettings();
+export class PascalCaseController {
+  private config: PascalCaseConfig = this.getConfig();
 
-  public constructor(private readonly camelCaseService: PascalCaseService) { super(); }
+  public constructor(private readonly camelCaseService: PascalCaseService) {  }
 
   /* If you with to expose any functionalities implement them here */
 

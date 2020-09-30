@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsNumber, IsOptional, IsString, IsUrl, ValidateIf } from 'class-validator';
 
-export class RedisSettings {
+export class RedisConfig {
 
   /* Environment Variables */
 

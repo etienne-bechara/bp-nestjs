@@ -5,42 +5,45 @@ import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import moment from 'moment';
 
+import { AppConfig } from '../app/app.config';
 import { AppEnvironment } from '../app/app.enum';
-import { AppSettings } from '../app/app.settings';
+import { ConfigService } from '../config/config.service';
+import { LoggerConfig } from './logger.config';
 import { LoggerLevel } from './logger.enum';
 import { LoggerParams } from './logger.interface';
-import { LoggerSettings } from './logger.settings';
 
 @Injectable()
 export class LoggerService {
   private sentryEnabled: boolean;
   private chalk: any;
 
-  public constructor(private settings: LoggerSettings & AppSettings) {
+  public constructor(
+    private readonly configService: ConfigService<AppConfig & LoggerConfig>,
+  ) {
     this.setupLogger();
   }
 
   /**
-   * Enable Sentry integration if the minum level configured
-   * at settings matches the current environment
+   * Enable Sentry integration if the minimum level configured
+   * at config matches the current environment
    * Then add a process listener to catch any unhandled exception.
    */
   private setupLogger(): void {
-    this.chalk = this.settings.NODE_ENV === AppEnvironment.DEVELOPMENT
+    this.chalk = this.configService.get('NODE_ENV') === AppEnvironment.LOCAL
       ? require('chalk')
       : undefined;
 
-    this.info(`Environment configured as ${this.settings.NODE_ENV}`, { private: true });
+    this.info(`Environment configured as ${this.configService.get('NODE_ENV')}`, { private: true });
 
     this.sentryEnabled =
-      this.settings.LOGGER_SENTRY_DSN
-      && this.settings.LOGGER_SENTRY_ENVIRONMENTS.includes(this.settings.NODE_ENV);
+      this.configService.get('LOGGER_SENTRY_DSN')
+      && this.configService.get('LOGGER_SENTRY_ENVIRONMENTS').includes(this.configService.get('NODE_ENV'));
 
     if (this.sentryEnabled) {
       Sentry.init({
-        dsn: this.settings.LOGGER_SENTRY_DSN,
-        environment: this.settings.NODE_ENV,
-        integrations: (ints) => ints.filter((i) => i.name !== 'OnUncaughtException'),
+        dsn: this.configService.get('LOGGER_SENTRY_DSN'),
+        environment: this.configService.get('NODE_ENV'),
+        integrations: (integration) => integration.filter((i) => i.name !== 'OnUncaughtException'),
       });
       this.success('[ENABLED] Sentry integration', { private: true });
     }
@@ -99,7 +102,7 @@ export class LoggerService {
    */
   private printLog(params: LoggerParams): void {
 
-    if (this.settings.NODE_ENV === AppEnvironment.DEVELOPMENT) {
+    if (this.configService.get('NODE_ENV') === AppEnvironment.LOCAL) {
       const nowStr = moment().format('YYYY-MM-DD HH:mm:ss');
       const stackStr = params.error
         ? `  at ${require('clean-stack')(params.error.stack)
@@ -124,13 +127,13 @@ export class LoggerService {
   }
 
   /**
-   * Publish events of Sentry according to minimun configured level.
+   * Publish events of Sentry according to minimum configured level.
    * @param params
    */
   private publishLog(params: LoggerParams): void {
     if (params.data?.private) return;
 
-    if (this.sentryEnabled && params.level <= this.settings.LOGGER_SENTRY_MINIMUM_LEVEL) {
+    if (this.sentryEnabled && params.level <= this.configService.get('LOGGER_SENTRY_MINIMUM_LEVEL')) {
       let sentryLevel;
       if (params.level === LoggerLevel.DEBUG) sentryLevel = Sentry.Severity.Debug;
       else if (params.level === LoggerLevel.INFO) sentryLevel = Sentry.Severity.Info;

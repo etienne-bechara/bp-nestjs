@@ -1,28 +1,54 @@
+import { UnderscoreNamingStrategy } from '@mikro-orm/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 
+import { AppConfig } from '../app/app.config';
+import { AppEnvironment } from '../app/app.enum';
+import { ConfigService } from '../config/config.service';
+import { LoggerService } from '../logger/logger.service';
 import { UtilService } from '../util/util.service';
-import OrmConnection from './orm.connection';
-import { OrmSettings } from './orm.settings';
+import { OrmConfig } from './orm.config';
 
-const enableOrm = UtilService.parseSettings<OrmSettings>().ORM_TYPE;
-const logger = UtilService.getLoggerService();
-const entities = UtilService.globToRequire([
+const rootEntities = UtilService.globToRequire('./**/*.entity.{ts,js}');
+const featureEntities = UtilService.globToRequire([
   './**/*.entity.js',
   '!./**/orm*entity.js',
 ]);
 
-enableOrm
-  ? logger.success('[ENABLED] ORM connection ', { private: true })
-  : logger.warning('[DISABLED] ORM connection', { private: true });
-
 @Module({
   imports: [
-    ...enableOrm ? [ MikroOrmModule.forRoot(OrmConnection) ] : [ ],
-    ...enableOrm ? [ MikroOrmModule.forFeature({ entities }) ] : [ ],
+    MikroOrmModule.forRootAsync({
+      inject: [ ConfigService, LoggerService ],
+      useFactory: (
+        configService: ConfigService<AppConfig & OrmConfig>,
+        loggerService: LoggerService,
+      ) => ({
+        type: configService.get('ORM_TYPE'),
+        host: configService.get('ORM_HOST'),
+        port: configService.get('ORM_PORT'),
+        user: configService.get('ORM_USERNAME'),
+        password: configService.get('ORM_PASSWORD'),
+        dbName: configService.get('ORM_DATABASE'),
+        pool: configService.get('ORM_POOL_CONFIG'),
+        driverOptions: configService.get('ORM_DRIVER_OPTIONS'),
+        baseDir: __dirname,
+        entities: rootEntities,
+        logger: (msg): void => loggerService.debug(`ORM ${msg}`),
+        namingStrategy: UnderscoreNamingStrategy,
+        debug: configService.get('NODE_ENV') === AppEnvironment.LOCAL,
+        migrations: {
+          tableName: '_migration',
+          path: `${__dirname}/../../../../migration`,
+          pattern: /^[\w-]+\d+\.[jt]s$/,
+          dropTables: configService.get('NODE_ENV') === AppEnvironment.LOCAL,
+          emit: 'ts',
+        },
+      }),
+    }),
+    MikroOrmModule.forFeature({ entities: featureEntities }),
   ],
   exports: [
-    ...enableOrm ? [ MikroOrmModule.forFeature({ entities }) ] : [ ],
+    MikroOrmModule.forFeature({ entities: featureEntities }),
   ],
 })
 export class OrmModule { }

@@ -6,23 +6,25 @@ import https from 'https';
 import moment from 'moment';
 import qs from 'qs';
 
-import { AppProvider } from '../app/app.provider';
+import { ConfigService } from '../config/config.service';
 import { UtilService } from '../util/util.service';
+import { HttpsConfig } from './https.config';
 import { HttpsReturnType } from './https.enum';
 import { HttpsCookie, HttpsRequestParams, HttpsServiceBases,
   HttpsServiceDefaults, HttpsServiceOptions } from './https.interface';
-import { HttpsSettings } from './https.settings';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class HttpsService extends AppProvider {
-  private settings: HttpsSettings = this.getSettings();
+export class HttpsService {
 
   private bases: HttpsServiceBases = { };
   private defaults: HttpsServiceDefaults= { };
   private httpsAgent: https.Agent;
   private instance: AxiosInstance;
 
-  public constructor(private readonly utilService: UtilService) { super(); }
+  public constructor(
+    private readonly configService: ConfigService<HttpsConfig>,
+    private readonly utilService: UtilService,
+  ) { }
 
   /**
    * Creates new HTTP instance based on Axios, validator is
@@ -50,9 +52,10 @@ export class HttpsService extends AppProvider {
    */
   private setDefaultParams(params: HttpsServiceOptions): void {
     if (!params.defaults) params.defaults = { };
+    const defaultTimeout = this.configService.get('HTTPS_DEFAULT_TIMEOUT');
 
     this.defaults.returnType = params.defaults.returnType || HttpsReturnType.DATA;
-    this.defaults.timeout = params.defaults.timeout || this.settings.HTTPS_DEFAULT_TIMEOUT;
+    this.defaults.timeout = params.defaults.timeout || defaultTimeout;
 
     this.defaults.validator = params.defaults.validator
       ? params.defaults.validator
@@ -170,8 +173,8 @@ export class HttpsService extends AppProvider {
   }
 
   /**
-   * Given a sucessful response, isolate its cookies in an
-   * easily accesible array of interfaces.
+   * Given a successful response, isolate its cookies in an
+   * easily accessible array of interfaces.
    * @param res
    */
   private parseResponseCookies(res: any): any {

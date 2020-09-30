@@ -2,14 +2,19 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
+import { ConfigService } from '../../config/config.service';
+import { LoggerService } from '../../logger/logger.service';
+import { AppConfig } from '../app.config';
 import { AppEnvironment } from '../app.enum';
 import { AppRequest, AppResponse } from '../app.interface';
-import { AppProvider } from '../app.provider';
-import { AppSettings } from '../app.settings';
 
 @Injectable()
-export class AppLoggerInterceptor extends AppProvider implements NestInterceptor {
-  private settings: AppSettings = this.getSettings();
+export class AppLoggerInterceptor implements NestInterceptor {
+
+  public constructor(
+    private readonly configService: ConfigService<AppConfig>,
+    private readonly loggerService: LoggerService,
+  ) { }
 
   /**
    * Print request and response data at console for debugging purposes.
@@ -21,8 +26,8 @@ export class AppLoggerInterceptor extends AppProvider implements NestInterceptor
     const start = new Date().getTime();
 
     const reqTarget = `${req.method.padEnd(6, ' ')} ${req.url}`;
-    if (this.settings.NODE_ENV === AppEnvironment.DEVELOPMENT) {
-      this.logger.server(`> ${reqTarget} | ${req.metadata.ip} | ${req.metadata.userAgent}`);
+    if (this.configService.get('NODE_ENV') === AppEnvironment.LOCAL) {
+      this.loggerService.server(`> ${reqTarget} | ${req.metadata.ip} | ${req.metadata.userAgent}`);
     }
 
     return next
@@ -30,7 +35,7 @@ export class AppLoggerInterceptor extends AppProvider implements NestInterceptor
       .pipe(
         finalize(() => {
           const res: AppResponse = context.switchToHttp().getResponse();
-          this.logger.server(`< ${reqTarget} | ${res.statusCode} | ${new Date().getTime() - start} ms`);
+          this.loggerService.server(`< ${reqTarget} | ${res.statusCode} | ${new Date().getTime() - start} ms`);
         }),
       );
   }
