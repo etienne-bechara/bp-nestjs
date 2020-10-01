@@ -21,8 +21,8 @@ export class PascalCaseService extends OrmService<PascalCaseEntity> {
   ) {
     super(camelCaseRepository, {
       defaults: {
-        uniqueKey: [ ], // Default key to match when upserting (can be overriden in method)
-        populate: [ ], // Default properties to cascade read (can be overriden in method)
+        uniqueKey: [ ], // Default key to match when upserting (can be overridden in method)
+        populate: [ ], // Default properties to cascade read (can be overridden in method)
       },
     });
   }

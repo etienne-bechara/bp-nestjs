@@ -54,36 +54,4 @@ export class TestService {
     });
   }
 
-  /**
-   * Runs a test group mocking console.log and console.info.
-   * @param name
-   * @param fn
-   */
-  public static describeSilent(name: string, fn: any): void {
-    console.log = jest.fn();
-    console.info = jest.fn();
-    fn();
-  }
-
-  /**
-   * Describes a test only if desired environment variable
-   * is present.
-   * @param variable
-   * @param silent
-   * @param name
-   * @param fn
-   */
-  public static describeIfEnv(variable: string, silent: boolean, name: string, fn: jest.EmptyFunction): void {
-    const variableExists = dotenv.config().parsed[variable];
-    if (!variableExists) {
-      describe.skip(name, fn);
-    }
-    else if (silent) {
-      TestService.describeSilent(name, fn);
-    }
-    else {
-      describe(name, fn);
-    }
-  }
-
 }
