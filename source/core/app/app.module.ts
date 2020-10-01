@@ -2,6 +2,7 @@
 import { ClassSerializerInterceptor, Global, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
+import { ConfigModule } from '../config/config.module';
 import { StaticService } from '../static/static.service';
 import { AppFilter } from './app.filter';
 import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
@@ -10,15 +11,23 @@ import { AppMetadataMiddleware } from './app.middleware';
 const modules = StaticService.globToRequire([
   './**/*.module.js',
   '!./**/app.module.js',
+  '!./**/config.module.js',
 ]).reverse();
 
 /**
- * Globally loads all files matching the module.ts pattern.
+ * Globally loads all files matching the *.module.ts pattern.
+ * Handles configuration separately as it can be loaded async.
  */
 @Global()
 @Module({
-  imports: modules,
-  exports: modules,
+  imports: [
+    ConfigModule.forRootAsync(),
+    ...modules,
+  ],
+  exports: [
+    ConfigModule,
+    ...modules,
+  ],
   providers: [
     { provide: APP_FILTER, useClass: AppFilter },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },

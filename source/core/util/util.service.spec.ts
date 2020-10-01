@@ -1,13 +1,18 @@
 import { Test } from '@nestjs/testing';
 
+import { ConfigModule } from '../config/config.module';
+import { ConfigService } from '../config/config.service';
+import { LoggerService } from '../logger/logger.service';
+import { StaticService } from '../static/static.service';
 import { UtilService } from './util.service';
 
-UtilService.describeSilent('UtilService', () => {
+StaticService.describeSilent('UtilService', () => {
   let utilService: UtilService;
 
   beforeAll(async () => {
     const testModule = await Test.createTestingModule({
-      providers: [ UtilService ],
+      imports: [ ConfigModule.forRootAsync() ],
+      providers: [ ConfigService, UtilService, LoggerService ],
     }).compile();
 
     utilService = testModule.get(UtilService);

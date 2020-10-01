@@ -1,16 +1,20 @@
 import { Test } from '@nestjs/testing';
 
-import { UtilService } from '../util/util.service';
+import { ConfigModule } from '../config/config.module';
+import { ConfigService } from '../config/config.service';
+import { LoggerService } from '../logger/logger.service';
+import { StaticService } from '../static/static.service';
 import { RedisKey } from './redis.enum';
 import { RedisService } from './redis.service';
 
-UtilService.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
+StaticService.describeIfEnv('REDIS_HOST', true, 'RedisService', () => {
   const rng = Math.random();
   let redisService: RedisService;
 
   beforeAll(async () => {
     const testModule = await Test.createTestingModule({
-      providers: [ RedisService ],
+      imports: [ ConfigModule.forRootAsync() ],
+      providers: [ RedisService, LoggerService, ConfigService ],
     }).compile();
 
     redisService = testModule.get(RedisService);

@@ -1,17 +1,20 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
-import { AppModule } from '../app/app.module';
+import { ConfigModule } from '../config/config.module';
+import { ConfigService } from '../config/config.service';
+import { LoggerService } from '../logger/logger.service';
+import { StaticService } from '../static/static.service';
 import { UtilService } from '../util/util.service';
 import { HttpsService } from './https.service';
 
-UtilService.describeSilent('UtilService', () => {
+StaticService.describeSilent('UtilService', () => {
   let httpsService: HttpsService;
 
   beforeEach(async () => {
     const testModule = await Test.createTestingModule({
-      imports: [ AppModule ],
-      providers: [ HttpsService, UtilService ],
+      imports: [ ConfigModule.forRootAsync() ],
+      providers: [ HttpsService, UtilService, ConfigService, LoggerService ],
     }).compile();
 
     httpsService = await testModule.resolve(HttpsService);

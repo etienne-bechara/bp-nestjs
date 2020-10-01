@@ -24,7 +24,6 @@ export class AppService {
    * • Disable timeout (handled in custom interceptor).
    */
   public async bootServer(): Promise<void> {
-    await ConfigService.populateConfig();
 
     this.server = await NestFactory.create(AppModule, {
       logger: [ 'error', 'warn' ],
