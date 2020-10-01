@@ -2,7 +2,7 @@ import { IncomingMessage } from 'http';
 
 export class AppRequest extends IncomingMessage {
   public metadata: AppRequestMetadata;
-  public headers: { [key: string]: string; };
+  public headers: { [key: string]: string };
   public accepted: any[];
   public protocol: string;
   public secure: boolean;

@@ -1,6 +1,6 @@
 export interface OrmServiceOptions {
   defaults?: {
     uniqueKey?: string[];
-    populate?: boolean | string[]
-  }
+    populate?: boolean | string[];
+  };
 }

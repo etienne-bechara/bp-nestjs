@@ -8,17 +8,17 @@ export interface UtilAppStatus {
     architecture: string;
     endianness: string;
     uptime: number;
-  },
-  cpus: os.CpuInfo[]
+  };
+  cpus: os.CpuInfo[];
   memory: {
     total: number;
     free: number;
-  },
+  };
   network: UtilAppNetwork;
 }
 
 export interface UtilAppNetwork {
   public_ipv4: string;
   public_ipv6: string;
-  interfaces: NodeJS.Dict<os.NetworkInterfaceInfo[]>
+  interfaces: NodeJS.Dict<os.NetworkInterfaceInfo[]>;
 }

@@ -38,5 +38,5 @@ export interface HttpsServiceAgent {
     cert: string;
     key: string;
     passphrase?: string;
-  }
+  };
 }

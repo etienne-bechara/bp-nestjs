@@ -177,7 +177,7 @@ export abstract class OrmController<Entity> {
    * @param object
    * @param type
    */
-  protected async plainToDtoOffset(object: any = { }, type: ClassType<unknown>): Promise<{ data: any, options: any }> {
+  protected async plainToDtoOffset(object: any = { }, type: ClassType<unknown>): Promise<{ data: any; options: any }> {
 
     const { data, options } = this.splitDataOptions(object);
 
@@ -192,7 +192,7 @@ export abstract class OrmController<Entity> {
    * to query find options.
    * @param object
    */
-  protected splitDataOptions(object: any = { }): { data: any, options: any} {
+  protected splitDataOptions(object: any = { }): { data: any; options: any} {
     const optionKeys = [ 'limit', 'offset', 'order' ];
 
     const data = { ...object };
@@ -217,7 +217,7 @@ export abstract class OrmController<Entity> {
    * and ORM find execution.
    * @param query
    */
-  protected parseQueryOperators(query: any = { }): { source: any, stripped: any, unflatted: any } {
+  protected parseQueryOperators(query: any = { }): { source: any; stripped: any; unflatted: any } {
     const allowedOperators = new Set([ 'eq', 'gt', 'gte', 'lt', 'lte', 'ne', 'like', 're' ]);
 
     const source = { ...query };

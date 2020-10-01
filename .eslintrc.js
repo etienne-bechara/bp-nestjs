@@ -177,6 +177,7 @@ module.exports =  {
 
     // Commas, semicolons, quotes, parenthesis and brackets
     '@typescript-eslint/quotes': [ 'warn', 'single', { avoidEscape: true }],
+    '@typescript-eslint/member-delimiter-style': [ 'warn' ],
     '@typescript-eslint/semi': [ 'warn' ],
     'comma-dangle': [ 'warn', 'always-multiline' ],
     'curly': [ 'warn', 'multi-line', 'consistent' ],

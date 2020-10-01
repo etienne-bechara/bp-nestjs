@@ -7,7 +7,7 @@ import { PascalCaseService } from './dot.case.service';
 export class PascalCaseController {
   private config: PascalCaseConfig = this.getConfig();
 
-  public constructor(private readonly camelCaseService: PascalCaseService) {  }
+  public constructor(private readonly camelCaseService: PascalCaseService) { }
 
   /* If you with to expose any functionalities implement them here */
 

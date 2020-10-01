@@ -6,10 +6,10 @@ export interface OrmControllerOptions {
   routes?: {
     only?: OrmControllerMethod[];
     exclude?: OrmControllerMethod[];
-  },
+  };
   dto?: {
-    create?: ClassType<unknown>,
-    update?: ClassType<unknown>,
-    read?: ClassType<unknown>,
-  }
+    create?: ClassType<unknown>;
+    update?: ClassType<unknown>;
+    read?: ClassType<unknown>;
+  };
 }
