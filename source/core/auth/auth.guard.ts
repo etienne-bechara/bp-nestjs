@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
   /**
    * Implements a global authentication according to
    * configured environment variables
-   * Refer to .env.sample for detailed information.
+   * Refer to .env.schema for detailed information.
    * @param context
    */
   public canActivate(context: ExecutionContext): boolean {

@@ -12,4 +12,4 @@
 
 # Application Secrets
 .env*
-!.env.sample
+!.env.schema

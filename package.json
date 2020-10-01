@@ -33,7 +33,7 @@
     "update:minor": "ncu -u --semverLevel major && npm i && npm audit fix",
     "update:major": "ncu -u && npm i && npm audit fix --force",
     "==== Boilerplate Config ====": "",
-    "boilerplate:setup": "npm i && cp-cli .env.sample .env && npm run boilerplate:reset && npm run boilerplate:update",
+    "boilerplate:setup": "npm i && cp-cli .env.schema .env && npm run boilerplate:reset && npm run boilerplate:update",
     "boilerplate:reset": "npm run reset:branch && npm run reset:remote",
     "boilerplate:update": "git fetch boilerplate && git merge boilerplate/master --allow-unrelated-histories --squash",
     "==== Boilerplate Removal ====": "",
