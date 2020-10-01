@@ -6,7 +6,6 @@ import { RedisService } from './redis.service';
 
 TestService.createSandbox({
   name: 'RedisService',
-  skipIfNoEnv: 'REDIS_HOST',
   providers: [ RedisService ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {
