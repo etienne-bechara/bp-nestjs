@@ -97,11 +97,9 @@ export class UtilService {
    * Reads data regarding application network.
    */
   public async getAppNetwork(): Promise<UtilAppNetwork> {
-    const { data: v4 } = await axios.get('https://api.ipify.org');
-    const { data: v6 } = await axios.get('https://api6.ipify.org');
+    const { data } = await axios.get('https://api64.ipify.org');
     return {
-      public_ipv4: v4,
-      public_ipv6: v6,
+      public_ip: data,
       interfaces: os.networkInterfaces(),
     };
   }
