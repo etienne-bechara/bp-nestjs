@@ -1,14 +1,10 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import dotenv from 'dotenv';
-import globby from 'globby';
 import os from 'os';
 
 import { AppRetryParams } from '../app/app.interface';
 import { LoggerService } from '../logger/logger.service';
-import { UtilAppStatus } from './util.interface';
+import { UtilAppNetwork, UtilAppStatus } from './util.interface';
 
 @Injectable()
 export class UtilService {
@@ -16,64 +12,6 @@ export class UtilService {
   public constructor(
     private readonly loggerService: LoggerService,
   ) { }
-
-  /**
-   * Given a glob path string, find all matching files
-   * and return an array of all required exports.
-   *
-   * Always use runtime root as entry point.
-   * @param globPath
-   */
-  public static globToRequire(globPath: string | string[]): any[] {
-    globPath = Array.isArray(globPath) ? globPath : [ globPath ];
-
-    const globRootPath = globPath.map((p) => {
-      if (!p.startsWith('./') && !p.startsWith('!./')) {
-        throw new Error("glob paths must start with './' or '!./'");
-      }
-      return p.replace(/^!\.\//, '!../../').replace(/^\.\//, '../../');
-    });
-
-    const matchingFiles = globby.sync(globRootPath, { cwd: __dirname });
-    const exportsArrays = matchingFiles.map((file) => {
-      const exportsObject = require(file);
-      return Object.keys(exportsObject).map((key) => exportsObject[key]);
-    });
-
-    return [].concat(...exportsArrays);
-  }
-
-  /**
-   * Runs a test group mocking console.log and console.info.
-   * @param name
-   * @param fn
-   */
-  public static describeSilent(name: string, fn: any): void {
-    console.log = jest.fn();
-    console.info = jest.fn();
-    fn();
-  }
-
-  /**
-   * Describes a test only if desired environment variable
-   * is present.
-   * @param variable
-   * @param silent
-   * @param name
-   * @param fn
-   */
-  public static describeIfEnv(variable: string, silent: boolean, name: string, fn: jest.EmptyFunction): void {
-    const variableExists = dotenv.config().parsed[variable];
-    if (!variableExists) {
-      describe.skip(name, fn);
-    }
-    else if (silent) {
-      UtilService.describeSilent(name, fn);
-    }
-    else {
-      describe(name, fn);
-    }
-  }
 
   /**
    * Asynchronously wait for desired amount of milliseconds.
@@ -92,12 +30,13 @@ export class UtilService {
 
     let msg = `${p.method}(): running with ${p.retries || '∞'} `;
     msg += `retries and ${p.timeout / 1000 || '∞ '}s timeout...`;
-    // this.loggerService.debug(msg);
+    this.loggerService.debug(msg);
 
     const startTime = new Date().getTime();
     let tentative = 1;
     let result: T;
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         result = await p.instance[p.method](...p.args);
@@ -113,36 +52,27 @@ export class UtilService {
 
         msg = `${p.method}(): ${e.message} | Retry #${tentative}/${p.retries || '∞'}`;
         msg += `, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`;
-        // this.loggerService.debug(msg);
+        this.loggerService.debug(msg);
 
         await this.halt(p.delay || 0);
       }
     }
 
-    // this.loggerService.debug(`${p.method}() finished successfully!`);
+    this.loggerService.debug(`${p.method}() finished successfully!`);
     return result;
   }
 
   /**
    * Reads data regarding current runtime and network.
+   * Let network acquisition fail if unable to fetch ips.
    */
-  public async readAppStatus(): Promise<UtilAppStatus> {
-    const publicIp = { v4: null, v6: null };
-
+  public async getAppStatus(): Promise<UtilAppStatus> {
+    let network: UtilAppNetwork;
     try {
-      const { data } = await axios.get('https://api.ipify.org');
-      publicIp.v4 = data;
+      network = await this.getAppNetwork();
     }
-    catch {
-      // this.loggerService.error(e);
-    }
-
-    try {
-      const { data } = await axios.get('https://api6.ipify.org');
-      publicIp.v6 = data;
-    }
-    catch {
-      // this.loggerService.error(e);
+    catch (e) {
+      this.loggerService.error(e);
     }
 
     return {
@@ -159,11 +89,20 @@ export class UtilService {
         free: os.freemem(),
       },
       cpus: os.cpus(),
-      network: {
-        public_ipv4: publicIp.v4,
-        public_ipv6: publicIp.v6,
-        interfaces: os.networkInterfaces(),
-      },
+      network,
+    };
+  }
+
+  /**
+   * Reads data regarding application network.
+   */
+  public async getAppNetwork(): Promise<UtilAppNetwork> {
+    const { data: v4 } = await axios.get('https://api.ipify.org');
+    const { data: v6 } = await axios.get('https://api6.ipify.org');
+    return {
+      public_ipv4: v4,
+      public_ipv6: v6,
+      interfaces: os.networkInterfaces(),
     };
   }
 

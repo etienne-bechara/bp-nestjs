@@ -2,12 +2,12 @@
 import { ClassSerializerInterceptor, Global, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
-import { UtilService } from '../util/util.service';
+import { StaticService } from '../static/static.service';
 import { AppFilter } from './app.filter';
 import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
 import { AppMetadataMiddleware } from './app.middleware';
 
-const modules = UtilService.globToRequire([
+const modules = StaticService.globToRequire([
   './**/*.module.js',
   '!./**/app.module.js',
 ]).reverse();

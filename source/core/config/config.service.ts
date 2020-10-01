@@ -5,7 +5,7 @@ import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 
 import { AppEnvironment } from '../app/app.enum';
-import { UtilService } from '../util/util.service';
+import { StaticService } from '../static/static.service';
 
 let cachedConfig: Record<string, any>;
 
@@ -30,7 +30,7 @@ export class ConfigService<T extends Record<string, any>> {
    * If everything is correct, caches the result.
    */
   public static async populateConfig(): Promise<void> {
-    const configConstructors = UtilService.globToRequire('./**/*.config.{js,ts}');
+    const configConstructors = StaticService.globToRequire('./**/*.config.{js,ts}');
     const envFile = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
     const envVariables = { ...process.env, envFile };
     const config: Record<string, any> = { };

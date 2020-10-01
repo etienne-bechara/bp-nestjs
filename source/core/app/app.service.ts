@@ -3,6 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { json } from 'express';
 
 import { ConfigService } from '../config/config.service';
+import { LoggerService } from '../logger/logger.service';
 import { AppConfig } from './app.config';
 import { AppModule } from './app.module';
 
@@ -12,6 +13,7 @@ import { AppModule } from './app.module';
  */
 export class AppService {
   private configService: ConfigService<AppConfig>;
+  private loggerService: LoggerService;
   private server: NestExpressApplication;
 
   /**
@@ -29,6 +31,8 @@ export class AppService {
     });
 
     this.configService = this.server.get('ConfigService');
+    this.loggerService = this.server.get('LoggerService');
+
     this.server.enableCors(this.configService.get('APP_CORS_OPTIONS'));
     this.server.use(
       json({ limit: this.configService.get('APP_JSON_LIMIT') }),
@@ -40,8 +44,8 @@ export class AppService {
     const timeoutStr = this.configService.get('APP_TIMEOUT')
       ? `set to ${(this.configService.get('APP_TIMEOUT') / 1000).toString()}s`
       : 'disabled';
-    // this.logger.debug(`Server timeouts are ${timeoutStr}`);
-    // this.logger.success(`Server listening on port ${this.config.PORT}`);
+    this.loggerService.debug(`Server timeouts are ${timeoutStr}`);
+    this.loggerService.success(`Server listening on port ${this.configService.get('PORT')}`);
   }
 
 }

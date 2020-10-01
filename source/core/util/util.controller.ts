@@ -13,7 +13,7 @@ export class UtilController {
    */
   @Get('status')
   public async getUtilStatus(): Promise<UtilAppStatus> {
-    return this.utilService.readAppStatus();
+    return this.utilService.getAppStatus();
   }
 
 }

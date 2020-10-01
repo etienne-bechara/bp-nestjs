@@ -6,11 +6,11 @@ import { AppConfig } from '../app/app.config';
 import { AppEnvironment } from '../app/app.enum';
 import { ConfigService } from '../config/config.service';
 import { LoggerService } from '../logger/logger.service';
-import { UtilService } from '../util/util.service';
+import { StaticService } from '../static/static.service';
 import { OrmConfig } from './orm.config';
 
-const rootEntities = UtilService.globToRequire('./**/*.entity.{ts,js}');
-const featureEntities = UtilService.globToRequire([
+const rootEntities = StaticService.globToRequire('./**/*.entity.{ts,js}');
+const featureEntities = StaticService.globToRequire([
   './**/*.entity.js',
   '!./**/orm*entity.js',
 ]);
