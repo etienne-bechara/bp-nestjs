@@ -35,13 +35,6 @@ const featureEntities = AppConfig.globToRequire([
         logger: (msg): void => loggerService.debug(`ORM ${msg}`),
         namingStrategy: UnderscoreNamingStrategy,
         debug: configService.get('NODE_ENV') === AppEnvironment.LOCAL,
-        migrations: {
-          tableName: '_migration',
-          path: `${__dirname}/../../../../migration`,
-          pattern: /^[\w-]+\d+\.[jt]s$/,
-          dropTables: configService.get('NODE_ENV') === AppEnvironment.LOCAL,
-          emit: 'ts',
-        },
       }),
     }),
     MikroOrmModule.forFeature({ entities: featureEntities }),
