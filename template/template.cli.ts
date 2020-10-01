@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 import { camelCase, constantCase, dotCase, pascalCase, pathCase, snakeCase } from 'change-case';
 import fs from 'fs-extra';
 import globby from 'globby';

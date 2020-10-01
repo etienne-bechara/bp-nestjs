@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/no-fn-reference-in-iterator */
-
 import { EntityData, FilterQuery, QueryOrder } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/mysql';
 import { BadRequestException, ConflictException, InternalServerErrorException,

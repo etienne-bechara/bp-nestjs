@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 
 import { AppConfig } from '../app/app.config';
-import { AppEnvironment } from '../app/app.enum';
 
 let cachedConfig: Record<string, any>;
 
@@ -52,11 +50,6 @@ export class ConfigService<T extends Record<string, any>> {
         config[key] = partialConfig[key];
       }
     }
-
-    if (config.NODE_ENV === AppEnvironment.LOCAL) {
-      require('source-map-support').install();
-    }
-
     cachedConfig = config;
   }
 

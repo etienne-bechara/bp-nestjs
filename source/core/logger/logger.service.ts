@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
-
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
+import chalk from 'chalk';
+import cleanStack from 'clean-stack';
 import moment from 'moment';
 
 import { AppConfig } from '../app/app.config';
@@ -15,7 +15,6 @@ import { LoggerParams } from './logger.interface';
 @Injectable()
 export class LoggerService {
   private sentryEnabled: boolean;
-  private chalk: any;
 
   public constructor(
     private readonly configService: ConfigService<AppConfig & LoggerConfig>,
@@ -29,10 +28,6 @@ export class LoggerService {
    * Then add a process listener to catch any unhandled exception.
    */
   private setupLogger(): void {
-    this.chalk = this.configService.get('NODE_ENV') === AppEnvironment.LOCAL
-      ? require('chalk')
-      : undefined;
-
     this.info(`Environment configured as ${this.configService.get('NODE_ENV')}`, { private: true });
 
     this.sentryEnabled =
@@ -105,17 +100,17 @@ export class LoggerService {
     if (this.configService.get('NODE_ENV') === AppEnvironment.LOCAL) {
       const nowStr = moment().format('YYYY-MM-DD HH:mm:ss');
       const stackStr = params.error
-        ? `  at ${require('clean-stack')(params.error.stack)
+        ? `  at ${cleanStack(params.error.stack)
           .split(' at ').splice(1).map((str: string) =>
             str.replace(/\s+/g, ' ').trim(),
           ).join('\n  at ')}`
         : undefined;
 
-      console.log(this.chalk`
+      console.log(chalk`
         {grey ${nowStr}} {${params.labelColor}  ${params.label} } {${params.messageColor} ${params.message}}
       `.trim());
 
-      if (stackStr && params.level <= LoggerLevel.ERROR) console.log(this.chalk`{grey ${stackStr}}`);
+      if (stackStr && params.level <= LoggerLevel.ERROR) console.log(chalk`{grey ${stackStr}}`);
       if (params.data && !params.data.private) console.log(params.data);
     }
 

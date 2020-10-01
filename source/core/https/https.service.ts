@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/require-await */
-
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import https from 'https';
