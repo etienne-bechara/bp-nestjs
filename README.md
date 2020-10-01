@@ -11,7 +11,7 @@ git clone https://github.com/etienne-bechara/bp-nestjs.git meu-novo-projeto
 cd meu-novo-projeto
 ```
 
-2\. Execute o script de setup, que irá renomear o remote `origin` para `boilerplate`, bem como reduzir todos os commits a apenas 1:
+2\. Execute o script de setup, que irá instalar as dependências e renomear o remote `origin` para `boilerplate`:
 
 ```shell
 npm run boilerplate:setup
