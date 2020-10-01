@@ -9,9 +9,9 @@ import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
 import { AppMetadataMiddleware } from './app.middleware';
 
 const modules = AppConfig.globToRequire([
-  './**/*.module.js',
-  '!./**/app.module.js',
-  '!./**/config.module.js',
+  './**/*.module.{js,ts}',
+  '!./**/app.module.{js,ts}',
+  '!./**/config.module.{js,ts}',
 ]).reverse();
 
 /**

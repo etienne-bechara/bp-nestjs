@@ -10,8 +10,8 @@ import { OrmConfig } from './orm.config';
 
 const rootEntities = AppConfig.globToRequire('./**/*.entity.{ts,js}');
 const featureEntities = AppConfig.globToRequire([
-  './**/*.entity.js',
-  '!./**/orm*entity.js',
+  './**/*.entity.{js,ts}',
+  '!./**/orm*entity.{js,ts}',
 ]);
 
 @Module({

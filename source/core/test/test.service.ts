@@ -2,7 +2,7 @@
 import { Test } from '@nestjs/testing';
 import dotenv from 'dotenv';
 
-import { ConfigModule } from '../config/config.module';
+import { AppModule } from '../app/app.module';
 import { ConfigService } from '../config/config.service';
 import { LoggerService } from '../logger/logger.service';
 import { TestSandboxOptions } from './test.interface';
@@ -32,8 +32,7 @@ export class TestService {
     // Creates the testing builder exposed to specific test
     const testingBuilder = Test.createTestingModule({
       imports: [
-        ConfigModule.forRootAsync(),
-        ...options.imports ? options.imports : [ ],
+        AppModule,
       ],
       providers: [
         ConfigService,
