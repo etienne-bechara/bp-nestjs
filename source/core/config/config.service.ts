@@ -4,8 +4,8 @@ import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 
+import { AppConfig } from '../app/app.config';
 import { AppEnvironment } from '../app/app.enum';
-import { StaticService } from '../static/static.service';
 
 let cachedConfig: Record<string, any>;
 
@@ -30,7 +30,7 @@ export class ConfigService<T extends Record<string, any>> {
    * If everything is correct, caches the result.
    */
   public static async populateConfig(): Promise<void> {
-    const configConstructors = StaticService.globToRequire('./**/*.config.{js,ts}');
+    const configConstructors = AppConfig.globToRequire('./**/*.config.{js,ts}');
     const envFile = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
     const envVariables = { ...process.env, envFile };
     const config: Record<string, any> = { };
