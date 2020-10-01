@@ -57,7 +57,7 @@
     "migration:create:prd": "npm run migration:set:prd && mikro-orm migration:create",
     "==== Migration Up ====": "",
     "migration:up": "(mikro-orm -v && mikro-orm migration:up) || (echo ORM not installed, skipping migrations... && exit 0)",
-    "==== Helpers ====": "",
+    "==== Migration Helpers ====": "",
     "migration:set:dev": "npm run build && cp-cli .env build/.env",
     "migration:set:stg": "npm run build && cp-cli .env.staging build/.env",
     "migration:set:prd": "npm run build && cp-cli .env.production build/.env"
