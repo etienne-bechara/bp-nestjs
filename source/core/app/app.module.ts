@@ -21,7 +21,7 @@ const modules = AppConfig.globToRequire([
 @Global()
 @Module({
   imports: [
-    ConfigModule.forRootAsync(),
+    ConfigModule.registerAsync(),
     ...modules,
   ],
   exports: [
