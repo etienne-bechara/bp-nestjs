@@ -6,7 +6,7 @@ import { ConfigModule } from '../config/config.module';
 import { AppConfig } from './app.config';
 import { AppFilter } from './app.filter';
 import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
-import { AppMetadataMiddleware } from './app.middleware';
+import { AppMiddleware } from './app.middleware';
 
 const modules = AppConfig.globToRequire([
   './**/*.module.{js,ts}',
@@ -45,14 +45,12 @@ const modules = AppConfig.globToRequire([
 export class AppModule {
 
   /**
-   * Applies desired middlewares.
+   * Applies a global middleware that acts on
+   * request before anything else.
    * @param consumer
    */
   public configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(
-        AppMetadataMiddleware,
-      )
-      .forRoutes('*');
+    consumer.apply(AppMiddleware).forRoutes('*');
   }
+
 }
