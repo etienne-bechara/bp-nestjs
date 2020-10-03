@@ -58,7 +58,7 @@ module.exports =  {
     '@typescript-eslint/no-unsafe-return': [ 'off' ], // Enables 'any' typed variables on returns
     '@typescript-eslint/restrict-template-expressions': [ 'off' ], // Complicates handling Error objects
     'unicorn/catch-error-name': [ 'off' ], // Allow using 'e' on catch instead of forced 'error'
-    'unicorn/no-null': [ 'off' ], // Allow using 'null', useful for returning strict DTOs
+    'unicorn/no-null': [ 'off' ], // Allow using 'null', useful for returning strict DTO
     'unicorn/no-reduce': [ 'off' ], // Allow using .reduce() method of Arrays
     'unicorn/prevent-abbreviations': [ 'off' ], // Allow common abbreviations (param, err, etc)
 
@@ -99,7 +99,7 @@ module.exports =  {
      * DOCUMENTATION RULES
      * Failure to comply should raise a 'warn'
      * • Must be present at all methods except top level classes
-     * • Must obey correct identation
+     * • Must obey correct indentation
      * • Must start with capital letter and end with a dot
      */
     'jsdoc/require-jsdoc': [ 'warn', {

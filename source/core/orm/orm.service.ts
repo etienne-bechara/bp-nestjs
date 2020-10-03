@@ -15,7 +15,7 @@ export abstract class OrmService<Entity> {
   protected readonly FK_FAIL_CREATE: string = 'must reference an existing entity';
   protected readonly FK_FAIL_DELETE: string = 'constraint prevents cascade deletion';
   protected readonly NOT_FOUND: string = 'entity with given id does not exist';
-  protected readonly PROPERTY_NON_EXISTANT: string = 'property does not exist on entity';
+  protected readonly PROPERTY_NON_EXISTENT: string = 'property does not exist on entity';
   protected readonly QUERY_FAIL: string = 'failed to execute query statement';
   protected readonly UK_REFERENCE_FAIL: string = 'unique constraint references more than one entity';
   protected readonly UK_MISSING: string = 'missing default unique key implementation';
@@ -156,7 +156,7 @@ export abstract class OrmService<Entity> {
 
   /**
    * Read, populate and count all entities that matches given criteria
-   * Returns an object contining limit, offset, total and results.
+   * Returns an object continuing limit, offset, total and results.
    * @param params
    * @param options
    */
@@ -193,7 +193,7 @@ export abstract class OrmService<Entity> {
   }
 
   /**
-   * Updates an already instatiated entity from raw data.
+   * Updates an already instantiated entity from raw data.
    * @param entity
    * @param data
    */
@@ -328,7 +328,7 @@ export abstract class OrmService<Entity> {
     else if (e.message.match(/query by not existing property/gi)) {
       const violation = /.+\.(.+)/gi.exec(e.message);
       const failedConstraint = violation ? violation[1] : 'undefined';
-      throw new BadRequestException(`${failedConstraint} ${this.PROPERTY_NON_EXISTANT}`);
+      throw new BadRequestException(`${failedConstraint} ${this.PROPERTY_NON_EXISTENT}`);
     }
 
     else {

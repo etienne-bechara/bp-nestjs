@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
 import { Inject, Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import https from 'https';
@@ -66,6 +65,7 @@ export class HttpsService {
 
     this.defaults.exceptionHandler = params.defaults.exceptionHandler
       ? params.defaults.exceptionHandler
+      // eslint-disable-next-line @typescript-eslint/require-await
       : async (params, res, msg): Promise<void> => {
         throw new InternalServerErrorException({
           message: `${params.method} ${params.url} ${msg}`,

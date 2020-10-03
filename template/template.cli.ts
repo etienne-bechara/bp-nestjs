@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { camelCase, constantCase, dotCase, pascalCase, pathCase, snakeCase } from 'change-case';
 import fs from 'fs-extra';
 import globby from 'globby';
@@ -68,6 +67,7 @@ function generateTemplateByType(type: string): void {
  * @param example
  */
 function printError(message: string, example?: string): void {
+  // eslint-disable-next-line no-console
   console.error(`
   
   Template Generation Failed!

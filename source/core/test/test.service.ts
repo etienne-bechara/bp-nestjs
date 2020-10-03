@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Test } from '@nestjs/testing';
 import dotenv from 'dotenv';
 
@@ -49,8 +48,8 @@ export class TestService {
     // Silence internal console and run provided descriptor
     // eslint-disable-next-line jest/valid-title
     describe(options.name, () => {
-      console.log = jest.fn();
-      console.info = jest.fn();
+      // eslint-disable-next-line no-console
+      console.log = jest.fn(); console.info = jest.fn();
       options.descriptor(testingBuilder);
     });
   }

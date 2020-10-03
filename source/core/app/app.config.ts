@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { Transform } from 'class-transformer';
 import { IsIn, IsNumber } from 'class-validator';
