@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
-import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import https from 'https';
 import moment from 'moment';
@@ -9,8 +9,8 @@ import { ConfigService } from '../config/config.service';
 import { UtilService } from '../util/util.service';
 import { HttpsConfig } from './https.config';
 import { HttpsReturnType } from './https.enum';
-import { HttpsCookie, HttpsRequestParams, HttpsServiceBases,
-  HttpsServiceDefaults, HttpsServiceOptions } from './https.interface';
+import { HttpsCookie, HttpsModuleOptions, HttpsRequestParams, HttpsServiceBases,
+  HttpsServiceDefaults } from './https.interface';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class HttpsService {
@@ -21,9 +21,13 @@ export class HttpsService {
   private instance: AxiosInstance;
 
   public constructor(
+    @Inject(HttpsConfig.HTTPS_MODULE_OPTIONS_TOKEN)
+    private readonly httpsModuleOptions: HttpsModuleOptions,
     private readonly configService: ConfigService<HttpsConfig>,
     private readonly utilService: UtilService,
-  ) { }
+  ) {
+    this.setupInstance(httpsModuleOptions);
+  }
 
   /**
    * Creates new HTTP instance based on Axios, validator is
@@ -31,7 +35,7 @@ export class HttpsService {
    * handler to standardize exception reporting.
    * @param params
    */
-  public setupInstance(params: HttpsServiceOptions): void {
+  private setupInstance(params: HttpsModuleOptions = { }): void {
     this.setDefaultParams(params);
     this.setBaseParams(params);
     this.setHttpsAgent(params);
@@ -49,7 +53,7 @@ export class HttpsService {
    * • Validator to pass on status lower than 400 (< bad request).
    * @param params
    */
-  private setDefaultParams(params: HttpsServiceOptions): void {
+  private setDefaultParams(params: HttpsModuleOptions): void {
     if (!params.defaults) params.defaults = { };
     const defaultTimeout = this.configService.get('HTTPS_DEFAULT_TIMEOUT');
 
@@ -79,7 +83,7 @@ export class HttpsService {
    * Store base URL, body and headers if configured at setup.
    * @param params
    */
-  private setBaseParams(params: HttpsServiceOptions): void {
+  private setBaseParams(params: HttpsModuleOptions): void {
     if (!params.bases) params.bases = { };
     this.bases.url = params.bases.url,
     this.bases.headers = params.bases.headers || { };
@@ -94,7 +98,7 @@ export class HttpsService {
    * • If ignoreHttpsErrors, customize it with a simple rejectUnauthorized.
    * @param params
    */
-  private setHttpsAgent(params: HttpsServiceOptions): void {
+  private setHttpsAgent(params: HttpsModuleOptions): void {
     if (!params.agent) {
       return;
     }
@@ -213,9 +217,7 @@ export class HttpsService {
    * @param params
    */
   public async request<T>(params: HttpsRequestParams): Promise<T> {
-    if (!this.instance) {
-      throw new InternalServerErrorException('https service must be configured');
-    }
+    if (!this.instance) this.setupInstance();
 
     const finalParams = this.replaceVariantParams(this.mergeBaseParams(params));
     const returnType = finalParams.returnType || this.defaults.returnType;

@@ -33,6 +33,7 @@ export class TestService {
     const testingBuilder = Test.createTestingModule({
       imports: [
         AppModule,
+        ...options.imports ? options.imports : [ ],
       ],
       providers: [
         ConfigService,

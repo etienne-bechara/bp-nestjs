@@ -18,16 +18,7 @@ export class PascalCaseService {
     private readonly configService: ConfigService<PascalCaseConfig>,
     private readonly loggerService: LoggerService,
     private readonly httpsService: HttpsService,
-  ) {
-    this.httpsService.setupInstance({
-      bases: {
-        url: this.configService.get('UPPER_CASE_HOST'),
-        headers: {
-          'authorization': this.configService.get('UPPER_CASE_API_KEY'),
-        },
-      },
-    });
-  }
+  ) { }
 
   /* Implement you API methods here */
 

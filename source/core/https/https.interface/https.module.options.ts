@@ -1,13 +1,16 @@
+import { ModuleMetadata } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import https from 'https';
 
 import { HttpsReturnType } from '../https.enum';
 import { HttpsRequestParams } from './https.request.params';
 
-/**
- * Sets up a custom HTTP instance based on Axios.
- */
-export interface HttpsServiceOptions {
+export interface HttpsAsyncModuleOptions extends Pick<ModuleMetadata, 'imports'> {
+  inject?: any[];
+  useFactory?: (...args: any[])=> Promise<HttpsModuleOptions> | HttpsModuleOptions;
+}
+
+export interface HttpsModuleOptions {
   agent?: HttpsServiceAgent;
   bases?: HttpsServiceBases;
   defaults?: HttpsServiceDefaults;

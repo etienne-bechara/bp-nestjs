@@ -2,7 +2,10 @@ import { DynamicModule, Module } from '@nestjs/common';
 
 import { ConfigService } from './config.service';
 
-@Module({ })
+@Module({
+  providers: [ ConfigService ],
+  exports: [ ConfigService ],
+})
 export class ConfigModule {
 
   /**
@@ -13,8 +16,6 @@ export class ConfigModule {
     await ConfigService.populateConfig();
     return {
       module: ConfigModule,
-      providers: [ ConfigService ],
-      exports: [ ConfigService ],
     };
   }
 
