@@ -24,6 +24,7 @@ export class TestService {
     if (options.skipIfNoEnv) {
       const variableExists = dotenv.config().parsed[options.skipIfNoEnv];
       if (!variableExists) {
+        // eslint-disable-next-line jest/valid-title, jest/no-disabled-tests
         describe.skip(options.name, () => options.descriptor(null));
         return;
       }
@@ -46,6 +47,7 @@ export class TestService {
     });
 
     // Silence internal console and run provided descriptor
+    // eslint-disable-next-line jest/valid-title
     describe(options.name, () => {
       console.log = jest.fn();
       console.info = jest.fn();

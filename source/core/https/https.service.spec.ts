@@ -21,12 +21,12 @@ TestService.createSandbox({
 
     describe('request', () => {
 
-      it('it should GET Google homepage', async () => {
+      it('should GET Google homepage', async () => {
         const data = await httpsService.get('https://www.google.com');
         expect(data).toMatch(/google/gi);
       });
 
-      it('it should throw a timeout exception', async () => {
+      it('should throw a timeout exception', async () => {
         let errorMessage: string;
         try {
           await httpsService.get('https://www.google.com', {
@@ -39,7 +39,7 @@ TestService.createSandbox({
         expect(errorMessage).toMatch(/timed out/gi);
       });
 
-      it('it should throw an internal server error exception', async () => {
+      it('should throw an internal server error exception', async () => {
         let errorStatus: number;
         try {
           await httpsService.get('https://www.google.com/404');

@@ -30,10 +30,12 @@ module.exports =  {
     'eslint:recommended', // https://eslint.org/docs/rules/
     'plugin:@typescript-eslint/recommended', // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin
     'plugin:@typescript-eslint/recommended-requiring-type-checking', // ^ ditto
+    'plugin:jest/recommended', // https://github.com/jest-community/eslint-plugin-jest#rules
     'plugin:unicorn/recommended', // https://github.com/sindresorhus/eslint-plugin-unicorn/blob/master/index.js
   ],
 
   plugins: [
+    'jest', // https://github.com/jest-community/eslint-plugin-jest
     'jsdoc', // https://github.com/gajus/eslint-plugin-jsdoc
     'promise', // https://github.com/xjamundx/eslint-plugin-promise
     'simple-import-sort', // https://github.com/lydell/eslint-plugin-simple-import-sort

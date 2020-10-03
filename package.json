@@ -133,6 +133,7 @@
     "change-case": "4.1.1",
     "cp-cli": "2.0.0",
     "eslint": "7.10.0",
+    "eslint-plugin-jest": "24.0.2",
     "eslint-plugin-jsdoc": "30.6.2",
     "eslint-plugin-more": "1.0.0",
     "eslint-plugin-promise": "4.2.1",
