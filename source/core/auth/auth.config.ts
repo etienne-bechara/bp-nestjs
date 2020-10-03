@@ -5,7 +5,6 @@ import { AuthStrategy } from './auth.enum';
 export class AuthConfig {
 
   /* Environment Variables */
-
   @IsOptional()
   @IsIn(Object.values(AuthStrategy))
   public readonly AUTH_STRATEGY: string;

@@ -5,7 +5,6 @@ import { IsIn, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class OrmConfig {
 
   /* Environment Variables */
-
   @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])
   public readonly ORM_TYPE: 'mongo' | 'mysql' | 'mariadb' | 'postgresql' | 'sqlite';
 
@@ -25,8 +24,7 @@ export class OrmConfig {
   @IsString() @IsNotEmpty()
   public readonly ORM_DATABASE: string;
 
-  /* Provider Options */
-
+  /* Service Settings */
   public readonly ORM_POOL_CONFIG: PoolConfig = {
     min: 5,
     max: 25,

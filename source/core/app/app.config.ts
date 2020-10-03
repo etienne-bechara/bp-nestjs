@@ -9,7 +9,6 @@ import { AppEnvironment } from './app.enum';
 export class AppConfig {
 
   /* Environment Variables */
-
   @IsIn(Object.values(AppEnvironment))
   public readonly NODE_ENV: AppEnvironment;
 
@@ -17,19 +16,16 @@ export class AppConfig {
   @IsNumber()
   public readonly PORT: number;
 
-  /* Provider Options */
+  /* Service Settings */
+  public readonly APP_JSON_LIMIT = '10mb';
 
-  public readonly APP_JSON_LIMIT: string = '10mb';
-
-  public readonly APP_TIMEOUT: number = 90 * 1000;
+  public readonly APP_TIMEOUT = 90 * 1000;
 
   public readonly APP_CORS_OPTIONS: CorsOptions = {
     origin: '*',
     methods: 'DELETE, GET, OPTIONS, POST, PUT',
     allowedHeaders: 'Accept, Authorization, Content-Type',
   };
-
-  /* Static Utilities */
 
   /**
    * Given a glob path string, find all matching files

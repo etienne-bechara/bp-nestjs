@@ -1,6 +1,6 @@
 export class HttpsConfig {
 
-  /* Provider Options */
+  /* Service Settings */
   public readonly HTTPS_DEFAULT_TIMEOUT = 60 * 1000;
 
   /* Injection Tokens */

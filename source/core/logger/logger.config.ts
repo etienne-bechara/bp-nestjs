@@ -6,13 +6,11 @@ import { LoggerLevel } from './logger.enum';
 export class LoggerConfig {
 
   /* Environment Variables */
-
   @IsOptional()
   @IsUrl()
   public readonly LOGGER_SENTRY_DSN: string;
 
-  /* Provider Options */
-
+  /* Service Settings */
   public readonly LOGGER_SENTRY_MINIMUM_LEVEL: LoggerLevel = LoggerLevel.ERROR;
 
   public readonly LOGGER_SENTRY_ENVIRONMENTS: AppEnvironment[] = [
