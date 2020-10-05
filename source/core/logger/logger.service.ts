@@ -35,7 +35,7 @@ export class LoggerService {
    */
   public registerTransport(transport: LoggerTransport): void {
     const options = transport.getOptions();
-    if (options?.level || options.level === 0) {
+    if (options?.level || options?.level === 0) {
       this.transports.push(transport);
     }
   }
