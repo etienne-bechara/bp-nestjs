@@ -4,11 +4,14 @@ import { validateOrReject } from 'class-validator';
 import dotenv from 'dotenv';
 
 import { AppConfig } from '../app/app.config';
+import { AppEnvironment } from '../app/app.enum';
 
 let cachedConfig: Record<string, any>;
 
 @Injectable()
 export class ConfigService<T extends Record<string, any>> {
+  public get(variable: 'NODE_ENV'): AppEnvironment;
+  public get<K extends keyof T>(variable: K): T[K];
 
   /**
    * Retrieves an specific setting by its key.

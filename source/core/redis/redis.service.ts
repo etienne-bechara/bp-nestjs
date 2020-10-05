@@ -36,7 +36,7 @@ export class RedisService {
       },
     });
 
-    this.loggerService.success(`Redis client connected at ${redisHost}`, { private: true });
+    this.loggerService.notice(`Redis client connected at ${redisHost}`);
   }
 
   /**

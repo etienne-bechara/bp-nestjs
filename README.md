@@ -23,11 +23,12 @@ npm run boilerplate:setup
 npm run boilerplate:udpate
 ```
 
-2b. Caso não queira utilizar as bases de dados, remova o componente desejado através de:
+2b. Caso não queira utilizar algum dos serviços opcionais, desinstale-os via:
 
 ```shell
 npm run uninstall:orm
 npm run uninstall:redis
+npm run uninstall:sentry
 ```
 
 3\. Suba a aplicação localmente através de:

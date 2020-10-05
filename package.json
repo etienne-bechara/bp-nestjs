@@ -39,6 +39,7 @@
     "==== Boilerplate Removal ====": "",
     "uninstall:orm": "npm un @mikro-orm/core @mikro-orm/mysql @mikro-orm/nestjs @mikro-orm/cli && rimraf source/core/orm && rimraf migration && rimraf template/crud",
     "uninstall:redis": "npm un ioredis @types/ioredis && rimraf source/core/redis",
+    "uninstall:sentry": "npm un @sentry/node && rimraf source/core/sentry",
     "==== Template Generation ====": "",
     "template:api": "ts-node ./template/template.cli -t api",
     "template:bare": "ts-node ./template/template.cli -t bare",

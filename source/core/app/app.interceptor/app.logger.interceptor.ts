@@ -27,7 +27,7 @@ export class AppLoggerInterceptor implements NestInterceptor {
 
     const reqTarget = `${req.method.padEnd(6, ' ')} ${req.url}`;
     if (this.configService.get('NODE_ENV') === AppEnvironment.LOCAL) {
-      this.loggerService.server(`> ${reqTarget} | ${req.metadata.ip} | ${req.metadata.userAgent}`);
+      this.loggerService.http(`> ${reqTarget} | ${req.metadata.ip} | ${req.metadata.userAgent}`);
     }
 
     return next
@@ -35,7 +35,7 @@ export class AppLoggerInterceptor implements NestInterceptor {
       .pipe(
         finalize(() => {
           const res: AppResponse = context.switchToHttp().getResponse();
-          this.loggerService.server(`< ${reqTarget} | ${res.statusCode} | ${new Date().getTime() - start} ms`);
+          this.loggerService.http(`< ${reqTarget} | ${res.statusCode} | ${new Date().getTime() - start} ms`);
         }),
       );
   }

@@ -44,7 +44,7 @@ export class AppService {
       ? `set to ${(this.configService.get('APP_TIMEOUT') / 1000).toString()}s`
       : 'disabled';
     this.loggerService.debug(`Server timeouts are ${timeoutStr}`);
-    this.loggerService.success(`Server listening on port ${this.configService.get('PORT')}`);
+    this.loggerService.notice(`Server listening on port ${this.configService.get('PORT')}`);
   }
 
 }

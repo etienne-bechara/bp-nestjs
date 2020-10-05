@@ -19,7 +19,7 @@ const featureEntities = AppConfig.globToRequire([
     MikroOrmModule.forRootAsync({
       inject: [ ConfigService, LoggerService ],
       useFactory: (
-        configService: ConfigService<AppConfig & OrmConfig>,
+        configService: ConfigService<OrmConfig>,
         loggerService: LoggerService,
       ) => {
         return {
