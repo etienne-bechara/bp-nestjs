@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import chalk from 'chalk';
 import moment from 'moment';
 
-import { AppEnvironment } from '../app/app.enum';
-import { ConfigService } from '../config/config.service';
-import { LoggerLevel } from '../logger/logger.enum';
-import { LoggerParams, LoggerTransport } from '../logger/logger.interface';
-import { LoggerTransportOptions } from '../logger/logger.interface/logger.transport.options';
-import { LoggerService } from '../logger/logger.service';
+import { AppEnvironment } from '../../../app/app.enum';
+import { ConfigService } from '../../../config/config.service';
+import { LoggerLevel } from '../../logger.enum';
+import { LoggerParams, LoggerTransport } from '../../logger.interface';
+import { LoggerTransportOptions } from '../../logger.interface/logger.transport.options';
+import { LoggerService } from '../../logger.service';
 import { ConsoleConfig } from './console.config';
 import { ConsoleStyle } from './console.interface';
 

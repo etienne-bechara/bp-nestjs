@@ -1,7 +1,7 @@
 import { IsOptional, IsUrl } from 'class-validator';
 
-import { AppEnvironment } from '../app/app.enum';
-import { LoggerLevel } from '../logger/logger.enum';
+import { AppEnvironment } from '../../../app/app.enum';
+import { LoggerLevel } from '../../logger.enum';
 
 export class SentryConfig {
 

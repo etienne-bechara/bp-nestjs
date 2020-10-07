@@ -2,11 +2,11 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { flatten } from 'flat';
 
-import { ConfigService } from '../config/config.service';
-import { LoggerLevel } from '../logger/logger.enum';
-import { LoggerParams, LoggerTransport } from '../logger/logger.interface';
-import { LoggerTransportOptions } from '../logger/logger.interface/logger.transport.options';
-import { LoggerService } from '../logger/logger.service';
+import { ConfigService } from '../../../config/config.service';
+import { LoggerLevel } from '../../logger.enum';
+import { LoggerParams, LoggerTransport } from '../../logger.interface';
+import { LoggerTransportOptions } from '../../logger.interface/logger.transport.options';
+import { LoggerService } from '../../logger.service';
 import { SentryConfig } from './sentry.config';
 
 @Injectable()
