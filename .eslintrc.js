@@ -150,7 +150,7 @@ module.exports =  {
     // Spacing
     '@typescript-eslint/func-call-spacing': [ 'warn', 'never' ],
     '@typescript-eslint/indent': [ 'warn', 2 ],
-    '@typescript-eslint/type-annotation-spacing': [ 'warn', { before: false, after: true }],
+    '@typescript-eslint/type-annotation-spacing': [ 'warn' ],
     'array-bracket-spacing': [ 'warn', 'always' ],
     'comma-spacing': [ 'warn', { before: false, after: true }],
     'key-spacing': [ 'warn', { beforeColon: false, afterColon: true, mode: 'strict' }],

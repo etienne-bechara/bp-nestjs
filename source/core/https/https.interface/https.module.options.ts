@@ -7,7 +7,7 @@ import { HttpsRequestParams } from './https.request.params';
 
 export interface HttpsAsyncModuleOptions extends Pick<ModuleMetadata, 'imports'> {
   inject?: any[];
-  useFactory?: (...args: any[])=> Promise<HttpsModuleOptions> | HttpsModuleOptions;
+  useFactory?: (...args: any[]) => Promise<HttpsModuleOptions> | HttpsModuleOptions;
 }
 
 export interface HttpsModuleOptions {
@@ -26,12 +26,12 @@ export interface HttpsServiceBases {
 export interface HttpsServiceDefaults {
   returnType?: HttpsReturnType;
   timeout?: number;
-  validator?: (status: number)=> boolean;
+  validator?: (status: number) => boolean;
   exceptionHandler?: (
     requestParams: HttpsRequestParams,
     upstreamResponse: AxiosResponse | any,
     errorMessage: string
-  )=> Promise<void>;
+  ) => Promise<void>;
 }
 
 export interface HttpsServiceAgent {

@@ -16,6 +16,6 @@ export interface HttpsRequestParams extends AxiosRequestConfig {
     requestParams: HttpsRequestParams,
     upstreamResponse: AxiosResponse | any,
     errorMessage: string
-  )=> Promise<void>;
+  ) => Promise<void>;
 
 }
