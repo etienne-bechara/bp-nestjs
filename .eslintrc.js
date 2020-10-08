@@ -4,8 +4,8 @@ npm i -D `
   @typescript-eslint/eslint-plugin `
   @typescript-eslint/parser `
   eslint `
+  eslint-plugin-jest `
   eslint-plugin-jsdoc `
-  eslint-plugin-more `
   eslint-plugin-promise `
   eslint-plugin-simple-import-sort `
   eslint-plugin-unicorn `
@@ -13,12 +13,29 @@ npm i -D `
 */
 
 module.exports =  {
+
+  globals: {
+    MyGlobal: true
+  },
+
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2019,
+    ecmaVersion: 2020,
     sourceType: 'module',
     project: './tsconfig.json',
     tsconfigRootDir: __dirname,
+  },
+
+  /**
+   * ENVIRONMENT DEFINITION
+   * Adds global declarations to the recognizable lint scope, which makes sure
+   * to never consider calls like 'require' or 'module' as something undefined.
+   */
+  env: {
+    es6: true,
+    jest: true,
+    mocha: true,
+    node: true,
   },
 
   /**
@@ -35,6 +52,7 @@ module.exports =  {
   ],
 
   plugins: [
+    '@typescript-eslint', // https://github.com/typescript-eslint/typescript-eslint
     'jest', // https://github.com/jest-community/eslint-plugin-jest
     'jsdoc', // https://github.com/gajus/eslint-plugin-jsdoc
     'promise', // https://github.com/xjamundx/eslint-plugin-promise
@@ -47,7 +65,7 @@ module.exports =  {
 
     /**
      * DISABLED RULES
-     * These were included in byt the 'extends' property.
+     * These were included by the 'extends' property.
      */
     '@typescript-eslint/no-inferrable-types': [ 'off' ], // Collides with typedef
     '@typescript-eslint/explicit-module-boundary-types': [ 'off' ], // Enables the 'any' keyword on arguments
@@ -89,7 +107,7 @@ module.exports =  {
      * New rules that should raise a 'warn'.
      */
     '@typescript-eslint/array-type': [ 'warn' ], // Enforces consistent array declaration
-    '@typescript-eslint/prefer-optional-chain': [ 'warn' ], // Enforces consistent array declaration
+    '@typescript-eslint/prefer-optional-chain': [ 'warn' ], // Enforces optional chaining when available
     'max-len': [ 'warn', { code: 120, comments: 120 } ], // Maximum column length
     'no-console': [ 'warn' ], // Disallow console.log
     'simple-import-sort/sort': [ 'warn' ], // Force import ordering
