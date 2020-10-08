@@ -11,6 +11,7 @@ export class OrmJsonType extends Type {
     if (!value) return null;
 
     let stringifiedValue: unknown;
+
     try {
       stringifiedValue = JSON.stringify(value);
     }

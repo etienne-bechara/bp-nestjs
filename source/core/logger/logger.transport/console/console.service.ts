@@ -46,6 +46,7 @@ export class ConsoleService implements LoggerTransport {
     if (env === AppEnvironment.LOCAL) {
       const msg = chalk`{grey ${now}} {${style.labelColor}  ${style.label} } {${style.messageColor} ${params.message}}`;
       console.log(msg);
+
       if (params.error && params.level <= LoggerLevel.ERROR) {
         console.log(chalk`{grey ${params.error.stack}}`);
       }
@@ -54,6 +55,7 @@ export class ConsoleService implements LoggerTransport {
     // Standard
     else {
       const msg = `${now} ${style.label} ${params.message}`;
+
       if (params.level <= LoggerLevel.ERROR) {
         console.error(msg);
         console.log(params.error);

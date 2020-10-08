@@ -35,7 +35,6 @@ TestService.createSandbox({
         expect(appStatus.network.public_ip).toBeDefined();
       });
     });
-
   },
 
 });

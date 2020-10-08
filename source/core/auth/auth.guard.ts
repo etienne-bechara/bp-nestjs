@@ -40,6 +40,7 @@ export class AuthGuard implements CanActivate {
       if (authString !== this.configService.get('AUTH_KEY')) {
         throw new UnauthorizedException('invalid authorization header');
       }
+
       return true;
     }
 
@@ -53,4 +54,5 @@ export class AuthGuard implements CanActivate {
 
     return true;
   }
+
 }

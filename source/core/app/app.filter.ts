@@ -126,7 +126,6 @@ export class AppFilter implements ExceptionFilter {
    * @param req
    */
   private logException(appException: AppException, req: AppRequest): void {
-
     const logData = {
       message: appException.message,
       details: appException.details,
@@ -161,6 +160,7 @@ export class AppFilter implements ExceptionFilter {
     if (!object || typeof object !== 'object' || Object.keys(object).length === 0) {
       return;
     }
+
     delete object.authorization;
     return object;
   }

@@ -168,14 +168,22 @@ module.exports =  {
     // Line breaking
     '@typescript-eslint/brace-style': [ 'warn', 'stroustrup', { allowSingleLine: true }],
     'eol-last': [ 'warn', 'always' ],
+    'function-call-argument-newline': [ 'warn', 'consistent' ],
+    'lines-between-class-members': [ 'warn', 'always', { exceptAfterSingleLine: true } ],
+    'newline-per-chained-call': [ 'warn', { ignoreChainWithDepth: 3 }],
     'no-multiple-empty-lines': [ 'warn', { max: 1 }],
-    'object-property-newline': [ 'warn', { allowAllPropertiesOnSameLine : true } ],
     'object-curly-newline': [ 'warn', {
       ObjectExpression: { minProperties: 4, multiline: true, consistent: true },
       ObjectPattern: { minProperties: 4, multiline: true, consistent: true },
       ImportDeclaration: 'never',
       ExportDeclaration: 'never',
     } ],
+    'object-property-newline': [ 'warn', { allowAllPropertiesOnSameLine : true } ],
+    'padded-blocks': [ 'warn', { blocks: 'never', classes: 'always', switches: 'never' } ],
+    'padding-line-between-statements': [ 'warn',
+      { blankLine: 'always', prev: '*', next: 'multiline-block-like' },
+      { blankLine: 'always', prev: 'multiline-block-like', next: '*' },
+    ],
 
     // Commas, semicolons, quotes, parenthesis and brackets
     '@typescript-eslint/quotes': [ 'warn', 'single', { avoidEscape: true }],

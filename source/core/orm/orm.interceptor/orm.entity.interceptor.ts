@@ -12,7 +12,6 @@ export class OrmEntityInterceptor implements NestInterceptor {
    * @param next
    */
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-
     return next
       .handle()
       .pipe(
@@ -20,12 +19,14 @@ export class OrmEntityInterceptor implements NestInterceptor {
           if (data) {
             if (Array.isArray(data)) {
               data = data.map((d) => d?.toJSON ? d.toJSON() : d);
+
               for (const d of data) {
                 this.eliminateRecursion(d.id, d);
               }
             }
             else if (data.results && Array.isArray(data.results)) {
               data.results = data.results.map((d) => d?.toJSON ? d.toJSON() : d);
+
               for (const d of data.results) {
                 this.eliminateRecursion(d.id, d);
               }
@@ -35,6 +36,7 @@ export class OrmEntityInterceptor implements NestInterceptor {
               this.eliminateRecursion(data.id, data);
             }
           }
+
           return data;
         }),
       );

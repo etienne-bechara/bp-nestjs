@@ -10,6 +10,7 @@ import { OrmFindOptions, OrmPartialResponse, OrmServiceOptions } from './orm.int
  * Creates an abstract service tied with a repository.
  */
 export abstract class OrmService<Entity> {
+
   protected readonly DUPLICATE_ENTRY: string = 'unique constraint violation';
   protected readonly ENTITY_UNDEFINED: string = 'cannot persist undefined entity';
   protected readonly FK_FAIL_CREATE: string = 'must reference an existing entity';
@@ -24,7 +25,6 @@ export abstract class OrmService<Entity> {
     private readonly repository: EntityRepository<Entity>,
     protected readonly options: OrmServiceOptions = { },
   ) {
-
     if (!this.options.defaults) this.options.defaults = { };
   }
 
@@ -39,7 +39,6 @@ export abstract class OrmService<Entity> {
     options: OrmFindOptions<Entity> = { },
     partial?: boolean,
   ): Promise<Entity | Entity[] | OrmPartialResponse<Entity>> {
-
     // Assign defaults
     options.populate = options.populate || this.options.defaults.populate;
     options.order = options.order || 'id:asc';
@@ -80,6 +79,7 @@ export abstract class OrmService<Entity> {
     if (!entity) {
       throw new InternalServerErrorException(this.ENTITY_UNDEFINED);
     }
+
     try {
       await this.repository.persistAndFlush(entity);
     }
@@ -99,6 +99,7 @@ export abstract class OrmService<Entity> {
     catch (e) {
       this.queryExceptionHandler(e, entity);
     }
+
     return entity;
   }
 
@@ -237,14 +238,15 @@ export abstract class OrmService<Entity> {
   public async readCreateOrUpdate(
     data: EntityData<Entity>, uniqueKey?: string[], allowUpdate?: boolean, failOnDuplicate?: boolean,
   ): Promise<Entity> {
-
     uniqueKey = this.validateUniqueKey(uniqueKey);
     const clause = { };
+
     for (const key of uniqueKey) {
       clause[key] = data[key];
     }
 
     const matchingEntities = await this.read(clause);
+
     if (matchingEntities.length > 1) {
       throw new ConflictException({
         message: this.UK_REFERENCE_FAIL,
@@ -304,7 +306,6 @@ export abstract class OrmService<Entity> {
    * @param data
    */
   protected queryExceptionHandler(e: Error, data: EntityData<Entity> | any): void {
-
     if (e.message.match(/duplicate entry/gi)) {
       const violation = /entry '(.+?)' for/gi.exec(e.message);
       throw new ConflictException({

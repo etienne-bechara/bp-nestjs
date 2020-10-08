@@ -10,6 +10,7 @@ let cachedConfig: Record<string, any>;
 
 @Injectable()
 export class ConfigService<T extends Record<string, any>> {
+
   public get(variable: 'NODE_ENV'): AppEnvironment;
   public get<K extends keyof T>(variable: K): T[K];
 
@@ -22,6 +23,7 @@ export class ConfigService<T extends Record<string, any>> {
     if (!cachedConfig) {
       throw new InternalServerErrorException('failed to acquire config cache');
     }
+
     return cachedConfig[variable as string];
   }
 
@@ -53,6 +55,7 @@ export class ConfigService<T extends Record<string, any>> {
         config[key] = partialConfig[key];
       }
     }
+
     cachedConfig = config;
   }
 

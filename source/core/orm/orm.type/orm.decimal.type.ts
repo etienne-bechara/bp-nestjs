@@ -10,7 +10,6 @@ export class OrmDecimalType extends Type {
    */
   // eslint-disable-next-line @typescript-eslint/naming-convention
   public convertToJSValue(value: any): any {
-
     if (!value) {
       return null;
     }

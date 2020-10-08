@@ -30,6 +30,7 @@ export class SentryService implements LoggerTransport {
     if (!options?.level && options?.level !== 0) return;
 
     const dsn = this.configService.get('SENTRY_DSN');
+
     if (!dsn) {
       throw new InternalServerErrorException('expected SENTRY_DSN to be an URL');
     }
@@ -57,7 +58,6 @@ export class SentryService implements LoggerTransport {
    * @param params
    */
   public log(params: LoggerParams): void {
-
     if (params.message !== params.error.message) {
       params.error.message = `${params.message}. ${params.error.message}`;
     }
@@ -68,7 +68,6 @@ export class SentryService implements LoggerTransport {
       scope.setExtras(flatten(params.data));
       Sentry.captureException(params.error);
     });
-
   }
 
   /**

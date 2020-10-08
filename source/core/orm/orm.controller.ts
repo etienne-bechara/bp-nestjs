@@ -17,6 +17,7 @@ import { OrmService } from './orm.service';
  */
 @UseInterceptors(OrmEntityInterceptor)
 export abstract class OrmController<Entity> {
+
   protected readonly MISSING_DTO: string = 'missing dto implementation';
   protected readonly MISSING_BODY: string = 'missing request body';
   protected readonly OPERATOR_NOT_ALLOWED: string = 'filter operator is not recognized';
@@ -115,7 +116,6 @@ export abstract class OrmController<Entity> {
    * @param method
    */
   public validateImplementation(method: OrmControllerMethod): void {
-
     if (
       this.options.routes.exclude?.includes(method)
       || this.options.routes.only && !this.options.routes.only.includes(method)
@@ -140,7 +140,6 @@ export abstract class OrmController<Entity> {
    * @param type
    */
   protected async plainToDto(object: unknown, type: ClassType<unknown>): Promise<any> {
-
     const typedObject = plainToClass(type, object);
     const failedConstraints = await validate(typedObject, {
       whitelist: true,
@@ -155,11 +154,14 @@ export abstract class OrmController<Entity> {
         });
         failedConstraints.push(...failure.children);
       }
+
       if (failure.constraints) {
         let partials = Object.values(failure.constraints);
+
         if (failure['parent']) {
           partials = partials.map((p) => `${failure['parent']}: ${p}`);
         }
+
         errors.push(...partials);
       }
     }
@@ -178,7 +180,6 @@ export abstract class OrmController<Entity> {
    * @param type
    */
   protected async plainToDtoOffset(object: any = { }, type: ClassType<unknown>): Promise<{ data: any; options: any }> {
-
     const { data, options } = this.splitDataOptions(object);
 
     return {
@@ -196,11 +197,13 @@ export abstract class OrmController<Entity> {
     const optionKeys = [ 'limit', 'offset', 'order' ];
 
     const data = { ...object };
+
     for (const key of optionKeys) {
       delete data[key];
     }
 
     const options = { ...object };
+
     for (const key in options) {
       if (!optionKeys.includes(key)) {
         delete options[key];

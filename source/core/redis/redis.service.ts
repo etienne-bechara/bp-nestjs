@@ -9,6 +9,7 @@ import { RedisSetParams } from './redis.interface';
 
 @Injectable()
 export class RedisService {
+
   private redisClient: Redis.Redis;
 
   public constructor(

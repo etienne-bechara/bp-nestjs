@@ -7,6 +7,7 @@ import { LoggerTransport } from './logger.interface';
 
 @Injectable()
 export class LoggerService {
+
   private transports: LoggerTransport[] = [ ];
 
   public constructor(
@@ -35,6 +36,7 @@ export class LoggerService {
    */
   public registerTransport(transport: LoggerTransport): void {
     const options = transport.getOptions();
+
     if (options?.level || options?.level === 0) {
       this.transports.push(transport);
     }
@@ -85,6 +87,7 @@ export class LoggerService {
       for (const detail of data) {
         if (detail instanceof Error) error = detail;
       }
+
       if (!error) {
         error = new Error(message as string);
         error.stack = error.stack.split('\n').filter((e, i) => i > 3).join('\n');

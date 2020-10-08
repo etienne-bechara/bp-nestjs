@@ -68,6 +68,7 @@ export class UtilService {
    */
   public async getAppStatus(): Promise<UtilAppStatus> {
     let network: UtilAppNetwork;
+
     try {
       network = await this.getAppNetwork();
     }

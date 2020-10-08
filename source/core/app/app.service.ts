@@ -12,6 +12,7 @@ import { AppModule } from './app.module';
  * It will not be injected through Nest framework.
  */
 export class AppService {
+
   private configService: ConfigService<AppConfig>;
   private loggerService: LoggerService;
   private server: NestExpressApplication;
@@ -24,7 +25,6 @@ export class AppService {
    * • Disable timeout (handled in custom interceptor).
    */
   public async bootServer(): Promise<void> {
-
     this.server = await NestFactory.create(AppModule, {
       logger: [ 'error', 'warn' ],
     });

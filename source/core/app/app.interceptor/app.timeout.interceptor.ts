@@ -35,6 +35,7 @@ export class AppTimeoutInterceptor implements NestInterceptor {
               new GatewayTimeoutException('failed to fulfill request within timeout'),
             );
           }
+
           return throwError(err);
         }),
       );

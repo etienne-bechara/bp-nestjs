@@ -18,10 +18,10 @@ export class TestService {
    * @param options
    */
   public static createSandbox(options: TestSandboxOptions): void {
-
     // Skip if criteria matches
     if (options.skipIfNoEnv) {
       const variableExists = dotenv.config().parsed[options.skipIfNoEnv];
+
       if (!variableExists) {
         // eslint-disable-next-line jest/valid-title, jest/no-disabled-tests
         describe.skip(options.name, () => options.descriptor(null));

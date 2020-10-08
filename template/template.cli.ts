@@ -10,12 +10,14 @@ import { argv } from 'yargs';
 function generateTemplate(): void {
   try {
     const type = argv.t ? argv.t.toString() : null;
+
     if (!type) {
       return printError(
         'missing template type',
         'npm run template:{template_type} -- -n {domain_name}',
       );
     }
+
     return generateTemplateByType(type);
   }
   catch (e) {
@@ -41,7 +43,6 @@ function generateTemplateByType(type: string): void {
   }
 
   globby.sync(`./${type}/**/*`, { cwd: __dirname }).map((file) => {
-
     const source = file.replace('./', './template/');
     const destination = file.replace('./', './source/')
       .replace(new RegExp(type, 'g'), dotCase(name));
@@ -58,7 +59,6 @@ function generateTemplateByType(type: string): void {
     fs.ensureFileSync(destination);
     fs.writeFileSync(destination, replaced, 'utf8');
   });
-
 }
 
 /**

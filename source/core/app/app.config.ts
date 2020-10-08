@@ -40,6 +40,7 @@ export class AppConfig {
       if (!p.startsWith('./') && !p.startsWith('!./')) {
         throw new Error("glob paths must start with './' or '!./'");
       }
+
       return p.replace(/^!\.\//, '!../../').replace(/^\.\//, '../../');
     });
 

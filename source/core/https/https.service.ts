@@ -182,6 +182,7 @@ export class HttpsService {
    */
   private parseResponseCookies(res: any): any {
     const cookies: HttpsCookie[] = [ ];
+
     if (!res?.headers || !res.headers['set-cookie']) {
       res.headers['set-cookie'] = [ ];
     }

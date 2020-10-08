@@ -1,6 +1,7 @@
 import { IncomingMessage } from 'http';
 
 export class AppRequest extends IncomingMessage {
+
   public metadata: AppRequestMetadata;
   public headers: { [key: string]: string };
   public accepted: any[];
@@ -24,10 +25,13 @@ export class AppRequest extends IncomingMessage {
   public originalUrl: string;
   public url: string;
   public baseUrl: string;
+
 }
 
 export class AppRequestMetadata {
+
   public ip?: string;
   public userAgent?: string;
   public jwtPayload?: any;
+
 }
