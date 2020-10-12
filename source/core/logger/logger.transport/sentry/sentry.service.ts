@@ -65,7 +65,7 @@ export class SentryService implements LoggerTransport {
     Sentry.withScope((scope) => {
       scope.setLevel(this.getSentrySeverity(params.level));
       if (params.data?.unexpected) scope.setTag('unexpected', 'true');
-      scope.setExtras(flatten(params.data));
+      scope.setExtras(flatten(params.data || { }));
       Sentry.captureException(params.error);
     });
   }
