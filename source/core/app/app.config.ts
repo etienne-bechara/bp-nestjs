@@ -29,22 +29,22 @@ export class AppConfig {
   /**
    * Given a glob path string, find all matching files
    * and return an array of all required exports.
-   *
-   * Always use runtime root as entry point.
    * @param globPath
    */
   public static globToRequire(globPath: string | string[]): any[] {
     globPath = Array.isArray(globPath) ? globPath : [ globPath ];
 
+    // Validate glob path and go back two paths (to be at root)
     const globRootPath = globPath.map((p) => {
-      if (!p.startsWith('./') && !p.startsWith('!./')) {
-        throw new Error("glob paths must start with './' or '!./'");
-      }
-
+      if (!p.match(/^!?\.\//g)) throw new Error("glob paths must start with './' or '!./'");
       return p.replace(/^!\.\//, '!../../').replace(/^\.\//, '../../');
     });
 
-    const matchingFiles = globby.sync(globRootPath, { cwd: __dirname });
+    // Acquire matching files and remove .ts entries if .js is present
+    let matchingFiles = globby.sync(globRootPath, { cwd: __dirname });
+    const jsFiles = matchingFiles.filter((file) => file.match(/\.js$/g));
+    matchingFiles = jsFiles.length > 0 ? jsFiles : matchingFiles;
+
     const exportsArrays = matchingFiles.map((file) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const exportsObject = require(file);

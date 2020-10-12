@@ -19,7 +19,7 @@
     "==== Build & Run ====": "",
     "build": "nest build",
     "dev": "npm start",
-    "start": "nest start --debug --watch",
+    "start": "tsnd --inspect=0.0.0.0:9229 ./source/core/main.ts",
     "start:dist": "node ./source/core/main.js || node ./build/source/core/main.js",
     "start:docker": "npm run build && docker build -t bp-nestjs build && docker run -it -p 8080:8080 bp-nestjs",
     "==== Lint & Test ====": "",
@@ -152,6 +152,7 @@
     "ts-jest": "26.4.1",
     "ts-loader": "8.0.4",
     "ts-node": "9.0.0",
+    "ts-node-dev": "1.0.0-pre.63",
     "tsconfig-paths": "3.9.0",
     "typescript": "4.0.3",
     "yargs": "16.0.3"
