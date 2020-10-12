@@ -90,7 +90,7 @@ export class LoggerService {
 
       if (!error) {
         error = new Error(message as string);
-        error.stack = error.stack.split('\n').filter((e, i) => i > 3).join('\n');
+        error.stack = error.stack.split('\n').filter((e, i) => i < 1 || i > 3).join('\n');
       }
     }
 
