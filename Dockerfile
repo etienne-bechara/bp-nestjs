@@ -1,6 +1,5 @@
-# Use smallest current Node.js image
+# Use alpine current Node.js image
 FROM node:14-alpine
-EXPOSE 8080
 
 # Create application directory and install packages
 WORKDIR /app
