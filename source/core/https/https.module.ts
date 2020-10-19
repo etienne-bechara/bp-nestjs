@@ -7,6 +7,7 @@ import { HttpsService } from './https.service';
 
 @Module({
   providers: [
+    HttpsConfig,
     HttpsService,
     {
       provide: HttpsConfig.HTTPS_MODULE_OPTIONS_TOKEN,

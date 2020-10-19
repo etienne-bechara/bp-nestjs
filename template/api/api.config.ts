@@ -1,6 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
-export class PascalCaseConfig {
+import { ConfigService } from '../core/config/config.service';
+
+@Injectable()
+export class PascalCaseConfig extends ConfigService {
 
   /* Environment Variables */
   @IsUrl()

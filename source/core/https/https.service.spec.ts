@@ -3,18 +3,20 @@ import { TestingModuleBuilder } from '@nestjs/testing';
 
 import { TestService } from '../test/test.service';
 import { UtilService } from '../util/util.service';
+import { HttpsConfig } from './https.config';
 import { HttpsModule } from './https.module';
 import { HttpsService } from './https.service';
 
 TestService.createSandbox({
   name: 'HttpsService',
-  imports: [ HttpsModule.register({ }) ],
-  providers: [ HttpsService, UtilService ],
+  global: true,
+  imports: [ HttpsModule ],
+  providers: [ HttpsConfig, HttpsService, UtilService ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {
     let httpsService: HttpsService;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       const testingModule = await testingBuilder.compile();
       httpsService = await testingModule.resolve(HttpsService);
     });

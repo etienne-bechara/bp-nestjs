@@ -2,7 +2,6 @@
 import { ClassSerializerInterceptor, Global, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
-import { ConfigModule } from '../config/config.module';
 import { AppConfig } from './app.config';
 import { AppFilter } from './app.filter';
 import { AppLoggerInterceptor, AppTimeoutInterceptor } from './app.interceptor';
@@ -11,7 +10,6 @@ import { AppMiddleware } from './app.middleware';
 const modules = AppConfig.globToRequire([
   './**/*.module.{js,ts}',
   '!./**/app.module.{js,ts}',
-  '!./**/config.module.{js,ts}',
 ]).reverse();
 
 /**
@@ -20,15 +18,10 @@ const modules = AppConfig.globToRequire([
  */
 @Global()
 @Module({
-  imports: [
-    ConfigModule.registerAsync(),
-    ...modules,
-  ],
-  exports: [
-    ConfigModule,
-    ...modules,
-  ],
+  imports: modules,
+  exports: modules,
   providers: [
+    AppConfig,
     { provide: APP_FILTER, useClass: AppFilter },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AppLoggerInterceptor },

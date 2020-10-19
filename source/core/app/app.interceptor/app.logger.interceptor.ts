@@ -2,7 +2,6 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { ConfigService } from '../../config/config.service';
 import { LoggerService } from '../../logger/logger.service';
 import { AppConfig } from '../app.config';
 import { AppEnvironment } from '../app.enum';
@@ -12,7 +11,7 @@ import { AppRequest, AppResponse } from '../app.interface';
 export class AppLoggerInterceptor implements NestInterceptor {
 
   public constructor(
-    private readonly configService: ConfigService<AppConfig>,
+    private readonly appConfig: AppConfig,
     private readonly loggerService: LoggerService,
   ) { }
 
@@ -27,7 +26,7 @@ export class AppLoggerInterceptor implements NestInterceptor {
 
     const reqTarget = `${req.method.padEnd(6, ' ')} ${req.url}`;
 
-    if (this.configService.get('NODE_ENV') === AppEnvironment.LOCAL) {
+    if (this.appConfig.NODE_ENV === AppEnvironment.LOCAL) {
       this.loggerService.http(`> ${reqTarget} | ${req.metadata.ip} | ${req.metadata.userAgent}`);
     }
 

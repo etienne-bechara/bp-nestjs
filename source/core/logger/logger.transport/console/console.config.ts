@@ -1,7 +1,11 @@
+import { Injectable } from '@nestjs/common';
+
 import { AppEnvironment } from '../../../app/app.enum';
+import { ConfigService } from '../../../config/config.service';
 import { LoggerLevel } from '../../logger.enum';
 
-export class ConsoleConfig {
+@Injectable()
+export class ConsoleConfig extends ConfigService {
 
   public readonly CONSOLE_TRANSPORT_OPTIONS = [
     { environment: AppEnvironment.LOCAL, level: LoggerLevel.DEBUG },

@@ -4,7 +4,6 @@ import https from 'https';
 import moment from 'moment';
 import qs from 'qs';
 
-import { ConfigService } from '../config/config.service';
 import { UtilService } from '../util/util.service';
 import { HttpsConfig } from './https.config';
 import { HttpsReturnType } from './https.enum';
@@ -22,7 +21,7 @@ export class HttpsService {
   public constructor(
     @Inject(HttpsConfig.HTTPS_MODULE_OPTIONS_TOKEN)
     private readonly httpsModuleOptions: HttpsModuleOptions,
-    private readonly configService: ConfigService<HttpsConfig>,
+    private readonly httpsConfig: HttpsConfig,
     private readonly utilService: UtilService,
   ) {
     this.setupInstance(httpsModuleOptions);
@@ -54,7 +53,7 @@ export class HttpsService {
    */
   private setDefaultParams(params: HttpsModuleOptions): void {
     if (!params.defaults) params.defaults = { };
-    const defaultTimeout = this.configService.get('HTTPS_DEFAULT_TIMEOUT');
+    const defaultTimeout = this.httpsConfig.HTTPS_DEFAULT_TIMEOUT;
 
     this.defaults.returnType = params.defaults.returnType || HttpsReturnType.DATA;
     this.defaults.timeout = params.defaults.timeout || defaultTimeout;

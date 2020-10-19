@@ -1,11 +1,12 @@
 import { TestingModuleBuilder } from '@nestjs/testing';
 
 import { TestService } from '../core/test/test.service';
+import { PascalCaseConfig } from './dot.case.config';
 import { PascalCaseService } from './dot.case.service';
 
 TestService.createSandbox({
   name: 'PascalCaseService',
-  providers: [ PascalCaseService ],
+  providers: [ PascalCaseService, PascalCaseConfig ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {
     let camelCaseService: PascalCaseService;
@@ -16,7 +17,7 @@ TestService.createSandbox({
     });
 
     describe('instance', () => {
-      it('should initialize correctly', () => {
+      it('should instantiate properly', () => {
         expect(camelCaseService).toBeDefined();
       });
     });

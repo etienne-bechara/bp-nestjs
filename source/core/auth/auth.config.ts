@@ -1,8 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { IsIn, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 
+import { ConfigService } from '../config/config.service';
 import { AuthStrategy } from './auth.enum';
 
-export class AuthConfig {
+@Injectable()
+export class AuthConfig extends ConfigService {
 
   /* Environment Variables */
   @IsOptional()

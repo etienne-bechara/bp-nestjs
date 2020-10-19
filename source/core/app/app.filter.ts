@@ -1,6 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
-import { ConfigService } from '../config/config.service';
 import { LoggerService } from '../logger/logger.service';
 import { AppConfig } from './app.config';
 import { AppEnvironment } from './app.enum';
@@ -10,7 +9,7 @@ import { AppException, AppRequest, AppResponse } from './app.interface';
 export class AppFilter implements ExceptionFilter {
 
   public constructor(
-    private readonly configService: ConfigService<AppConfig>,
+    private readonly appConfig: AppConfig,
     private readonly loggerService: LoggerService,
   ) { }
 
@@ -33,7 +32,7 @@ export class AppFilter implements ExceptionFilter {
     this.logException(appException, req);
 
     const productionServerError =
-      this.configService.get('NODE_ENV') === AppEnvironment.PRODUCTION
+      this.appConfig.NODE_ENV === AppEnvironment.PRODUCTION
       && appException.errorCode === HttpStatus.INTERNAL_SERVER_ERROR;
 
     res.setHeader('Content-Type', 'application/json');

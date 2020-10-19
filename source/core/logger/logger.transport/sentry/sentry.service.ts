@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { flatten } from 'flat';
 
-import { ConfigService } from '../../../config/config.service';
 import { LoggerLevel } from '../../logger.enum';
 import { LoggerParams, LoggerTransport } from '../../logger.interface';
 import { LoggerTransportOptions } from '../../logger.interface/logger.transport.options';
@@ -13,7 +12,7 @@ import { SentryConfig } from './sentry.config';
 export class SentryService implements LoggerTransport {
 
   public constructor(
-    protected readonly configService: ConfigService<SentryConfig>,
+    protected readonly sentryConfig: SentryConfig,
     protected readonly loggerService: LoggerService,
   ) {
     this.loggerService.registerTransport(this);
@@ -29,7 +28,7 @@ export class SentryService implements LoggerTransport {
     const options = this.getOptions();
     if (!options?.level && options?.level !== 0) return;
 
-    const dsn = this.configService.get('SENTRY_DSN');
+    const dsn = this.sentryConfig.SENTRY_DSN;
 
     if (!dsn) {
       throw new InternalServerErrorException('expected SENTRY_DSN to be an URL');
@@ -47,8 +46,8 @@ export class SentryService implements LoggerTransport {
    * Returns the options array for this logging transport.
    */
   public getOptions(): LoggerTransportOptions {
-    const environment = this.configService.get('NODE_ENV');
-    const options = this.configService.get('SENTRY_TRANSPORT_OPTIONS');
+    const environment = this.sentryConfig.NODE_ENV;
+    const options = this.sentryConfig.SENTRY_TRANSPORT_OPTIONS;
     return options.find((o) => o.environment === environment);
   }
 

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConfigService } from '../core/config/config.service';
 import { HttpsService } from '../core/https/https.service';
 import { LoggerService } from '../core/logger/logger.service';
-import { PascalCaseConfig } from './dot.case.config';
 
 @Injectable()
 export class PascalCaseService {
@@ -15,7 +13,6 @@ export class PascalCaseService {
    * @param httpsService
    */
   public constructor(
-    private readonly configService: ConfigService<PascalCaseConfig>,
     private readonly loggerService: LoggerService,
     private readonly httpsService: HttpsService,
   ) { }

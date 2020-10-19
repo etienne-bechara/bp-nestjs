@@ -1,9 +1,12 @@
+import { Injectable } from '@nestjs/common';
 import { IsOptional, IsUrl } from 'class-validator';
 
 import { AppEnvironment } from '../../../app/app.enum';
+import { ConfigService } from '../../../config/config.service';
 import { LoggerLevel } from '../../logger.enum';
 
-export class SentryConfig {
+@Injectable()
+export class SentryConfig extends ConfigService {
 
   /* Environment Variables */
   @IsOptional()

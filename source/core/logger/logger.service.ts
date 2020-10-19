@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import cleanStack from 'clean-stack';
 
-import { ConfigService } from '../config/config.service';
+import { LoggerConfig } from './logger.config';
 import { LoggerLevel } from './logger.enum';
 import { LoggerTransport } from './logger.interface';
 
@@ -11,7 +11,7 @@ export class LoggerService {
   private transports: LoggerTransport[] = [ ];
 
   public constructor(
-    private readonly configService: ConfigService<unknown>,
+    private readonly loggerConfig: LoggerConfig,
   ) {
     this.setupLogger();
   }
@@ -20,7 +20,7 @@ export class LoggerService {
    * Adds an event listener to catch uncaught exceptions.
    */
   private setupLogger(): void {
-    const env = this.configService.get('NODE_ENV');
+    const env = this.loggerConfig.NODE_ENV;
     this.info(`Environment configured as ${env}`);
 
     process.on('uncaughtException', (err) => {

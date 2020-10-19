@@ -1,8 +1,7 @@
 import { Test } from '@nestjs/testing';
-import dotenv from 'dotenv';
 
 import { AppModule } from '../app/app.module';
-import { ConfigService } from '../config/config.service';
+import { LoggerConfig } from '../logger/logger.config';
 import { LoggerService } from '../logger/logger.service';
 import { TestSandboxOptions } from './test.interface';
 
@@ -18,25 +17,19 @@ export class TestService {
    * @param options
    */
   public static createSandbox(options: TestSandboxOptions): void {
-    // Skip if criteria matches
-    if (options.skipIfNoEnv) {
-      const variableExists = dotenv.config().parsed[options.skipIfNoEnv];
-
-      if (!variableExists) {
-        // eslint-disable-next-line jest/valid-title, jest/no-disabled-tests
-        describe.skip(options.name, () => options.descriptor(null));
-        return;
-      }
+    if (options.skip) {
+      // eslint-disable-next-line jest/valid-title, jest/no-disabled-tests
+      describe.skip(options.name, () => options.descriptor(null));
+      return;
     }
 
-    // Creates the testing builder exposed to specific test
     const testingBuilder = Test.createTestingModule({
       imports: [
-        AppModule,
+        ...options.global ? [ AppModule ] : [ ],
         ...options.imports ? options.imports : [ ],
       ],
       providers: [
-        ConfigService,
+        LoggerConfig,
         LoggerService,
         ...options.providers ? options.providers : [ ],
       ],
@@ -45,11 +38,8 @@ export class TestService {
       ],
     });
 
-    // Silence internal console and run provided descriptor
-    // eslint-disable-next-line jest/valid-title
-    describe(options.name, () => {
-      // eslint-disable-next-line no-console
-      console.log = jest.fn(); console.info = jest.fn();
+    describe(options.name, () => { // eslint-disable-line jest/valid-title
+      console.log = jest.fn(); console.warn = jest.fn(); // eslint-disable-line no-console
       options.descriptor(testingBuilder);
     });
   }

@@ -1,8 +1,12 @@
 import { Dictionary, PoolConfig } from '@mikro-orm/core';
+import { Injectable } from '@nestjs/common';
 import { Transform } from 'class-transformer';
 import { IsIn, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class OrmConfig {
+import { ConfigService } from '../config/config.service';
+
+@Injectable()
+export class OrmConfig extends ConfigService {
 
   /* Environment Variables */
   @IsIn([ 'mongo', 'mysql', 'mariadb', 'postgresql', 'sqlite' ])

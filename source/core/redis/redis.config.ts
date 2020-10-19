@@ -1,7 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { Transform } from 'class-transformer';
 import { IsNumber, IsString, IsUrl } from 'class-validator';
 
-export class RedisConfig {
+import { ConfigService } from '../config/config.service';
+
+@Injectable()
+export class RedisConfig extends ConfigService {
 
   /* Environment Variables */
   @IsUrl()

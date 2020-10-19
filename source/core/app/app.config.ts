@@ -1,11 +1,14 @@
+import { Injectable } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { Transform } from 'class-transformer';
 import { IsIn, IsNumber } from 'class-validator';
 import globby from 'globby';
 
+import { ConfigService } from '../config/config.service';
 import { AppEnvironment } from './app.enum';
 
-export class AppConfig {
+@Injectable()
+export class AppConfig extends ConfigService {
 
   /* Environment Variables */
   @IsIn(Object.values(AppEnvironment))

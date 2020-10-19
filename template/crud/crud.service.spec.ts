@@ -16,7 +16,7 @@ TestService.createSandbox({
     });
 
     describe('instance', () => {
-      it('should initialize correctly', () => {
+      it('should instantiate properly', () => {
         expect(camelCaseService).toBeDefined();
       });
     });

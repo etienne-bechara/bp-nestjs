@@ -4,7 +4,6 @@ import chalk from 'chalk';
 import moment from 'moment';
 
 import { AppEnvironment } from '../../../app/app.enum';
-import { ConfigService } from '../../../config/config.service';
 import { LoggerLevel } from '../../logger.enum';
 import { LoggerParams, LoggerTransport } from '../../logger.interface';
 import { LoggerTransportOptions } from '../../logger.interface/logger.transport.options';
@@ -16,7 +15,7 @@ import { ConsoleStyle } from './console.interface';
 export class ConsoleService implements LoggerTransport {
 
   public constructor(
-    protected readonly configService: ConfigService<ConsoleConfig>,
+    protected readonly consoleConfig: ConsoleConfig,
     protected readonly loggerService: LoggerService,
   ) {
     this.loggerService.registerTransport(this);
@@ -27,8 +26,8 @@ export class ConsoleService implements LoggerTransport {
    * application environment.
    */
   public getOptions(): LoggerTransportOptions {
-    const environment = this.configService.get('NODE_ENV');
-    const options = this.configService.get('CONSOLE_TRANSPORT_OPTIONS');
+    const environment = this.consoleConfig.NODE_ENV;
+    const options = this.consoleConfig.CONSOLE_TRANSPORT_OPTIONS;
     return options.find((o) => o.environment === environment);
   }
 
@@ -39,7 +38,7 @@ export class ConsoleService implements LoggerTransport {
    */
   public log(params: LoggerParams): void {
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
-    const env = this.configService.get('NODE_ENV');
+    const env = this.consoleConfig.NODE_ENV;
     const style = this.getStyle(params.level);
 
     // Colored

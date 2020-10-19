@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 
-import { ConfigService } from '../config/config.service';
 import { LoggerService } from '../logger/logger.service';
 import { RedisConfig } from './redis.config';
 import { RedisKey } from './redis.enum';
@@ -13,7 +12,7 @@ export class RedisService {
   private redisClient: Redis.Redis;
 
   public constructor(
-    private readonly configService: ConfigService<RedisConfig>,
+    private readonly redisConfig: RedisConfig,
     private readonly loggerService: LoggerService,
   ) {
     this.setupRedis();
@@ -25,12 +24,12 @@ export class RedisService {
    * of 100ms. On failure throws regular exception.
    */
   private setupRedis(): void {
-    const redisHost = this.configService.get('REDIS_HOST');
+    const redisHost = this.redisConfig.REDIS_HOST;
     this.redisClient = new Redis({
       host: redisHost,
-      port: this.configService.get('REDIS_PORT'),
-      password: this.configService.get('REDIS_PASSWORD'),
-      keyPrefix: this.configService.get('REDIS_KEY_PREFIX'),
+      port: this.redisConfig.REDIS_PORT,
+      password: this.redisConfig.REDIS_PASSWORD,
+      keyPrefix: this.redisConfig.REDIS_KEY_PREFIX,
       reconnectOnError: (err: Error): boolean | 1 | 2 => {
         this.loggerService.error(err);
         return 2;

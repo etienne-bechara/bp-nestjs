@@ -1,62 +1,80 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
+import { validateSync } from 'class-validator';
 import dotenv from 'dotenv';
 
-import { AppConfig } from '../app/app.config';
 import { AppEnvironment } from '../app/app.enum';
 
-let cachedConfig: Record<string, any>;
+const initializedConfigs = [ ];
 
-@Injectable()
-export class ConfigService<T extends Record<string, any>> {
+export abstract class ConfigService {
 
-  public get(variable: 'NODE_ENV'): AppEnvironment;
-  public get<K extends keyof T>(variable: K): T[K];
+  public readonly NODE_ENV: AppEnvironment;
 
   /**
-   * Retrieves an specific setting by its key.
-   * It is expected that the cache was already populated.
-   * @param variable
+   * During construction, only allow each instance
+   * to be called once.
+   * This is used to prevent overflow due to mock
+   * initialization from class-transformer.
    */
-  public get<K extends keyof T>(variable: K): T[K] {
-    if (!cachedConfig) {
-      throw new InternalServerErrorException('failed to acquire config cache');
-    }
+  public constructor() {
+    const configName = this['constructor'].name;
 
-    return cachedConfig[variable as string];
+    if (!initializedConfigs.includes(configName)) {
+      initializedConfigs.push(configName);
+      this.setupConfig();
+    }
   }
 
   /**
-   * Parses all *.config.ts files, merges them with environment,
-   * and apply validation rules.
-   * If everything is correct, caches the result.
+   * Reads all variables related to this instance
+   * and validate them.
    */
-  public static async populateConfig(): Promise<void> {
-    const configConstructors = AppConfig.globToRequire('./**/*.config.{js,ts}');
+  protected setupConfig(): void {
+    const envVariables = this.getEnvVariables();
+    this.validateEnvVariables(envVariables);
+    this.populateEnvVariables(envVariables);
+  }
+
+  /**
+   * Acquires variables from environment, overwriting
+   * them with .env file in case of collision.
+   */
+  protected getEnvVariables(): Record<string, any> {
     const envFile = dotenv.config({ path: `${__dirname}/../../../.env` }).parsed || { };
-    const envVariables = { ...process.env, envFile };
-    const config: Record<string, any> = { };
+    const envProcess = process.env || { };
+    return { ...envProcess, ...envFile };
+  }
 
-    for (const constructor of configConstructors) {
-      const partialConfig: Record<string, any> = plainToClass(constructor, envVariables);
+  /**
+   * Validates provided environment variables against decorators
+   * from class-validator, applying transformations from class-
+   * transformer if any is present.
+   * @param envVariables
+   */
+  protected validateEnvVariables(envVariables: Record<string, any>): void {
+    const transformedClass = plainToClass(this['constructor'] as any, envVariables);
 
-      try {
-        await validateOrReject(partialConfig, {
-          validationError: { target: false },
-        });
-      }
-      catch (e) {
-        console.error(e); // eslint-disable-line no-console
-        process.exit(1); // eslint-disable-line unicorn/no-process-exit
-      }
+    const validationErrors = validateSync(transformedClass, {
+      validationError: { target: false },
+    });
 
-      for (const key in partialConfig) {
-        config[key] = partialConfig[key];
+    if (validationErrors.length > 0) {
+      console.error(...validationErrors); // eslint-disable-line no-console
+      process.exit(1); // eslint-disable-line unicorn/no-process-exit
+    }
+  }
+
+  /**
+   * Given a set of valid environment variables, populates the
+   * declared local one with its equivalent.
+   * @param envVariables
+   */
+  protected populateEnvVariables(envVariables: Record<string, any>): void {
+    for (const variable in envVariables) {
+      if (envVariables[variable] || envVariables[variable] === 0) {
+        this[variable] = envVariables[variable];
       }
     }
-
-    cachedConfig = config;
   }
 
 }

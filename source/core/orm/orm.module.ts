@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 
 import { AppConfig } from '../app/app.config';
 import { AppEnvironment } from '../app/app.enum';
-import { ConfigService } from '../config/config.service';
 import { LoggerService } from '../logger/logger.service';
 import { OrmConfig } from './orm.config';
 
@@ -17,31 +16,33 @@ const featureEntities = AppConfig.globToRequire([
 @Module({
   imports: [
     MikroOrmModule.forRootAsync({
-      inject: [ ConfigService, LoggerService ],
+      inject: [ OrmConfig, LoggerService ],
       useFactory: (
-        configService: ConfigService<OrmConfig>,
+        ormConfig: OrmConfig,
         loggerService: LoggerService,
       ) => {
         return {
-          type: configService.get('ORM_TYPE'),
-          host: configService.get('ORM_HOST'),
-          port: configService.get('ORM_PORT'),
-          user: configService.get('ORM_USERNAME'),
-          password: configService.get('ORM_PASSWORD'),
-          dbName: configService.get('ORM_DATABASE'),
-          pool: configService.get('ORM_POOL_CONFIG'),
-          driverOptions: configService.get('ORM_DRIVER_OPTIONS'),
+          type: ormConfig.ORM_TYPE,
+          host: ormConfig.ORM_HOST,
+          port: ormConfig.ORM_PORT,
+          user: ormConfig.ORM_USERNAME,
+          password: ormConfig.ORM_PASSWORD,
+          dbName: ormConfig.ORM_DATABASE,
+          pool: ormConfig.ORM_POOL_CONFIG,
+          driverOptions: ormConfig.ORM_DRIVER_OPTIONS,
           baseDir: __dirname,
           entities: rootEntities,
           logger: (msg): void => loggerService.debug(`ORM ${msg}`),
           namingStrategy: UnderscoreNamingStrategy,
-          debug: configService.get('NODE_ENV') === AppEnvironment.LOCAL,
+          debug: ormConfig.NODE_ENV === AppEnvironment.LOCAL,
         };
       },
     }),
     MikroOrmModule.forFeature({ entities: featureEntities }),
   ],
+  providers: [ OrmConfig ],
   exports: [
+    OrmConfig,
     MikroOrmModule.forFeature({ entities: featureEntities }),
   ],
 })

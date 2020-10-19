@@ -2,14 +2,13 @@ import { CallHandler, ExecutionContext, GatewayTimeoutException, Injectable, Nes
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 
-import { ConfigService } from '../../config/config.service';
 import { AppConfig } from '../app.config';
 
 @Injectable()
 export class AppTimeoutInterceptor implements NestInterceptor {
 
   public constructor(
-    private readonly configService: ConfigService<AppConfig>,
+    private readonly appConfig: AppConfig,
   ) { }
 
   /**
@@ -22,7 +21,7 @@ export class AppTimeoutInterceptor implements NestInterceptor {
    * @param next
    */
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const msTimeout = this.configService.get('APP_TIMEOUT');
+    const msTimeout = this.appConfig.APP_TIMEOUT;
 
     if (!msTimeout) return next.handle();
     return next

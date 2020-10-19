@@ -1,12 +1,14 @@
 import { TestingModuleBuilder } from '@nestjs/testing';
 
 import { TestService } from '../test/test.service';
+import { RedisConfig } from './redis.config';
 import { RedisKey } from './redis.enum';
 import { RedisService } from './redis.service';
 
 TestService.createSandbox({
   name: 'RedisService',
-  providers: [ RedisService ],
+  // imports: [ RedisModule ],
+  providers: [ RedisConfig, RedisService ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {
     const rng = Math.random();
