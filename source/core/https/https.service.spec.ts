@@ -10,7 +10,7 @@ import { HttpsService } from './https.service';
 TestService.createSandbox({
   name: 'HttpsService',
   global: true,
-  imports: [ HttpsModule ],
+  imports: [ HttpsModule.register() ],
   providers: [ HttpsConfig, HttpsService, UtilService ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {

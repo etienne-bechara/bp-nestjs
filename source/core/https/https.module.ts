@@ -25,7 +25,7 @@ export class HttpsModule {
    * Configures the underlying https service synchronously.
    * @param options
    */
-  public static register(options: HttpsModuleOptions): DynamicModule {
+  public static register(options: HttpsModuleOptions = { }): DynamicModule {
     return {
       module: HttpsModule,
       providers: [
@@ -46,7 +46,7 @@ export class HttpsModule {
    * acquiring data from other injectable services (i.e. Config).
    * @param options
    */
-  public static registerAsync(options: HttpsAsyncModuleOptions): DynamicModule {
+  public static registerAsync(options: HttpsAsyncModuleOptions = { }): DynamicModule {
     return {
       module: HttpsModule,
       imports: options.imports,
