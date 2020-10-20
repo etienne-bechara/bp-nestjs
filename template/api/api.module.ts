@@ -21,6 +21,6 @@ import { PascalCaseService } from './dot.case.service';
   ],
   controllers: [ PascalCaseController ],
   providers: [ PascalCaseConfig, PascalCaseService ],
-  exports: [ PascalCaseService ],
+  exports: [ PascalCaseConfig, PascalCaseService ],
 })
 export class PascalCaseModule { }
