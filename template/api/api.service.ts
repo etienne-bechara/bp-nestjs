@@ -8,7 +8,6 @@ export class PascalCaseService {
 
   /**
    * Instantiate an exclusive http service for PascalCase API.
-   * @param configService
    * @param loggerService
    * @param httpsService
    */
