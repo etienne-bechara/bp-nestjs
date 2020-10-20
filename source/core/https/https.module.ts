@@ -51,7 +51,6 @@ export class HttpsModule {
       module: HttpsModule,
       imports: options.imports,
       providers: [
-        HttpsService,
         {
           provide: HttpsConfig.HTTPS_MODULE_ID_TOKEN,
           useValue: v4(),

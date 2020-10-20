@@ -36,6 +36,9 @@ export class TestService {
       controllers: [
         ...options.controllers ? options.controllers : [ ],
       ],
+      exports: [
+        ...options.exports ? options.exports : [ ],
+      ],
     });
 
     describe(options.name, () => { // eslint-disable-line jest/valid-title

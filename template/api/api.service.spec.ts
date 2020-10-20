@@ -6,6 +6,7 @@ import { PascalCaseService } from './dot.case.service';
 
 TestService.createSandbox({
   name: 'PascalCaseService',
+  global: true,
   providers: [ PascalCaseService, PascalCaseConfig ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {

@@ -4,7 +4,6 @@ import https from 'https';
 import moment from 'moment';
 import qs from 'qs';
 
-import { UtilService } from '../util/util.service';
 import { HttpsConfig } from './https.config';
 import { HttpsReturnType } from './https.enum';
 import { HttpsCookie, HttpsModuleOptions, HttpsRequestParams, HttpsServiceBases,
@@ -22,7 +21,6 @@ export class HttpsService {
     @Inject(HttpsConfig.HTTPS_MODULE_OPTIONS_TOKEN)
     private readonly httpsModuleOptions: HttpsModuleOptions,
     private readonly httpsConfig: HttpsConfig,
-    private readonly utilService: UtilService,
   ) {
     this.setupInstance(httpsModuleOptions);
   }
@@ -233,7 +231,7 @@ export class HttpsService {
     try {
       res = await Promise.race([
         this.instance(finalParams),
-        this.utilService.halt(timeout),
+        new Promise((resolve) => setTimeout(resolve, timeout)) as any,
       ]);
 
       if (!res) {
