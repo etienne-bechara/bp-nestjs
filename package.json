@@ -35,7 +35,7 @@
     "==== Boilerplate Config ====": "",
     "boilerplate:setup": "npm i && cp-cli .env.schema .env && npm run boilerplate:rename && npm run boilerplate:update",
     "boilerplate:rename": "git remote rename origin boilerplate && git remote set-url --push boilerplate no_push",
-    "boilerplate:update": "git fetch boilerplate && git merge boilerplate/master",
+    "boilerplate:update": "git fetch boilerplate && git merge boilerplate/main",
     "==== Boilerplate Removal ====": "",
     "uninstall:orm": "npm un @mikro-orm/core @mikro-orm/mysql @mikro-orm/nestjs @mikro-orm/cli && rimraf source/core/orm && rimraf migration && rimraf template/crud",
     "uninstall:redis": "npm un ioredis @types/ioredis && rimraf source/core/redis",
