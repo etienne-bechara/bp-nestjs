@@ -21,4 +21,6 @@ export class RedisConfig extends ConfigService {
   /* Service Settings */
   public readonly REDIS_KEY_PREFIX = '';
 
+  public readonly REDIS_LOCK_DEFAULT_DURATION = 5000;
+
 }
