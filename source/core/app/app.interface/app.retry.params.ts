@@ -1,9 +1,8 @@
 export interface AppRetryParams {
-  instance: any;
-  method: string;
-  args?: any;
+  method: () => any;
+  breakIf?: (e: any) => boolean;
+  name?: string;
   retries?: number;
   timeout?: number;
   delay?: number;
-  breakIf?: (e: any) => boolean;
 }

@@ -3,6 +3,11 @@ import { TestingModuleBuilder } from '@nestjs/testing';
 import { TestService } from '../test/test.service';
 import { UtilService } from './util.service';
 
+const mockFailure = (c): void => {
+  c.quantity++;
+  throw new Error('error');
+};
+
 TestService.createSandbox({
   name: 'UtilService',
   providers: [ UtilService ],
@@ -23,6 +28,40 @@ TestService.createSandbox({
         const elapsed = new Date().getTime() - start;
         expect(elapsed).toBeGreaterThan(haltTime * 0.95);
         expect(elapsed).toBeLessThan(haltTime * 1.05);
+      });
+    });
+
+    describe('retryOnException', () => {
+      it('should retry a function for 5 times', async () => {
+        const counter = { quantity: 0 };
+        const retries = 5;
+
+        try {
+          await utilService.retryOnException({
+            method: () => mockFailure(counter),
+            retries,
+          });
+        }
+        catch { /* Handled by expect */ }
+
+        expect(counter.quantity).toBe(retries + 1);
+      });
+
+      it('should retry a function for 2 seconds', async () => {
+        const counter = { quantity: 0 };
+        const timeout = 2000;
+        const delay = 550;
+
+        try {
+          await utilService.retryOnException({
+            method: () => mockFailure(counter),
+            timeout,
+            delay,
+          });
+        }
+        catch { /* Handled by expect */ }
+
+        expect(counter.quantity).toBe(Math.ceil(timeout / delay) + 1);
       });
     });
 

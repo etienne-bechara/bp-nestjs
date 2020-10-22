@@ -26,39 +26,38 @@ export class UtilService {
    * @param params
    */
   public async retryOnException<T>(params: AppRetryParams): Promise<T> {
-    const p = params;
+    const methodName = params.name || 'Unnamed';
 
-    let msg = `${p.method}(): running with ${p.retries || '∞'} `;
-    msg += `retries and ${p.timeout / 1000 || '∞ '}s timeout...`;
-    this.loggerService.debug(msg);
+    let startMsg = `${methodName}: running with ${params.retries || '∞'} `;
+    startMsg += `retries and ${params.timeout / 1000 || '∞ '}s timeout...`;
+    this.loggerService.debug(startMsg);
 
     const startTime = new Date().getTime();
     let tentative = 1;
     let result: T;
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    while (true) { // eslint-disable-line no-constant-condition
       try {
-        result = await p.instance[p.method](...p.args);
+        result = await params.method();
         break;
       }
       catch (e) {
         const elapsed = new Date().getTime() - startTime;
 
-        if (p.retries && tentative > p.retries) throw e;
-        else if (p.timeout && elapsed > p.timeout) throw e;
-        else if (p.breakIf?.(e)) throw e;
+        if (params.retries && tentative > params.retries) throw e;
+        else if (params.timeout && elapsed > params.timeout) throw e;
+        else if (params.breakIf?.(e)) throw e;
         tentative++;
 
-        msg = `${p.method}(): ${e.message} | Retry #${tentative}/${p.retries || '∞'}`;
-        msg += `, elapsed ${elapsed / 1000}/${p.timeout / 1000 || '∞ '}s...`;
-        this.loggerService.debug(msg);
+        let retryMsg = `${methodName}: ${e.message} | Retry #${tentative}/${params.retries || '∞'}`;
+        retryMsg += `, elapsed ${elapsed / 1000}/${params.timeout / 1000 || '∞ '}s...`;
+        this.loggerService.debug(retryMsg);
 
-        await this.halt(p.delay || 0);
+        await this.halt(params.delay || 0);
       }
     }
 
-    this.loggerService.debug(`${p.method}() finished successfully!`);
+    this.loggerService.debug(`${methodName}: finished successfully!`);
     return result;
   }
 
