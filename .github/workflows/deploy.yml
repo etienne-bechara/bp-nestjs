@@ -1,0 +1,145 @@
+# This workflow will build a docker container, publish it to
+# Google Container Registry, and deploy it on Cloud Run when
+# a commit is pushed on master or stage branches.
+#
+# Workflow environment variables will be acquired from GitHub
+# secrets according to prefixes, being PRD for production and
+# STG for staging.
+#
+# To configure the deploy, the minimum required variables are:
+# - {env}_GCP_PROJECT: Project ID at Google Cloud
+# - {env}_GCP_SA_KEY: JSON Service Account Key to authenticate CLI
+#
+
+name: Test, Build & Deploy
+on:
+  push:
+    branches:
+      - master
+      - stage
+
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  REGISTRY_HOSTNAME: gcr.io
+  REGISTRY_IMAGE_NAME: ${{ github.event.repository.name }}
+  CLOUD_RUN_SERVICE_NAME: ${{ github.event.repository.name }}
+  CLOUD_RUN_REGION: us-east1
+  CLOUD_RUN_CPU: 1
+  CLOUD_RUN_MEMORY: 1Gi
+  CLOUD_RUN_TIMEOUT: 100s
+  CLOUD_RUN_MAX_INSTANCES: 15
+  CLOUD_RUN_CONCURRENCY: 80
+
+jobs:
+  deploy:
+    name: Test, Build & Deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 14.x ]
+
+    steps:
+    - name: "[Staging] Configure Environment"
+      if: endsWith(github.ref, '/stage')
+      run: |
+        echo "GCP_PREFIX=stg" >> $GITHUB_ENV
+        echo "GCP_PROJECT=${{ secrets.STG_GCP_PROJECT }}" >> $GITHUB_ENV
+        echo "NODE_ENV=${{ secrets.STG_NODE_ENV }}" >> $GITHUB_ENV
+        echo "ORM_TYPE=${{ secrets.STG_ORM_TYPE }}" >> $GITHUB_ENV
+        echo "ORM_HOST=${{ secrets.STG_ORM_HOST }}" >> $GITHUB_ENV
+        echo "ORM_PORT=${{ secrets.STG_ORM_PORT }}" >> $GITHUB_ENV
+        echo "ORM_USERNAME=${{ secrets.STG_ORM_USERNAME }}" >> $GITHUB_ENV
+        echo "ORM_PASSWORD=${{ secrets.STG_ORM_PASSWORD }}" >> $GITHUB_ENV
+        echo "ORM_DATABASE=${{ secrets.STG_ORM_DATABASE }}" >> $GITHUB_ENV
+        echo "REDIS_HOST=${{ secrets.STG_REDIS_HOST }}" >> $GITHUB_ENV
+        echo "REDIS_PORT=${{ secrets.STG_REDIS_PORT }}" >> $GITHUB_ENV
+        echo "REDIS_DATABASE=${{ secrets.STG_REDIS_DATABASE }}" >> $GITHUB_ENV
+        echo "REDIS_PASSWORD=${{ secrets.STG_REDIS_PASSWORD }}" >> $GITHUB_ENV
+
+    - name: "[Production] Configure Environment"
+      if: endsWith(github.ref, '/master')
+      run: |
+        echo "GCP_PREFIX=prd" >> $GITHUB_ENV
+        echo "GCP_PROJECT=${{ secrets.PRD_GCP_PROJECT }}" >> $GITHUB_ENV
+        echo "NODE_ENV=${{ secrets.PRD_NODE_ENV }}" >> $GITHUB_ENV
+        echo "ORM_TYPE=${{ secrets.PRD_ORM_TYPE }}" >> $GITHUB_ENV
+        echo "ORM_HOST=${{ secrets.PRD_ORM_HOST }}" >> $GITHUB_ENV
+        echo "ORM_PORT=${{ secrets.PRD_ORM_PORT }}" >> $GITHUB_ENV
+        echo "ORM_USERNAME=${{ secrets.PRD_ORM_USERNAME }}" >> $GITHUB_ENV
+        echo "ORM_PASSWORD=${{ secrets.PRD_ORM_PASSWORD }}" >> $GITHUB_ENV
+        echo "ORM_DATABASE=${{ secrets.PRD_ORM_DATABASE }}" >> $GITHUB_ENV
+        echo "REDIS_HOST=${{ secrets.PRD_REDIS_HOST }}" >> $GITHUB_ENV
+        echo "REDIS_PORT=${{ secrets.PRD_REDIS_PORT }}" >> $GITHUB_ENV
+        echo "REDIS_DATABASE=${{ secrets.PRD_REDIS_DATABASE }}" >> $GITHUB_ENV
+        echo "REDIS_PASSWORD=${{ secrets.PRD_REDIS_PASSWORD }}" >> $GITHUB_ENV
+
+    - name: "[All] Use Checkout"
+      uses: actions/checkout@v2
+
+    - name: "[All] Use Node.js ${{ matrix.node-version }}"
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: "[All] Install Dependencies"
+      run: npm install
+
+    - name: "[All] Execute Lint Check"
+      run: npm run lint
+
+    - name: "[All] Execute Unit Tests"
+      run: npm run test
+
+    - name: "[All] Build Deployable Artifact"
+      run: npm run build
+
+    - name: "[Staging] Authenticate Google Cloud Platform"
+      if: endsWith(github.ref, '/stage')
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.STG_GCP_SA_KEY }}
+
+    - name: "[Production] Authenticate Google Cloud Platform"
+      if: endsWith(github.ref, '/master')
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.PRD_GCP_SA_KEY }}
+
+    - name: "[All] Configure Google Cloud CLI"
+      run: gcloud auth configure-docker
+      
+    - name: "[All] Build Container Image"
+      run: docker build build/. -t $REGISTRY_HOSTNAME/$GCP_PROJECT/$GCP_PREFIX-$REGISTRY_IMAGE_NAME:$GITHUB_SHA
+          
+    - name: "[All] Publish Image to Container Registry"
+      run: docker push $REGISTRY_HOSTNAME/$GCP_PROJECT/$GCP_PREFIX-$REGISTRY_IMAGE_NAME:$GITHUB_SHA
+
+    - name: "[All] Deploy Image on Cloud Run"
+      run: |
+        gcloud run deploy $GCP_PREFIX-$CLOUD_RUN_SERVICE_NAME \
+          --project $GCP_PROJECT \
+          --image $REGISTRY_HOSTNAME/$GCP_PROJECT/$GCP_PREFIX-$REGISTRY_IMAGE_NAME:$GITHUB_SHA \
+          --region $CLOUD_RUN_REGION \
+          --cpu $CLOUD_RUN_CPU \
+          --memory $CLOUD_RUN_MEMORY \
+          --timeout $CLOUD_RUN_TIMEOUT \
+          --max-instances $CLOUD_RUN_MAX_INSTANCES \
+          --concurrency $CLOUD_RUN_CONCURRENCY \
+          --platform managed \
+          --allow-unauthenticated \
+          --set-env-vars="SENTRY_DSN=$SENTRY_DSN" \
+          --set-env-vars="NODE_ENV=$NODE_ENV" \
+          --set-env-vars="ORM_TYPE=$ORM_TYPE" \
+          --set-env-vars="ORM_HOST=$ORM_HOST" \
+          --set-env-vars="ORM_PORT=$ORM_PORT" \
+          --set-env-vars="ORM_USERNAME=$ORM_USERNAME" \
+          --set-env-vars="ORM_PASSWORD=$ORM_PASSWORD" \
+          --set-env-vars="ORM_DATABASE=$ORM_DATABASE" \
+          --set-env-vars="REDIS_HOST=$REDIS_HOST" \
+          --set-env-vars="REDIS_PORT=$REDIS_PORT" \
+          --set-env-vars="REDIS_DATABASE=$REDIS_DATABASE" \
+          --set-env-vars="REDIS_PASSWORD=$REDIS_PASSWORD" \
+
+    - name: "[All] Execute Migrations"
+      run: npm run migration:up
