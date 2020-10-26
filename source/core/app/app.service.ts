@@ -24,6 +24,8 @@ export class AppService {
    * • Disable timeout (handled in custom interceptor).
    */
   public async bootServer(): Promise<void> {
+    const fallbackPort = 8080;
+
     this.server = await NestFactory.create(AppModule, {
       logger: [ 'error', 'warn' ],
     });
@@ -36,14 +38,15 @@ export class AppService {
       json({ limit: this.appConfig.APP_JSON_LIMIT }),
     );
 
-    const httpServer = await this.server.listen(this.appConfig.PORT);
+    const httpServerPort = this.appConfig.PORT || fallbackPort;
+    const httpServer = await this.server.listen(httpServerPort);
     httpServer.setTimeout(0);
 
     const timeoutStr = this.appConfig.APP_TIMEOUT
       ? `set to ${(this.appConfig.APP_TIMEOUT / 1000).toString()}s`
       : 'disabled';
     this.loggerService.debug(`Server timeouts are ${timeoutStr}`);
-    this.loggerService.notice(`Server listening on port ${this.appConfig.PORT}`);
+    this.loggerService.notice(`Server listening on port ${httpServerPort}`);
   }
 
 }
