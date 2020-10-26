@@ -82,7 +82,7 @@ TestService.createSandbox({
         await Promise.all(lockPromises);
 
         const elapsed = new Date().getTime() - start;
-        expect(elapsed).toBeGreaterThan(duration * instances);
+        expect(elapsed).toBeGreaterThan(duration * (instances - 1));
       });
     });
   },

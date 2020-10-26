@@ -16,8 +16,8 @@ TestService.createSandbox({
       camelCaseService = testingModule.get(PascalCaseService);
     });
 
-    describe('instance', () => {
-      it('should instantiate properly', () => {
+    describe('injection', () => {
+      it('should resolve dependency injection', () => {
         expect(camelCaseService).toBeDefined();
       });
     });

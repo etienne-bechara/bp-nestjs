@@ -2,16 +2,14 @@ import { HttpStatus } from '@nestjs/common';
 import { TestingModuleBuilder } from '@nestjs/testing';
 
 import { TestService } from '../test/test.service';
-import { UtilService } from '../util/util.service';
 import { HttpsConfig } from './https.config';
 import { HttpsModule } from './https.module';
 import { HttpsService } from './https.service';
 
 TestService.createSandbox({
   name: 'HttpsService',
-  global: true,
   imports: [ HttpsModule.register() ],
-  providers: [ HttpsConfig, HttpsService, UtilService ],
+  providers: [ HttpsConfig, HttpsService ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {
     let httpsService: HttpsService;
