@@ -3,12 +3,13 @@ import cleanStack from 'clean-stack';
 
 import { LoggerConfig } from './logger.config';
 import { LoggerLevel } from './logger.enum';
-import { LoggerTransport } from './logger.interface';
+import { LoggerParams, LoggerTransport } from './logger.interface';
 
 @Injectable()
 export class LoggerService {
 
   private transports: LoggerTransport[] = [ ];
+  private pendingLogs: LoggerParams[] = [ ];
 
   public constructor(
     private readonly loggerConfig: LoggerConfig,
@@ -51,15 +52,30 @@ export class LoggerService {
    * @param data
    */
   private log(level: LoggerLevel, message: string | Error, ...data: (Error | Record<string, any>)[]): void {
+    const logBatch: LoggerParams[] = [ ...this.pendingLogs ];
+
+    const logMessage = {
+      level,
+      message: this.getLogMessage(message),
+      error: this.getLogError(message, ...data),
+      data: this.getLogData(...data),
+    };
+
+    if (this.transports.length === 0) {
+      this.pendingLogs.push(logMessage);
+      return;
+    }
+
+    this.pendingLogs = [ ];
+    logBatch.push(logMessage);
+
     for (const transport of this.transports) {
       const options = transport.getOptions();
       if (level > options.level) continue;
-      transport.log({
-        level,
-        message: this.getLogMessage(message),
-        error: this.getLogError(message, ...data),
-        data: this.getLogData(...data),
-      });
+
+      for (const logRecord of logBatch) {
+        transport.log(logRecord);
+      }
     }
   }
 
