@@ -19,7 +19,7 @@
     "==== Build & Run ====": "",
     "build": "nest build",
     "dev": "npm start",
-    "start": "tsnd --exit-child --transpile-only --inspect=0.0.0.0:9229 ./source/core/main.ts",
+    "start": "tsnd --exit-child --transpile-only --watch *.env --inspect=0.0.0.0:9229 ./source/core/main.ts",
     "start:dist": "node ./source/core/main.js || node ./build/source/core/main.js",
     "start:docker": "npm run build && docker build -t bp-nestjs build && docker run -it -p 8080:8080 bp-nestjs",
     "==== Lint & Test ====": "",
