@@ -3,7 +3,7 @@
   "sourceRoot": ".",
   "entryFile": "source/core/main",
   "compilerOptions": {
-    "tsConfigPath": "tsconfig.build.json",
+    "tsConfigPath": "tsconfig.json",
     "deleteOutDir": true,
     "assets": [
       ".env",
