@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
 
-import { AppRequest } from '../../core/app/app.interface';
+import { AppRequest } from '../app/app.interface';
 import { AuthConfig } from './auth.config';
 import { AuthStrategy } from './auth.enum';
 

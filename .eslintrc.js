@@ -4,6 +4,7 @@ npm i -D `
   @typescript-eslint/eslint-plugin `
   @typescript-eslint/parser `
   eslint `
+  eslint-plugin-import `
   eslint-plugin-jest `
   eslint-plugin-jsdoc `
   eslint-plugin-promise `
@@ -39,6 +40,21 @@ module.exports =  {
   },
 
   /**
+   * PLUGINS
+   * Which plugins we would like to enable
+   */
+  plugins: [
+    '@typescript-eslint', // https://github.com/typescript-eslint/typescript-eslint
+    'import', // https://github.com/benmosher/eslint-plugin-import
+    'jest', // https://github.com/jest-community/eslint-plugin-jest
+    'jsdoc', // https://github.com/gajus/eslint-plugin-jsdoc
+    'promise', // https://github.com/xjamundx/eslint-plugin-promise
+    'simple-import-sort', // https://github.com/lydell/eslint-plugin-simple-import-sort
+    'unicorn', // https://github.com/sindresorhus/eslint-plugin-unicorn
+    'unused-imports', // https://github.com/sweepline/eslint-plugin-unused-imports
+  ],
+
+  /**
    * BASE RULES
    * These extensions defines the full set of starting rules
    * Additions and exclusions are in 'rules' property
@@ -46,19 +62,12 @@ module.exports =  {
   extends: [
     'eslint:recommended', // https://eslint.org/docs/rules/
     'plugin:@typescript-eslint/recommended', // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin
-    'plugin:@typescript-eslint/recommended-requiring-type-checking', // ^ ditto
+    'plugin:@typescript-eslint/recommended-requiring-type-checking', // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/src/configs/recommended-requiring-type-checking.ts
+    'plugin:import/errors', // https://github.com/benmosher/eslint-plugin-import/blob/master/config/errors.js
+    'plugin:import/typescript', // https://github.com/benmosher/eslint-plugin-import/blob/master/config/typescript.js
+    'plugin:import/warnings', // https://github.com/benmosher/eslint-plugin-import/blob/master/config/warnings.js
     'plugin:jest/recommended', // https://github.com/jest-community/eslint-plugin-jest#rules
     'plugin:unicorn/recommended', // https://github.com/sindresorhus/eslint-plugin-unicorn/blob/master/index.js
-  ],
-
-  plugins: [
-    '@typescript-eslint', // https://github.com/typescript-eslint/typescript-eslint
-    'jest', // https://github.com/jest-community/eslint-plugin-jest
-    'jsdoc', // https://github.com/gajus/eslint-plugin-jsdoc
-    'promise', // https://github.com/xjamundx/eslint-plugin-promise
-    'simple-import-sort', // https://github.com/lydell/eslint-plugin-simple-import-sort
-    'unicorn', // https://github.com/sindresorhus/eslint-plugin-unicorn
-    'unused-imports', // https://github.com/sweepline/eslint-plugin-unused-imports
   ],
 
   rules: {
@@ -76,6 +85,7 @@ module.exports =  {
     '@typescript-eslint/no-unsafe-return': [ 'off' ], // Enables 'any' typed variables on returns
     '@typescript-eslint/restrict-template-expressions': [ 'off' ], // Complicates handling Error objects
     'unicorn/catch-error-name': [ 'off' ], // Allow using 'e' on catch instead of forced 'error'
+    'import/export': [ 'off' ], // Does not work with TypeScript
     'unicorn/no-null': [ 'off' ], // Allow using 'null', useful for returning strict DTO
     'unicorn/no-reduce': [ 'off' ], // Allow using .reduce() method of Arrays
     'unicorn/prevent-abbreviations': [ 'off' ], // Allow common abbreviations (param, err, etc)
@@ -108,6 +118,7 @@ module.exports =  {
      */
     '@typescript-eslint/array-type': [ 'warn' ], // Enforces consistent array declaration
     '@typescript-eslint/prefer-optional-chain': [ 'warn' ], // Enforces optional chaining when available
+    'import/no-useless-path-segments': [ 'warn', { noUselessIndex: true } ], // Enforces shortest possible path
     'max-len': [ 'warn', { code: 120, comments: 120 } ], // Maximum column length
     'no-console': [ 'warn' ], // Disallow console.log
     'simple-import-sort/sort': [ 'warn' ], // Force import ordering

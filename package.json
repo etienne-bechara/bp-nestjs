@@ -19,6 +19,7 @@
     "==== Build & Run ====": "",
     "build": "nest build",
     "dev": "npm start",
+    "index": "barrelsby -D -q -l all -d ./source && rimraf ./source/index.ts && rimraf ./source/core/index.ts",
     "start": "tsnd --exit-child --transpile-only --watch *.env --inspect=0.0.0.0:9229 ./source/core/main.ts",
     "start:dist": "node ./source/core/main.js || node ./build/source/core/main.js",
     "start:docker": "npm run build && docker build -t bp-nestjs build && docker run -it -p 8080:8080 bp-nestjs",
@@ -65,7 +66,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged --allow-empty"
+      "pre-commit": "npm run index && git add ./\\*index.ts && lint-staged --allow-empty"
     }
   },
   "lint-staged": {
@@ -133,9 +134,11 @@
     "@types/uuid": "8.3.0",
     "@typescript-eslint/eslint-plugin": "4.4.0",
     "@typescript-eslint/parser": "4.4.0",
+    "barrelsby": "2.2.0",
     "change-case": "4.1.1",
     "cp-cli": "2.0.0",
     "eslint": "7.11.0",
+    "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jest": "24.1.0",
     "eslint-plugin-jsdoc": "30.6.4",
     "eslint-plugin-more": "1.0.0",
