@@ -4,6 +4,5 @@
 
 export * from './util.controller';
 export * from './util.module';
-export * from './util.service.spec';
 export * from './util.service';
 export * from './util.interface';
