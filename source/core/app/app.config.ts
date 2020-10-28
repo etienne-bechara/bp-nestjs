@@ -20,6 +20,8 @@ export class AppConfig extends ConfigService {
   public readonly PORT: number;
 
   /* Service Settings */
+  public readonly APP_GLOBAL_PREFIX = '';
+
   public readonly APP_JSON_LIMIT = '10mb';
 
   public readonly APP_TIMEOUT = 90 * 1000;

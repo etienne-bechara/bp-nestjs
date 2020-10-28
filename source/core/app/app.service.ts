@@ -33,6 +33,7 @@ export class AppService {
     this.appConfig = this.server.get('AppConfig');
     this.loggerService = this.server.get('LoggerService');
 
+    this.server.setGlobalPrefix(this.appConfig.APP_GLOBAL_PREFIX);
     this.server.enableCors(this.appConfig.APP_CORS_OPTIONS);
     this.server.use(
       json({ limit: this.appConfig.APP_JSON_LIMIT }),
