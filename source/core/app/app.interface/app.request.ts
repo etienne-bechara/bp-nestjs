@@ -30,7 +30,8 @@ export class AppRequest extends IncomingMessage {
 
 export class AppRequestMetadata {
 
-  public ip?: string;
+  public clientIp?: string;
+  public serverIp?: string;
   public userAgent?: string;
   public jwtPayload?: any;
 

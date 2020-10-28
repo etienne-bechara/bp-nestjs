@@ -1,10 +1,14 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import requestIp from 'request-ip';
 
+import { UtilService } from '../util';
 import { AppRequest, AppResponse } from './app.interface';
 
 @Injectable()
 export class AppMiddleware implements NestMiddleware {
+
+  public constructor(
+    private readonly utilService: UtilService,
+  ) { }
 
   /**
    * Applies a global middleware that act upon every
@@ -13,8 +17,8 @@ export class AppMiddleware implements NestMiddleware {
    * @param res
    * @param next
    */
-  public use(req: AppRequest, res: AppResponse, next: any): void {
-    this.addRequestMetadata(req);
+  public async use(req: AppRequest, res: AppResponse, next: any): Promise<void> {
+    await this.addRequestMetadata(req);
     next();
   }
 
@@ -23,9 +27,10 @@ export class AppMiddleware implements NestMiddleware {
    * to user ip, agent and jwt payload.
    * @param req
    */
-  public addRequestMetadata(req: AppRequest): void {
+  public async addRequestMetadata(req: AppRequest): Promise<void> {
     req.metadata = {
-      ip: requestIp.getClientIp(req) || null,
+      clientIp: this.utilService.getClientIp(req),
+      serverIp: await this.utilService.getServerIp(),
       userAgent: req.headers ? req.headers['user-agent'] : null,
       jwtPayload: { },
     };

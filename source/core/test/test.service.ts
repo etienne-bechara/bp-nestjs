@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 
 import { AppModule } from '../app/app.module';
+import { HttpsModule } from '../https';
 import { LoggerConfig } from '../logger/logger.config';
 import { LoggerService } from '../logger/logger.service';
 import { TestSandboxOptions } from './test.interface';
@@ -26,7 +27,7 @@ export class TestService {
     const testingBuilder = Test.createTestingModule({
       imports: [
         ...options.global ? [ AppModule ] : [ ],
-        ...options.imports ? options.imports : [ ],
+        ...options.imports ? options.imports : [ HttpsModule.register() ],
       ],
       providers: [
         LoggerConfig,

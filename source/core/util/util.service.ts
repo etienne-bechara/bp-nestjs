@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import os from 'os';
+import requestIp from 'request-ip';
 
-import { AppRetryParams } from '../app/app.interface';
+import { AppRequest, AppRetryParams } from '../app/app.interface';
+import { HttpsService } from '../https';
 import { LoggerService } from '../logger/logger.service';
-import { UtilAppNetwork, UtilAppStatus } from './util.interface';
+import { UtilAppStatus } from './util.interface';
 
 @Injectable()
 export class UtilService {
 
+  private serverIp: string;
+
   public constructor(
+    private readonly httpsService: HttpsService,
     private readonly loggerService: LoggerService,
   ) { }
 
@@ -62,19 +66,46 @@ export class UtilService {
   }
 
   /**
+   * Given a request object, extracts the client ip.
+   * @param req
+   */
+  public getClientIp(req: AppRequest): string {
+    const forwardedIpRegex = /by.+?for=(.+?);/g;
+    let forwardedIp;
+
+    if (req.headers.forwarded) {
+      forwardedIp = forwardedIpRegex.exec(req.headers.forwarded);
+    }
+
+    return forwardedIp
+      ? forwardedIp[1]
+      : requestIp.getClientIp(req);
+  }
+
+  /**
+   * Returns current server ip and caches result for future use.
+   * In case of error log an exception but do not throw.
+   */
+  public async getServerIp(): Promise<string> {
+    if (!this.serverIp) {
+      try {
+        this.serverIp = await this.httpsService.get('https://api64.ipify.org', {
+          timeout: 5000,
+        });
+      }
+      catch (e) {
+        this.loggerService.error('failed to acquire server ip address', e);
+      }
+    }
+
+    return this.serverIp;
+  }
+
+  /**
    * Reads data regarding current runtime and network.
    * Let network acquisition fail if unable to fetch ips.
    */
   public async getAppStatus(): Promise<UtilAppStatus> {
-    let network: UtilAppNetwork;
-
-    try {
-      network = await this.getAppNetwork();
-    }
-    catch (e) {
-      this.loggerService.error(e);
-    }
-
     return {
       system: {
         version: os.version(),
@@ -89,18 +120,10 @@ export class UtilService {
         free: os.freemem(),
       },
       cpus: os.cpus(),
-      network,
-    };
-  }
-
-  /**
-   * Reads data regarding application network.
-   */
-  public async getAppNetwork(): Promise<UtilAppNetwork> {
-    const { data } = await axios.get('https://api64.ipify.org');
-    return {
-      public_ip: data,
-      interfaces: os.networkInterfaces(),
+      network: {
+        public_ip: await this.getServerIp(),
+        interfaces: os.networkInterfaces(),
+      },
     };
   }
 
