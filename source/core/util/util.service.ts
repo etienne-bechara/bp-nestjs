@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import os from 'os';
 import requestIp from 'request-ip';
 
-import { AppRequest, AppRetryParams } from '../app/app.interface';
+import { AppRequest } from '../app/app.interface';
 import { HttpsService } from '../https';
 import { LoggerService } from '../logger/logger.service';
-import { UtilAppStatus } from './util.interface';
+import { UtilAppStatus, UtilRetryParams } from './util.interface';
 
 @Injectable()
 export class UtilService {
@@ -29,7 +29,7 @@ export class UtilService {
    * Retry a method for configured times or until desired timeout.
    * @param params
    */
-  public async retryOnException<T>(params: AppRetryParams): Promise<T> {
+  public async retryOnException<T>(params: UtilRetryParams): Promise<T> {
     const methodName = params.name || 'Unnamed';
 
     let startMsg = `${methodName}: running with ${params.retries || '∞'} `;

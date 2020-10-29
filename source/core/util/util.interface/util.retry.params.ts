@@ -1,4 +1,4 @@
-export interface AppRetryParams {
+export interface UtilRetryParams {
   method: () => any;
   breakIf?: (e: any) => boolean;
   name?: string;

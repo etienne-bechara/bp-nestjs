@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { Transform } from 'class-transformer';
-import { IsIn, IsNumber, IsOptional } from 'class-validator';
+import { IsIn, IsOptional, Max, Min } from 'class-validator';
 import globby from 'globby';
 
 import { ConfigService } from '../config/config.service';
@@ -16,7 +16,7 @@ export class AppConfig extends ConfigService {
 
   @IsOptional()
   @Transform((v) => Number.parseInt(v))
-  @IsNumber()
+  @Min(1024) @Max(65535)
   public readonly PORT: number;
 
   /* Service Settings */
