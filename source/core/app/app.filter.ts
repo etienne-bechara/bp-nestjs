@@ -1,4 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { decycle } from 'cycle';
 
 import { LoggerService } from '../logger/logger.service';
 import { AppConfig } from './app.config';
@@ -89,6 +90,7 @@ export class AppFilter implements ExceptionFilter {
 
   /**
    * Given an exception, extracts its details.
+   * Ensures that circular references are eliminated.
    * @param exception
    */
   private getDetails(exception: HttpException | Error): unknown {
@@ -111,7 +113,7 @@ export class AppFilter implements ExceptionFilter {
       }
     }
 
-    return details || { };
+    return decycle(details) || { };
   }
 
   /**

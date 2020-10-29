@@ -109,6 +109,7 @@
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "clean-stack": "3.0.0",
+    "cycle": "1.0.3",
     "dotenv": "8.2.0",
     "flat": "5.0.2",
     "globby": "11.0.1",

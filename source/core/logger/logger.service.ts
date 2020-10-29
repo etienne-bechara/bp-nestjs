@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import cleanStack from 'clean-stack';
+import { decycle } from 'cycle';
 
 import { LoggerConfig } from './logger.config';
 import { LoggerLevel } from './logger.enum';
@@ -127,7 +128,7 @@ export class LoggerService {
     }
 
     return Object.keys(dataObject).length > 0
-      ? dataObject
+      ? decycle(dataObject)
       : undefined;
   }
 
