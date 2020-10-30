@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator';
 
-import { MockConfig } from '../test/mock/mock.confit';
+import { MockConfig } from '../test/mock/mock.config';
 import { TestService } from '../test/test.service';
 import { ConfigService } from './config.service';
 
