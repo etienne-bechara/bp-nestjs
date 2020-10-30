@@ -1,14 +1,20 @@
 import { TestingModuleBuilder } from '@nestjs/testing';
 import { v4 } from 'uuid';
 
+import { ConfigModule } from '../config/config.module';
 import { TestService } from '../test/test.service';
-import { UtilService } from '../util/util.service';
 import { RedisConfig } from './redis.config';
 import { RedisService } from './redis.service';
 
 TestService.createSandbox({
   name: 'RedisService',
-  providers: [ RedisConfig, RedisService, UtilService ],
+  providers: [ RedisConfig, RedisService ],
+  imports: [
+    ConfigModule.registerAsync({
+      configs: [ RedisConfig ],
+      envPath: `${__dirname}/../../../.env`,
+    }),
+  ],
 
   descriptor: (testingBuilder: TestingModuleBuilder) => {
     const testKey = v4();

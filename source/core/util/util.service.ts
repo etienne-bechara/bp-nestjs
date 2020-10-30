@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import globby from 'globby';
 import os from 'os';
 import requestIp from 'request-ip';
 
 import { AppRequest } from '../app/app.interface';
-import { HttpsService } from '../https';
+import { HttpsService } from '../https/https.service';
 import { LoggerService } from '../logger/logger.service';
 import { UtilAppStatus, UtilRetryParams } from './util.interface';
 
@@ -16,6 +17,34 @@ export class UtilService {
     private readonly httpsService: HttpsService,
     private readonly loggerService: LoggerService,
   ) { }
+
+  /**
+   * Given a glob path string, find all matching files
+   * and return an array of all required exports.
+   * @param globPath
+   */
+  public static globToRequire(globPath: string | string[]): any[] {
+    globPath = Array.isArray(globPath) ? globPath : [ globPath ];
+
+    // Validate glob path and go back two paths (to be at root)
+    const globRootPath = globPath.map((p) => {
+      if (!p.match(/^!?\.\//g)) throw new Error("glob paths must start with './' or '!./'");
+      return p.replace(/^!\.\//, '!../../').replace(/^\.\//, '../../');
+    });
+
+    // Acquire matching files and remove .ts entries if .js is present
+    let matchingFiles = globby.sync(globRootPath, { cwd: __dirname });
+    const jsFiles = matchingFiles.filter((file) => file.match(/\.js$/g));
+    matchingFiles = jsFiles.length > 0 ? jsFiles : matchingFiles;
+
+    const exportsArrays = matchingFiles.map((file) => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const exportsObject = require(file);
+      return Object.keys(exportsObject).map((key) => exportsObject[key]);
+    });
+
+    return [].concat(...exportsArrays);
+  }
 
   /**
    * Asynchronously wait for desired amount of milliseconds.

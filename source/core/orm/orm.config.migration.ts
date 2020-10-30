@@ -1,8 +1,8 @@
 import { UnderscoreNamingStrategy } from '@mikro-orm/core';
 import dotenv from 'dotenv';
 
-import { AppConfig } from '../app/app.config';
 import { AppEnvironment } from '../app/app.enum';
+import { UtilService } from '../util/util.service';
 
 dotenv.config({ path: `${__dirname}/../../../.env` });
 
@@ -22,7 +22,7 @@ export default {
   dbName: process.env.ORM_DATABASE,
 
   baseDir: __dirname,
-  entities: AppConfig.globToRequire('./**/*.entity.{ts,js}'),
+  entities: UtilService.globToRequire('./**/*.entity.{ts,js}'),
 
   namingStrategy: UnderscoreNamingStrategy,
 

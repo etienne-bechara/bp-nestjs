@@ -2,19 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { IsOptional, IsUrl } from 'class-validator';
 
 import { AppEnvironment } from '../../../app/app.enum';
-import { ConfigService } from '../../../config/config.service';
+import { InjectSecret } from '../../../config/config.decorator';
+import { LoggerConfig } from '../../logger.config';
 import { LoggerLevel } from '../../logger.enum';
+import { LoggerTransportOptions } from '../../logger.interface';
 
 @Injectable()
-export class SentryConfig extends ConfigService {
+export class SentryConfig extends LoggerConfig {
 
-  /* Environment Variables */
+  @InjectSecret()
   @IsOptional()
   @IsUrl()
   public readonly SENTRY_DSN: string;
 
-  /* Service Options */
-  public readonly SENTRY_TRANSPORT_OPTIONS = [
+  public readonly SENTRY_TRANSPORT_OPTIONS: LoggerTransportOptions[] = [
     { environment: AppEnvironment.LOCAL, level: null },
     { environment: AppEnvironment.DEVELOPMENT, level: LoggerLevel.ERROR },
     { environment: AppEnvironment.STAGING, level: LoggerLevel.ERROR },

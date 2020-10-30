@@ -39,7 +39,7 @@ export class AppService {
       json({ limit: this.appConfig.APP_JSON_LIMIT }),
     );
 
-    const httpServerPort = this.appConfig.PORT || fallbackPort;
+    const httpServerPort = this.appConfig.APP_PORT || fallbackPort;
     const httpServer = await this.server.listen(httpServerPort);
     httpServer.setTimeout(0);
 

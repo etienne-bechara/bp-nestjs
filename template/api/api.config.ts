@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
-import { ConfigService } from '../core/config/config.service';
+import { InjectSecret } from '../config/config.decorator';
 
 @Injectable()
-export class PascalCaseConfig extends ConfigService {
+export class PascalCaseConfig {
 
-  /* Environment Variables */
+  @InjectSecret()
   @IsUrl()
   public readonly UPPER_CASE_HOST: string;
 
+  @InjectSecret()
   @IsString() @IsNotEmpty()
   public readonly UPPER_CASE_API_KEY: string;
 

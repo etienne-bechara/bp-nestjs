@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 
-import { UtilService } from '../util';
+import { UtilService } from '../util/util.service';
 import { AppRequest, AppResponse } from './app.interface';
 
 @Injectable()

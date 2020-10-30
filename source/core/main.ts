@@ -1,6 +1,14 @@
 import 'source-map-support/register';
 
-import { AppService } from './app/app.service';
+import { AppModule } from './app/app.module';
+import { UtilService } from './util/util.service';
 
-const appService = new AppService();
-void appService.bootServer();
+void AppModule.bootServer({
+  envPath: `${__dirname}/../../.env`,
+  configs: UtilService.globToRequire('./**/*.config.{js,ts}'),
+  modules: UtilService.globToRequire([
+    './**/*.module.{js,ts}',
+    '!./**/app.module.{js,ts}',
+    '!./**/config.module.{js,ts}',
+  ]).reverse(),
+});
