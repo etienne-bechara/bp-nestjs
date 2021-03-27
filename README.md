@@ -1,5 +1,14 @@
 # NestJS Boilerplate
 
+⚠️ Atenção!
+
+Este repositório foi dividido em vários pacotes menores e não será mais atualizado, confira os componentes em:
+- [@bechara/nestjs-core](https://github.com/etienne-bechara/nestjs-core): Framework principal com agregando logger, http adapter, e outras amenidades ao NestJS.
+- [@bechara/nestjs-orm](https://github.com/etienne-bechara/nestjs-orm): Framework opcional agregando ORM e abstrações para manipular entidades.
+- [@bechara/nestjs-redis](https://github.com/etienne-bechara/nestjs-redis): Plugin opcional para conectar banco de dados Redis.
+- [@bechara/eslint-config-bechara-ts](https://github.com/etienne-bechara/eslint-config-bechara-ts): Múltiplas regras e plugins de lint em TypeScript.
+---
+
 Boilerplate baseado em NestJS com intuito de prover iniciação rápida de projetos em Node.js.
 
 **Guia Rápido**
